@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 
@@ -14,4 +15,8 @@ use App\Http\Controllers\DashboardController;
 |
 */
 
-Route::get('/', [DashboardController::class, 'index']);
+Route::get('login', [AuthController::class, 'index'])->name('login');
+
+Route::middleware(['auth:web'])->group(function () {
+    Route::get('/', [DashboardController::class, 'index']);
+});
