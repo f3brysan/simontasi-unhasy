@@ -17,6 +17,7 @@ use App\Http\Controllers\DashboardController;
 
 Route::get('login', [AuthController::class, 'index'])->name('login');
 Route::post('login', [AuthController::class, 'auth']);
+Route::post('logout', [AuthController::class, 'logout']);
 
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
