@@ -17,13 +17,13 @@ class AuthController extends Controller
     {
         // Validate email and password fields
         $request->validate([
-            'email'    => ['required', 'email'],
+            'no_induk'    => ['required'],
             'password' => ['required'],
         ]);
 
         // Define the credentials for user authentication
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+            'no_induk'    => ['required'],
             'password' => ['required'],
         ]);
 

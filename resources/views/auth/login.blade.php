@@ -63,7 +63,7 @@
                                             </svg></span>
 
                                         <input class="form-control" type="text" placeholder="Email"
-                                            name="email">
+                                            name="no_induk">
                                     </div>
                                     <div class="input-group mb-4"><span class="input-group-text">
                                             <svg class="icon">
