@@ -55,11 +55,8 @@
         <!-- CoreUI and necessary plugins-->
         
         <script src="{{ URL::to('/') }}/vendors/@coreui/coreui/js/coreui.bundle.min.js"></script>
-        <script src="{{ URL::to('/') }}/vendors/simplebar/js/simplebar.min.js"></script>
-        <script src="{{ URL::to('/') }}/vendors/chart.js/js/chart.min.js"></script>
-        <script src="{{ URL::to('/') }}/vendors/@coreui/chartjs/js/coreui-chartjs.js"></script>
-        <script src="{{ URL::to('/') }}/vendors/@coreui/utils/js/coreui-utils.js"></script>
-        <script src="{{ URL::to('/') }}/js/widgets.js"></script>       
+        <script src="{{ URL::to('/') }}/vendors/simplebar/js/simplebar.min.js"></script>          
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>     
         @stack('js')
       </body>
     </html>
