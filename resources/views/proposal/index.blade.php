@@ -132,7 +132,12 @@
                             iziToast.success({
                                 title: 'Berhasil',
                                 message: 'Proposal tersimpan.',
+                                position: 'topRight'
                             });
+                            setTimeout(
+                                function() {                                    
+                                    location.reload();
+                                }, 2000);
                         },
                         error: function(data) {
                             console.log('Error', data);
