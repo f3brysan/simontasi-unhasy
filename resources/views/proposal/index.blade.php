@@ -26,7 +26,7 @@
                             </div>
                             <div>
                                 <a href="javascript:void(0)" class="btn btn-primary float-end"
-                                    onclick="daftarProposal('{{ auth()->user()->no_induk }}')">Daftar</a>
+                                    onclick="daftarProposal()">Daftar</a>
                             </div>
                         @endif
                     </div>
@@ -47,25 +47,28 @@
                     <h5 class="modal-title" id="staticBackdropLabel">Proposal</h5>
                     <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="exampleFormControlTextarea1" class="form-label">Judul Skripsi</label>
-                        <textarea class="form-control summernote" id="exampleFormControlTextarea1" rows="3"></textarea>
+                <form id="storeProposal">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Judul Skripsi</label>
+                            <textarea class="form-control summernote" id="exampleFormControlTextarea1" rows="3" name="judul"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Dosen Pembimbing</label>
+                            <select class="form-select form-select-lg mb-3" id="allDosenPembimbing" name="dosen_pembimbing"
+                                style="width: 100%">
+                                <option value="">--- Pilih Dosen ---</option>
+                                @foreach ($allDosenPembimbing as $item)
+                                    <option value="{{ $item['nip'] }}">{{ $item['nip'] }} - {{ $item['nama'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="exampleFormControlTextarea1" class="form-label">Dosen Pembimbing</label>
-                        <select class="form-select form-select-lg mb-3" id="allDosenPembimbing" name="dosen_pembimbing" style="width: 100%">
-                            <option value="">--- Pilih Dosen ---</option>
-                            @foreach ($allDosenPembimbing as $item)
-                                <option value="{{ $item['nip'] }}">{{ $item['nip'] }} - {{ $item['nama'] }}</option>
-                            @endforeach
-                        </select>
-                    </div>                    
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtnDaftarProposal">Simpan</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -78,26 +81,66 @@
     {{-- Select2 --}}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    {{-- JQuery Validate --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+    {{-- TOAST JS --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"
+        integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css"
+        integrity="sha512-DIW4FkYTOxjCqRt7oS9BFO+nVOwDL4bzukDyDtMO7crjUZhwpyrWBFroq+IqRe6VnJkTpRAS6nhDvf0w+wHmxg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script>
         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
             $('.summernote').summernote({
                 placeholder: 'Judul Skripsi Anda',
                 tabsize: 2,
                 height: 100
             });
-
-
         });
     </script>
     <script>
-        function daftarProposal(nim) {
-            // console.log(nim);
+        function daftarProposal() {
             $('#allDosenPembimbing').select2({
                 dropdownParent: $('#modalDaftarProposal')
             });
             $("#modalDaftarProposal").modal('show');
+        }
 
+        // STORE DATA
+        if ($("#storeProposal").length > 0) {
+            $("#storeProposal").validate({
+                submitHandler: function(form) {
+                    $('#saveBtnDaftarProposal').html('Menyimpan . .');
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('daftar/proposal/store') }}",
+                        data: $('#storeProposal').serializeArray(),
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#storeProposal').trigger("reset");
+                            $('#modalDaftarProposal').modal("hide");
+                            $('#saveBtnDaftarProposal').html('Simpan');
+                            iziToast.success({
+                                title: 'Berhasil',
+                                message: 'Proposal tersimpan.',
+                            });
+                        },
+                        error: function(data) {
+                            console.log('Error', data);
+                            $('#tombol-simpan').html('Simpan');
+                        }
+                    });
+                }
+            });
         }
     </script>
 @endpush
