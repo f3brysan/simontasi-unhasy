@@ -67,7 +67,14 @@ class AuthController extends Controller
                         'email' => $dataUser->email,
                         'password' => bcrypt($request->password)
                     ]);
-                    $register->assignRole('dosen');
+
+                    if ($dataUser->jenis == 'MHS') {
+                        $register->assignRole('mahasiswa');                        
+                    }
+                    
+                    if ($dataUser->jenis == 'DOSEN') {
+                        $register->assignRole('dosen');                        
+                    }
 
                     Auth::loginUsingId($register->id);
                     $request->session()->regenerate();
