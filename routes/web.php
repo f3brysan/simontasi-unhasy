@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProposalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,4 +22,8 @@ Route::post('logout', [AuthController::class, 'logout']);
 
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
+});
+
+Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {
+    Route::get('daftar/proposal', [ProposalController::class, 'index']);
 });

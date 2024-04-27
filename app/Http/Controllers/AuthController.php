@@ -2,28 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
     public function index()
     {
-         // Display the login form
+        // Display the login form
         return view('auth.login');
     }
 
     public function auth(Request $request)
     {
+
         // Validate email and password fields
         $request->validate([
-            'no_induk'    => ['required'],
+            'no_induk' => ['required'],
             'password' => ['required'],
         ]);
 
         // Define the credentials for user authentication
         $credentials = $request->validate([
-            'no_induk'    => ['required'],
+            'no_induk' => ['required'],
             'password' => ['required'],
         ]);
 
@@ -35,6 +39,46 @@ class AuthController extends Controller
             $user = auth()->user();
             // Redirect to the intended page with a success message
             return redirect()->intended('/')->with('success', 'Selamat Datang ' . $user->name ?? $user->email . ' .');
+        }
+
+        if (!Auth::attempt($credentials)) {
+            $parr = array(
+                'type' => 'auth',
+                'username' => $request->no_induk,
+                'password' => $request->password
+            );
+
+            $cekAuthSiakad = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', $parr);
+
+            if (empty($cekAuthSiakad)) {
+                return back()->with('LoginError', 'Tidak Bisa Mengakses Data Siakadu');
+            }
+
+            if (!empty($cekAuthSiakad)) {
+                if ($cekAuthSiakad->message == "Login Fail.") {
+                    return back()->with('LoginError', 'Email atau Password SIAKAD Anda salah !');
+                }
+
+                if ($cekAuthSiakad->message == "Login succeed.") {
+                    $dataUser = $cekAuthSiakad->data;
+                    $register = User::create([
+                        'nama' =>$dataUser->name,
+                        'no_induk' => $dataUser->no_identitas,
+                        'email' => $dataUser->email,
+                        'password' => bcrypt($request->password)
+                    ]);
+                    $register->assignRole('dosen');
+
+                    Auth::loginUsingId($register->id);
+                    $request->session()->regenerate();
+                    $user = auth()->user();
+                    
+                    return redirect()->intended('/')->with('success', 'Selamat Datang ' . $user->name ?? $user->email . ' .');
+                }
+            }
+
+
+
         }
         // Return to the previous page with an error message
         return back()->with('LoginError', 'Email atau Password Anda salah !');
