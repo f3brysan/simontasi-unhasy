@@ -228,24 +228,34 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Show the user with the given ID
+     *
+     * This function retrieves a user with the given ID and returns the user
+     * along with their program of study and roles.
+     *
+     * @param string $id encrypted user ID
+     *
+     * @return \Illuminate\Http\JsonResponse user data
+     */
     public function show($id)
     {
-        $result = [];
-        $id = Crypt::decrypt($id);
-        $getUser = User::with('roles')->where('id', $id)->first();
-        $result['user'] = $getUser;
-        $result['prodi'] = [];
-        $result['roles'] = [];
+        $result = []; // initialize the result array
+        $id = Crypt::decrypt($id); // decrypt the given ID
+        $getUser = User::with('roles')->where('id', $id)->first(); // get the user
+        $result['user'] = $getUser; // set the user data in the result
+        $result['prodi'] = []; // initialize the program of study array
+        $result['roles'] = []; // initialize the roles array
 
-        $getProdi = DB::table('tr_user_prodi')->where('user_id', $id)->get();
-        foreach ($getProdi as $prodi) {
-            array_push($result['prodi'], $prodi->kode_prodi);
+        $getProdi = DB::table('tr_user_prodi')->where('user_id', $id)->get(); // get the user's program of study
+        foreach ($getProdi as $prodi) { // loop through the program of study
+            array_push($result['prodi'], $prodi->kode_prodi); // add the program of study to the array
         }
-        foreach ($getUser->roles as $role) {
-            array_push($result['roles'], $role->name);
+        foreach ($getUser->roles as $role) { // loop through the user's roles
+            array_push($result['roles'], $role->name); // add the role to the array
         }
 
-        return response()->json($result);
+        return response()->json($result); // return the user data
 
     }
 }
