@@ -72,8 +72,25 @@ class UserController extends Controller
                     $result = '';
                     // Loop through each role
                     foreach ($user['roles'] as $role) {
+                        switch ($role) {
+                            case 'superadmin':
+                                $type = 'bg-primary';
+                                break;
+
+                            case 'dosen':
+                                $type = 'bg-info';
+                                break;
+
+                            case 'mahasiswa':
+                                $type = 'bg-warning';
+                                break;
+                            
+                            default:
+                                $type = 'bg-success';
+                                break;
+                        }
                         // Add a badge for the role
-                        $result .= '<span class="badge bg-info m-1">' . $role . '</span>';
+                        $result .= '<span class="badge '.$type.' m-1">' . $role . '</span>';
                     }
                     return $result;
                 })
@@ -98,13 +115,13 @@ class UserController extends Controller
         // Return the index view with the data
         return view('user.index', compact('prodiList', 'roles'));
     }
-
+   
     /**
      * Create a new user
      *
      * @param stdClass $parr object containing user data
      *
-     * @return bool true if the user is created, false otherwise
+     * @return bool true if the user is created successfully, false otherwise
      */
     public function create($parr)
     {
