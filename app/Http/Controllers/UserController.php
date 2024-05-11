@@ -38,7 +38,7 @@ class UserController extends Controller
                 // User's student number
                 'no_induk' => $user->no_induk ?? '',
                 // User's program of study
-                'prodi' => $user->prodi_kode ? [(new GetDataAPISiakad)->getDataProdi($user->prodi_kode)['prodi'] ?? ''] : [],
+                'prodi' => $user->prodi_kode ? [(new GetDataAPISiakad)->getDataProdi($user->prodi_kode)->prodi ?? ''] : [],
                 // User's roles
                 'roles' => $user->roles->pluck('name')->toArray(),
             ];
@@ -49,7 +49,7 @@ class UserController extends Controller
         // Loop through each prodi_kode and user_id
         foreach ($prodiPengelola as $item) {
             // Get the program of study name
-            $prodi = (new GetDataAPISiakad)->getDataProdi($item->kode_prodi)['prodi'] ?? '';
+            $prodi = (new GetDataAPISiakad)->getDataProdi($item->kode_prodi)->prodi ?? '';
             // Get the user's index based on the user's ID
             $prodiIndex = array_search($item->user_id, array_column($usersData, 'id'));
             // Add the program of study to the user's data
@@ -104,8 +104,6 @@ class UserController extends Controller
         // Return the index view with the data
         return view('user.index', compact('prodiList', 'roles'));
     }
-
-
 
     /**
      * Store a newly created resource in storage.
