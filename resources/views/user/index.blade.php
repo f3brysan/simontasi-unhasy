@@ -47,7 +47,7 @@
     {{-- Modal Add User --}}
     <div class="modal fade" id="crudModalUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form action="">
+            <form id="crud-form">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalTitle"></h5>
@@ -56,13 +56,33 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">No Induk/Username</label>
-                            <input type="no_induk" class="form-control" id="exampleFormControlInput1"
-                                placeholder="UH.XXX.XXX">
+                            <input type="text" class="form-control" id="exampleFormControlInput1" id="no_induk"
+                                name="no_induk" placeholder="UH.XXX.XXX">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Nama</label>
+                            <input type="text" class="form-control" id="exampleFormControlInput1" id="nama"
+                                name="nama" placeholder="Febry San">
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Prodi</label>
-                            <input type="no_induk" class="form-control" id="exampleFormControlInput1"
-                                placeholder="UH.XXX.XXX">
+                            <select class="form-select mb-3 js-example-basic-multiple" id="prodi" name="prodi[]" style="width: 100%" multiple="multiple">                                
+                                @foreach ($dataProdi as $item)
+                                    <option value="{{ $item->kode_prodi }}">{{ $item->prodi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" id="exampleFormControlInput1" placeholder="Minimal 8 karakter">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Prodi</label>
+                            <select class="form-select mb-3 js-example-basic-multiple" id="roles" name="roles[]" style="width: 100%"  multiple="multiple">                                
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -81,7 +101,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {{-- JQuery Validate --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
-    
+
     {{-- Data Tables --}}
     <link rel="stylesheet" href="//cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
     <script src="//cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
@@ -146,7 +166,12 @@
         });
     </script>
     <script>
-        $("#addUser").click(function() {
+        $("#addUser").click(function() {            
+            $('.js-example-basic-multiple').select2({
+                dropdownParent: $('#crudModalUser'),
+                placeholder: "Pilih",
+                theme: "classic",
+            });
             $("#modalTitle").html('Tambah Pengguna');
             $("#crudModalUser").modal('show');
         });
@@ -156,19 +181,19 @@
 
         });
         // STORE DATA
-        if ($("#storeProposal").length > 0) {
-            $("#storeProposal").validate({
+        if ($("#crud-form").length > 0) {
+            $("#crud-form").validate({
                 submitHandler: function(form) {
                     $('#saveBtnDaftarProposal').html('Menyimpan . .');
 
                     $.ajax({
                         type: "POST",
                         url: "{{ URL::to('daftar/proposal/store') }}",
-                        data: $('#storeProposal').serializeArray(),
+                        data: $('#crud-form').serializeArray(),
                         dataType: 'json',
                         success: function(data) {
                             if (data == true) {
-                                $('#storeProposal').trigger("reset");
+                                $('#crud-form').trigger("reset");
                                 $('#modalDaftarProposal').modal("hide");
                                 $('#saveBtnDaftarProposal').html('Simpan');
                                 iziToast.success({

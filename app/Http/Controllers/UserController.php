@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -16,6 +17,8 @@ class UserController extends Controller
 
         // Initialize an empty array to store user data
         $usersData = [];
+
+        $roles = Role::whereIn('name', ['superadmin', 'pengelola'])->get();        
 
         // Iterate through each user
         foreach ($usersWithRoles as $user) {
@@ -47,13 +50,18 @@ class UserController extends Controller
         }
 
         // Fetch faculty data
-        $dataFakultas = (new GetDataAPISiakad)->getDataFakultas();
-
+        $dataProdi = (new GetDataAPISiakad)->getDataProdi();
+            
         // If request is AJAX, return DataTables
         if ($request->ajax()) {
             return DataTables::of($usersData)
                 ->addColumn('action', function ($userData) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . Crypt::encrypt($userData['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn btn-primary btn-sm edit-user"><i class="fa-solid fa-wrench"></i></a>';
+                    $rolePermit = ['superadmin', 'pengelola'];
+                    $btn = '';
+                    if (array_intersect($userData['roles'], $rolePermit)) {
+                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . Crypt::encrypt($userData['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn btn-primary btn-sm edit-user"><i class="fa-solid fa-wrench"></i></a>';
+                    }
+                   
                     return $btn;
                 })
                 ->addColumn('roles', function ($userData) {
@@ -72,7 +80,7 @@ class UserController extends Controller
         }
 
         // If not AJAX, return view with faculty data
-        return view('user.index', compact('dataFakultas'));
+        return view('user.index', compact('dataProdi', 'roles'));
 
     }
 }
