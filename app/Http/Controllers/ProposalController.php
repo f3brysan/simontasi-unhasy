@@ -39,7 +39,7 @@ class ProposalController extends Controller
             $data['pembimbing'] = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $data['dataProposal']->id)->where('tipe', 'like', 'B%')->get();
             $data['penguji'] = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $data['dataProposal']->id)->where('tipe', 'like', 'U%')->get();
         }
-
+        // dd($data);
         return view('proposal.index', $data);
     }
 
@@ -71,7 +71,8 @@ class ProposalController extends Controller
                     'nama' => $dataDosen->nama,
                     'tipe' => 'B', // B = Pembimbing
                     'created_at' => date('Y-m-d H:i:s'),
-                    'created_by' => auth()->user()->name
+                    'created_by' => auth()->user()->name,
+                    'is_ok' => 0
                 ]);
 
                 if (($insertDosen == true) and ($insertProposal == true)) {

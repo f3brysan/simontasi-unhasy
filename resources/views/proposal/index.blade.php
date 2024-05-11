@@ -20,13 +20,58 @@
                         <h5>Pendaftaran Proposal</h5></span>
                     </div>
                     <div class="card-body">
-                        @if (empty($data['proposal']))
+                        @if (empty($dataProposal))
                             <div class="alert alert-danger text-center" role="alert">
                                 Anda belum mendaftarkan Proposal Anda.
                             </div>
                             <div>
                                 <a href="javascript:void(0)" class="btn btn-primary float-end"
                                     onclick="daftarProposal()">Daftar</a>
+                            </div>
+                        @endif
+
+                        @if (!empty($dataProposal))
+                            <div class="table container-fluid">
+                                <table class="table table-bordered table-hover">
+                                    <tr>
+                                        <td style="width: 20%"><strong>NIM</strong></td>
+                                        <td>{{ auth()->user()->no_induk }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>NAMA</strong></td>
+                                        <td>{{ auth()->user()->nama }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Judul</strong></td>
+                                        <td>{!! $dataProposal->title !!}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Dosen Pembimbing</strong></td>
+                                        <td>
+                                            <div class="row">
+                                                @foreach ($pembimbing as $item)
+                                                    <div class="col-md-9">
+                                                        <u>{{ $item->nama }}</u><br>NIP: {{ $item->nip }}
+                                                    </div>
+                                                    <div class="col-md-3"><span class="badge text-bg-warning"> Menunggu Approval</span></div>
+                                                @endforeach
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Dosen Penguji</strong></td>
+                                        <td>
+                                            <div class="row">
+                                                @foreach ($penguji as $item)
+                                                    <div class="col-md-9">
+                                                        <u>{{ $item->nama }}</u><br>NIP: {{ $item->nip }}
+                                                    </div>
+                                                    <div class="col-md-3"><span class="badge text-bg-warning"> Menunggu Approval</span></div>
+                                                @endforeach
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         @endif
                     </div>
@@ -126,18 +171,17 @@
                         data: $('#storeProposal').serializeArray(),
                         dataType: 'json',
                         success: function(data) {
-                            $('#storeProposal').trigger("reset");
-                            $('#modalDaftarProposal').modal("hide");
-                            $('#saveBtnDaftarProposal').html('Simpan');
-                            iziToast.success({
-                                title: 'Berhasil',
-                                message: 'Proposal tersimpan.',
-                                position: 'topRight'
-                            });
-                            setTimeout(
-                                function() {                                    
-                                    location.reload();
-                                }, 2000);
+                            if (data == true) {
+                                $('#storeProposal').trigger("reset");
+                                $('#modalDaftarProposal').modal("hide");
+                                $('#saveBtnDaftarProposal').html('Simpan');
+                                iziToast.success({
+                                    title: 'Berhasil',
+                                    message: 'Proposal tersimpan.',
+                                    position: 'topRight'
+                                });
+                                location.reload();
+                            }
                         },
                         error: function(data) {
                             console.log('Error', data);

@@ -24,6 +24,10 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
 });
 
+Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
+    
+});
+
 Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {
     Route::get('daftar/proposal', [ProposalController::class, 'index']);
     Route::post('daftar/proposal/store', [ProposalController::class, 'storeProposal']);
