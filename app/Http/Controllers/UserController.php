@@ -12,12 +12,6 @@ use Illuminate\Support\Facades\Crypt;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         // Get all users
@@ -106,33 +100,35 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create a new user
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param stdClass $parr object containing user data
+     *
+     * @return bool true if the user is created, false otherwise
      */
-    public function store(Request $request)
+    public function create($parr)
     {
-        // Begin transaction
+        // Start a new transaction
         DB::beginTransaction();
 
         try {
             // Create a new user
             $user = User::create([
-                'name' => $request->nama,
-                'no_induk' => $request->no_induk,
-                'email' => $request->no_induk . '@unhasy.ac.id',
-                'password' => bcrypt($request->password)
+                'name' => $parr->nama,
+                'no_induk' => $parr->no_induk,
+                'email' => $parr->no_induk . '@unhasy.ac.id',
+                'password' => bcrypt($parr->password)
             ]);
 
             // Assign roles to the user
-            foreach ($request->roles as $role) {
+            foreach ($parr->roles as $role) {
                 $user->assignRole($role);
             }
 
             // Add the user's program of study
-            foreach ($request->prodi as $program) {
+            foreach ($parr->prodi as $program) {
                 DB::table('tr_user_prodi')->insert([
+                    'id' => Str::uuid(),
                     'user_id' => $user->id,
                     'kode_prodi' => $program,
                     'created_at' => now()
@@ -142,14 +138,114 @@ class UserController extends Controller
             // Commit the transaction
             DB::commit();
 
-            return response()->json(true);
+            return true;
 
         } catch (\Exception $exception) {
             // Rollback the transaction
             DB::rollBack();
 
             // Return the exception message
+            return false;
+        }
+    }
+
+    /**
+     * Update user data
+     *
+     * @param array $parr array of user data
+     *
+     * @return bool
+     */
+    public function update($parr)
+    {
+        // Start a new transaction
+        DB::beginTransaction();
+        // Get the user to be updated
+        $user = User::where('id', $parr['id'])->first();
+        // Update the user
+        $updateUser = $user->update([
+            'nama' => $parr['name'],
+            'updated_at' => date('Y-m-d h:i:s')
+        ]);
+
+        // Re-assign roles to the user
+        $user->syncRoles($parr['roles']);
+
+        // Remove all the user's program of study
+        $removeProdi = DB::table('tr_user_prodi')->where('user_id', $parr['id'])->delete();
+
+        // Add the user's program of study
+        foreach ($parr['prodi'] as $program) {
+            DB::table('tr_user_prodi')->insert([
+                'id' => Str::uuid(),
+                'user_id' => $parr['id'],
+                'kode_prodi' => $program,
+                'created_at' => now()
+            ]);
+        }
+        // Commit the transaction
+        DB::commit();
+        return true;
+    }
+
+    /**
+     * Store a newly created or update existing user.
+     *
+     * This function is responsible for storing a newly created user
+     * or update an existing user based on the presence of the 'id'
+     * parameter in the request.
+     *
+     * @param Request $request the request containing the user data
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request)
+    {
+        try {
+            // Get all the request data
+            $parr = $request->all();
+
+            // Check if user is updating an existing user
+            if (!empty($request->id)) {
+                // If updating an existing user, update the user
+                $store = $this->update($parr);
+            } else { // Otherwise create a new user
+                // If creating a new user, create the user
+                $store = $this->create($parr);
+            }
+
+            // If the store operation is successful
+            if ($store == true) {
+                // Return JSON true
+                return response()->json(true);
+            } else { // Otherwise return JSON false
+                return response()->json(false);
+            }
+
+        } catch (\Exception $exception) { // If exception occurs
+            // Return the exception message
             return response()->json($exception->getMessage());
         }
+    }
+
+    public function show($id)
+    {
+        $result = [];
+        $id = Crypt::decrypt($id);
+        $getUser = User::with('roles')->where('id', $id)->first();
+        $result['user'] = $getUser;
+        $result['prodi'] = [];
+        $result['roles'] = [];
+
+        $getProdi = DB::table('tr_user_prodi')->where('user_id', $id)->get();
+        foreach ($getProdi as $prodi) {
+            array_push($result['prodi'], $prodi->kode_prodi);
+        }
+        foreach ($getUser->roles as $role) {
+            array_push($result['roles'], $role->name);
+        }
+
+        return response()->json($result);
+
     }
 }

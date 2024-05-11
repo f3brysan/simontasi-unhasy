@@ -54,6 +54,7 @@
                         <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <input type="hidden" id="id" name="id">
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">No Induk/Username</label>
                             <input type="text" class="form-control" id="no_induk" name="no_induk"
@@ -61,7 +62,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="nama" name="nama"
+                            <input type="text" class="form-control" id="name" name="name"
                                 placeholder="Febry San">
                         </div>
                         <div class="mb-3">
@@ -73,7 +74,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3" id="password-form">
                             <label for="exampleFormControlInput1" class="form-label">Password</label>
                             <input type="password" id="password" name="password" class="form-control"
                                 placeholder="Minimal 8 karakter">
@@ -117,7 +118,7 @@
                 }
             });
 
-           $('#myTable').DataTable({
+            table = $('#myTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
@@ -126,7 +127,7 @@
                 },
                 columns: [{
                         data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',                        
+                        name: 'DT_RowIndex',
                     },
                     {
                         data: 'no_induk',
@@ -143,7 +144,7 @@
                     {
                         data: 'roles',
                         name: 'roles',
-                      
+
                     },
                     {
                         data: 'action',
@@ -169,6 +170,7 @@
     </script>
     <script>
         $("#addUser").click(function() {
+            $("#password-form").show();
             $('.js-example-basic-multiple').select2({
                 dropdownParent: $('#crudModalUser'),
                 placeholder: "Pilih",
@@ -180,9 +182,25 @@
 
         $(document).on('click', '.edit', function() {
             var id = $(this).data('id');
-
+            $.get("{{ URL::to('setting/users') }}/" + id,
+                function(data) {
+                    $('.js-example-basic-multiple').select2({
+                        dropdownParent: $('#crudModalUser'),
+                        placeholder: "Pilih",
+                        theme: "classic",
+                    });
+                    $("#modalTitle").html('Tambah Pengguna');
+                    $("#crudModalUser").modal('show');
+                    $("#id").val(data.user.id);
+                    $("#no_induk").val(data.user.no_induk);
+                    $("#name").val(data.user.nama);
+                    $("#prodi").val(data.prodi).change();
+                    $("#roles").val(data.roles).change();
+                    $("#password-form").hide();
+                });
         });
-        // STORE DATA
+
+
         if ($("#crud-form").length > 0) {
             $("#crud-form").validate({
                 submitHandler: function(form) {
@@ -198,7 +216,7 @@
                                 $('#crud-form').trigger("reset");
                                 $('#crudModalUser').modal("hide");
                                 $('#saveBtn').html('Simpan');
-                                // table.ajax.reload(null, false);
+                                table.ajax.reload(null, false);
 
                                 iziToast.success({
                                     title: 'Berhasil',

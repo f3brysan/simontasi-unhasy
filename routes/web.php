@@ -27,6 +27,7 @@ Route::middleware(['auth:web'])->group(function () {
 
 Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::get('setting/users', [UserController::class, 'index']);
+    Route::get('setting/users/{id}', [UserController::class, 'show']);
     Route::post('setting/users/store', [UserController::class, 'store']);
 });
 
