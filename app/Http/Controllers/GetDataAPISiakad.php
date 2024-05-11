@@ -27,4 +27,28 @@ class GetDataAPISiakad extends Controller
         }        
         return $result;
     }
+
+    public function getDataProdi($kode = null)
+    {
+        $getProdi = $cekAuthSiakad = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
+            'type' => 'prodi'
+        ]);
+
+        $result = $getProdi->data;   
+        
+        
+        if ($kode != null) {
+            foreach ($getProdi->data as $item) {
+                if ($item->kode_prodi == $kode) {
+                    $result = (object) [
+                        'kode_fakultas' => $item->kode_fakultas,
+                        'fakultas' => $item->fakultas,
+                        'kode_prodi' => $item->kode_prodi,
+                        'prodi' => $item->prodi
+                    ];
+                }
+            }            
+        }        
+        return $result;
+    }
 }
