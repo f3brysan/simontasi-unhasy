@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 
 class GetDataAPISiakad extends Controller
 {
+    /**
+     * Retrieves data for a specific dosen from the API.
+     *
+     * @param string|null $nip The NIP of the dosen to retrieve. If null, retrieves all dosen.
+     * @return mixed|null The data for the dosen with the specified NIP, or all dosen if $nip is null. Returns null if the API request fails.
+     */
     public function getDataDosen($nip = null)
     {
         $getDosen = $cekAuthSiakad = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [

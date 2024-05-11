@@ -56,29 +56,32 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">No Induk/Username</label>
-                            <input type="text" class="form-control" id="exampleFormControlInput1" id="no_induk"
-                                name="no_induk" placeholder="UH.XXX.XXX">
+                            <input type="text" class="form-control" id="no_induk" name="no_induk"
+                                placeholder="UH.XXX.XXX">
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="exampleFormControlInput1" id="nama"
-                                name="nama" placeholder="Febry San">
+                            <input type="text" class="form-control" id="nama" name="nama"
+                                placeholder="Febry San">
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Prodi</label>
-                            <select class="form-select mb-3 js-example-basic-multiple" id="prodi" name="prodi[]" style="width: 100%" multiple="multiple">                                
-                                @foreach ($dataProdi as $item)
+                            <select class="form-select mb-3 js-example-basic-multiple" id="prodi" name="prodi[]"
+                                style="width: 100%" multiple="multiple">
+                                @foreach ($prodiList as $item)
                                     <option value="{{ $item->kode_prodi }}">{{ $item->prodi }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" id="exampleFormControlInput1" placeholder="Minimal 8 karakter">
+                            <input type="password" id="password" name="password" class="form-control"
+                                placeholder="Minimal 8 karakter">
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Prodi</label>
-                            <select class="form-select mb-3 js-example-basic-multiple" id="roles" name="roles[]" style="width: 100%"  multiple="multiple">                                
+                            <select class="form-select mb-3 js-example-basic-multiple" id="roles" name="roles[]"
+                                style="width: 100%" multiple="multiple">
                                 @foreach ($roles as $role)
                                     <option value="{{ $role->name }}">{{ $role->name }}</option>
                                 @endforeach
@@ -87,7 +90,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Tutup</button>
-                        <button type="button" class="btn btn-primary">Simpan</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Simpan</button>
                     </div>
                 </div>
             </form>
@@ -114,7 +117,7 @@
                 }
             });
 
-            $('#myTable').DataTable({
+           $('#myTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
@@ -123,16 +126,15 @@
                 },
                 columns: [{
                         data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        className: 'text-right'
+                        name: 'DT_RowIndex',                        
                     },
                     {
                         data: 'no_induk',
                         name: 'no_induk'
                     },
                     {
-                        data: 'nama',
-                        name: 'nama'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
                         data: 'prodi',
@@ -141,7 +143,7 @@
                     {
                         data: 'roles',
                         name: 'roles',
-                        className: 'text-center',
+                      
                     },
                     {
                         data: 'action',
@@ -166,7 +168,7 @@
         });
     </script>
     <script>
-        $("#addUser").click(function() {            
+        $("#addUser").click(function() {
             $('.js-example-basic-multiple').select2({
                 dropdownParent: $('#crudModalUser'),
                 placeholder: "Pilih",
@@ -184,29 +186,30 @@
         if ($("#crud-form").length > 0) {
             $("#crud-form").validate({
                 submitHandler: function(form) {
-                    $('#saveBtnDaftarProposal').html('Menyimpan . .');
+                    $('#saveBtn').html('Menyimpan . .');
 
                     $.ajax({
                         type: "POST",
-                        url: "{{ URL::to('daftar/proposal/store') }}",
+                        url: "{{ URL::to('setting/users/store') }}",
                         data: $('#crud-form').serializeArray(),
                         dataType: 'json',
                         success: function(data) {
                             if (data == true) {
                                 $('#crud-form').trigger("reset");
-                                $('#modalDaftarProposal').modal("hide");
-                                $('#saveBtnDaftarProposal').html('Simpan');
+                                $('#crudModalUser').modal("hide");
+                                $('#saveBtn').html('Simpan');
+                                // table.ajax.reload(null, false);
+
                                 iziToast.success({
                                     title: 'Berhasil',
                                     message: 'Proposal tersimpan.',
                                     position: 'topRight'
                                 });
-                                location.reload();
                             }
                         },
                         error: function(data) {
                             console.log('Error', data);
-                            $('#tombol-simpan').html('Simpan');
+                            $('#saveBtn').html('Simpan');
                         }
                     });
                 }
