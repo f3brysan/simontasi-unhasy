@@ -8,6 +8,26 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('dashboard.index');
+        $user = auth()->user();
+        $roles = $user->getRoleNames()->toArray();
+        // dd($roles);
+        
+        if (in_array('superadmin', $roles)) {
+            return view('dashboard.superadmin');
+        }
+
+        if (in_array('mahasiswa', $roles)) {   
+            return view('dashboard.mahasiswa');         
+        }
+
+        if (in_array('dosen', $roles)) {   
+            return view('dashboard.mahasiswa');         
+        }
+        
+    }
+
+    public function indexSuperAdmin()
+    {
+        
     }
 }

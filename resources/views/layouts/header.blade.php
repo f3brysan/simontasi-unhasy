@@ -18,10 +18,14 @@
                 <div class="dropdown-menu dropdown-menu-end pt-0">
                     <div class="dropdown-header bg-light py-2">
                         <div class="fw-semibold">Account</div>
-                    </div><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                            <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-account-logout"></use>
-                        </svg> Logout</a>
+                    </div>
+                    <form action="{{ URL::to('logout') }}" method="post">
+                        @csrf
+                        <button class="dropdown-item" href="#">
+                            <svg class="icon me-2">
+                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-account-logout"></use>
+                            </svg> Logout</button>
+                    </form>
                 </div>
             </li>
         </ul>
