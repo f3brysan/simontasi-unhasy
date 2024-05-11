@@ -8,12 +8,17 @@ use Illuminate\Support\Facades\DB;
 
 class ProposalController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        $data = [];
-
+        // Get list of dosen pembimbing
         $getDosen = (new GetDataAPISiakad)->getDataDosen();
 
+        // Filter dosen pembimbing by current user's program study
         $allDosenPembimbing = [];
         foreach ($getDosen as $item) {
             if ($item->prodi_kode == auth()->user()->prodi_kode) {
@@ -24,24 +29,36 @@ class ProposalController extends Controller
             }
         }
         ksort($allDosenPembimbing);
-        $data['allDosenPembimbing'] = $allDosenPembimbing;
 
+        // Get proposal data
         $no_induk = auth()->user()->no_induk;
-        $data['dataProposal'] = DB::table('tr_pendaftaran as p')
+        $dataProposal = DB::table('tr_pendaftaran as p')
             ->where('no_induk', $no_induk)->first();
 
-        $data['berkasProposal'] = null;
-        $data['pembimbing'] = null;
-        $data['penguji'] = null;
+        $data = [
+            'allDosenPembimbing' => $allDosenPembimbing,
+            'dataProposal' => $dataProposal,
+            'berkasProposal' => null,
+            'pembimbing' => null,
+            'penguji' => null,
+        ];
 
-        if (!empty($data['dataProposal'])) {
-            $data['berkasProposal'] = DB::table('tr_pendaftaran_berkas')->where('pendaftaran_id', $data['dataProposal']->id)->get();
-            $data['pembimbing'] = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $data['dataProposal']->id)->where('tipe', 'like', 'B%')->get();
-            $data['penguji'] = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $data['dataProposal']->id)->where('tipe', 'like', 'U%')->get();
+        // Get proposal berkas, pembimbing, dan penguji
+        if (!empty($dataProposal)) {
+            $data['berkasProposal'] = DB::table('tr_pendaftaran_berkas')
+                ->where('pendaftaran_id', $dataProposal->id)->get();
+            $data['pembimbing'] = DB::table('tr_pendaftaran_dosen')
+                ->where('pendaftaran_id', $dataProposal->id)
+                ->where('tipe', 'like', 'B%')->get();
+            $data['penguji'] = DB::table('tr_pendaftaran_dosen')
+                ->where('pendaftaran_id', $dataProposal->id)
+                ->where('tipe', 'like', 'U%')->get();
         }
+
         // dd($data);
         return view('proposal.index', $data);
     }
+
 
     public function storeProposal(Request $request)
     {
@@ -53,7 +70,7 @@ class ProposalController extends Controller
                 ->where('no_induk', $no_induk)->exists();
             DB::beginTransaction();
             if ($isExist) {
-                # code...
+                
             } else {
                 $idPendaftaran = Str::uuid();
                 $insertProposal = DB::table('tr_pendaftaran')->insert([
