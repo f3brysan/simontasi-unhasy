@@ -12,7 +12,7 @@ class GetDataAPISiakad extends Controller
             'type' => 'dosen'
         ]);
 
-        $result = $getDosen->data;        
+        $result = $getDosen->data;
         if ($nip != null) {
             foreach ($getDosen->data as $item) {
                 if ($item->no_identitas == $nip) {
@@ -23,8 +23,8 @@ class GetDataAPISiakad extends Controller
                         'prodi_kode' => $item->prodi_kode
                     ];
                 }
-            }            
-        }        
+            }
+        }
         return $result;
     }
 
@@ -34,9 +34,9 @@ class GetDataAPISiakad extends Controller
             'type' => 'prodi'
         ]);
 
-        $result = $getProdi->data;   
-        
-        
+        $result = $getProdi->data;
+
+
         if ($kode != null) {
             foreach ($getProdi->data as $item) {
                 if ($item->kode_prodi == $kode) {
@@ -47,8 +47,34 @@ class GetDataAPISiakad extends Controller
                         'prodi' => $item->prodi
                     ];
                 }
-            }            
-        }        
+            }
+        }
+        return $result;
+    }
+
+    public function getDataFakultas($kode = null)
+    {
+        $getFakultas = $cekAuthSiakad = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
+            'type' => 'prodi'
+        ]);            
+
+        if ($kode != null) {
+            foreach ($getFakultas->data as $item) {
+                if ($item->kode_fakultas == $kode) {
+                    $result = (object) [
+                        'kode_fakultas' => $item->kode_fakultas,
+                        'fakultas' => $item->fakultas,
+                    ];
+                }
+            }
+        } else {
+            foreach ($getFakultas->data as $item) {
+                $result[$item->kode_fakultas] = (object) [
+                    'kode_fakultas' => $item->kode_fakultas,
+                    'fakultas' => $item->fakultas,
+                ];
+            }
+        }
         return $result;
     }
 }
