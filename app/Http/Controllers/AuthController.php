@@ -18,7 +18,6 @@ class AuthController extends Controller
 
     public function auth(Request $request)
     {
-
         // Validate email and password fields
         $request->validate([
             'no_induk' => ['required'],
@@ -37,58 +36,67 @@ class AuthController extends Controller
             // store the user information in the session
             $request->session()->regenerate();
             $user = auth()->user();
+
             // Redirect to the intended page with a success message
-            return redirect()->intended('/')->with('success', 'Selamat Datang ' . $user->name ?? $user->email . ' .');
+            return redirect()->intended('/')->with('success', 'Selamat Datang ' . $user->name ?? $user->email . '.');
         }
 
+        // If authentication fails with the provided credentials
         if (!Auth::attempt($credentials)) {
+            // Prepare credentials to check against an external system (e.g., SIAKAD)
             $parr = array(
                 'type' => 'auth',
                 'username' => $request->no_induk,
                 'password' => $request->password
             );
 
+            // Make a request to an external system (SIAKAD) to authenticate
             $cekAuthSiakad = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', $parr);
 
+            // If authentication against external system fails
             if (empty($cekAuthSiakad)) {
                 return back()->with('LoginError', 'Tidak Bisa Mengakses Data Siakadu');
             }
 
+            // If authentication against external system succeeds
             if (!empty($cekAuthSiakad)) {
                 if ($cekAuthSiakad->message == "Login Fail.") {
                     return back()->with('LoginError', 'Email atau Password SIAKAD Anda salah !');
                 }
-
                 if ($cekAuthSiakad->message == "Login succeed.") {
+                    // Extract user data from the response
                     $dataUser = $cekAuthSiakad->data;
+
+                    // Create a new user in the local system
                     $register = User::create([
-                        'nama' =>$dataUser->name,
+                        'nama' => $dataUser->name,
                         'no_induk' => $dataUser->no_identitas,
                         'email' => $dataUser->email,
                         'password' => bcrypt($request->password)
                     ]);
 
+                    // Assign role based on user type
                     if ($dataUser->jenis == 'MHS') {
-                        $register->assignRole('mahasiswa');                        
+                        $register->assignRole('mahasiswa');
                     }
-                    
                     if ($dataUser->jenis == 'DOSEN') {
-                        $register->assignRole('dosen');                        
+                        $register->assignRole('dosen');
                     }
 
+                    // Log in the newly created user
                     Auth::loginUsingId($register->id);
                     $request->session()->regenerate();
                     $user = auth()->user();
-                    
-                    return redirect()->intended('/')->with('success', 'Selamat Datang ' . $user->name ?? $user->email . ' .');
+
+                    // Redirect to the intended page with a success message
+                    return redirect()->intended('/')->with('success', 'Selamat Datang ' . $user->name ?? $user->email . '.');
                 }
             }
-
-
-
         }
-        // Return to the previous page with an error message
+
+        // If all authentication attempts fail, return to the previous page with an error message
         return back()->with('LoginError', 'Email atau Password Anda salah !');
+
     }
 
     public function logout(Request $request)
