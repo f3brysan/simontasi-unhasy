@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +26,7 @@ Route::middleware(['auth:web'])->group(function () {
 });
 
 Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
-    
+    Route::get('setting/users', [UserController::class, 'index']);
 });
 
 Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {

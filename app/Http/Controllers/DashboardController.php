@@ -13,7 +13,7 @@ class DashboardController extends Controller
         // dd($roles);
         
         if (in_array('superadmin', $roles)) {
-            return view('dashboard.index');
+            return view('dashboard.superadmin');
         }
 
         if (in_array('mahasiswa', $roles)) {   
@@ -23,6 +23,11 @@ class DashboardController extends Controller
         if (in_array('dosen', $roles)) {   
             return view('dashboard.mahasiswa');         
         }
+        
+    }
+
+    public function indexSuperAdmin()
+    {
         
     }
 }
