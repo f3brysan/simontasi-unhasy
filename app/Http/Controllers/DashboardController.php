@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -39,27 +40,41 @@ class DashboardController extends Controller
             if ($user->hasRole('pengelola')) {
 
             } else {
+                // Get data for the datatable of the proposal data
                 $data = $this->indexSuperAdmin();
                 $proposalData = $data['getDataProposals'];
+
                 // If the request is an AJAX request, return a datatable of the proposal data
                 if ($request->ajax()) {
+                    // Generate columns for the datatable
                     return DataTables::of($proposalData)
                         ->addColumn('action', function ($proposal) {
-                            // If the user has a role that can be assigned to the user
-                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['no_induk']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn btn-primary btn-sm edit-user m-1"><i class="fa-solid fa-wrench"></i></a>';
-                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['no_induk']) . '" title="Setujui" class="approve btn btn-success btn-sm m-1"><i class="fa-solid fa-check text-white"></i></a>';
+                            // Generate buttons for the datatable
+                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" title="Lihat" class="edit btn btn-primary btn-sm edit-user m-1"><em class="fa-solid fa-eye"></em></a>';
+                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" data-nim="' . $proposal['no_induk'] . '" data-name="'.$proposal['nama'].'" title="Setujui" class="approve btn btn-success btn-sm m-1"><em class="fa-solid fa-check text-white"></em></a>';
                             return $btn;
                         })
                         ->addColumn('approved', function ($proposal) {
+                            // Generate the approval status for the datatable
                             $isOk = $proposal['is_ok'] == 0 ? '<span class="badge bg-warning">Belum Disetujui</span>' : '<span class="badge bg-success">Disetujui</span>';
                             return $isOk;
                         })
-                        ->rawColumns(['action', 'approved'])
+                        ->addColumn('title', function ($proposal) {
+                            return Str::words($proposal['title'], 20, '...');
+                        })
+                        ->addColumn('dosen', function ($proposal) {
+                            $result = '<ul>';
+                            $result .= ' <b>Dosen Pembimbing</b> <li>'.$proposal['dosen_pembimbing'].'</li>';
+                            $result .= '</ul>';
+                            return $result;
+                        })
+                        ->rawColumns(['action', 'approved', 'title', 'dosen'])
                         ->addIndexColumn()
                         ->make(true);
                 }
             }
 
+            // Return the superadmin dashboard
             return view('dashboard.superadmin', $data);
         }
 
@@ -91,6 +106,7 @@ class DashboardController extends Controller
         $getDataProposals = $getData->where('type', 'P');
         $getProdi = (new GetDataAPISiakad)->getDataProdi();
         $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')->where('tipe', 'B')->get();
+        $getDosenPenguji = DB::table('tr_pendaftaran_dosen')->where('tipe', 'U')->get();
 
         $resultDataProposals = [];
         foreach ($getDataProposals as $proposal) {

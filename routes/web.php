@@ -25,6 +25,11 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
 });
 
+Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () {
+    Route::get('proposal/approve/{id}', [ProposalController::class, 'approveDosenProposal']);
+});
+
+
 Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::get('setting/users', [UserController::class, 'index']);
     Route::get('setting/users/{id}', [UserController::class, 'show']);

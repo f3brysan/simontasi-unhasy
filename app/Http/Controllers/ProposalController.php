@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
 
 class ProposalController extends Controller
 {
@@ -104,6 +105,21 @@ class ProposalController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return $e->getMessage();
+        }
+    }
+    
+    public function approveDosenProposal($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);            
+            $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')->where('tipe', 'B')->where('pendaftaran_id', $id)->update([
+                'is_ok' => 1,
+                'is_ok_by' => $no_induk = auth()->user()->nama,
+                'is_ok_at' => date('Y-m-d H:i:s')
+            ]);
+            return response()->json($getDosenPembimbing);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), $e->getCode());
         }
     }
 }
