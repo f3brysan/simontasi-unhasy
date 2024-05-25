@@ -53,7 +53,15 @@
                                                     <div class="col-md-9">
                                                         <u>{{ $item->nama }}</u><br>NIP: {{ $item->nip }}
                                                     </div>
-                                                    <div class="col-md-3"><span class="badge text-bg-warning"> Menunggu Approval</span></div>
+                                                    <div class="col-md-3">
+                                                        @if ($item->is_ok == 1)
+                                                        <span class="text-center badge text-bg-success text-light"> Telah Approval</span>
+                                                        
+                                                        <p class="text-muted">{{ $item->is_ok_at }}</p>
+                                                        @else
+                                                        <span class="badge text-bg-warning text-light"> Menunggu Approval</span>
+                                                        @endif
+                                                    </div>
                                                 @endforeach
                                             </div>
                                         </td>
