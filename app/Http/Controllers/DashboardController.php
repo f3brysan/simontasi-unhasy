@@ -95,7 +95,7 @@ class DashboardController extends Controller
 
     public function indexSuperAdmin()
     {
-        $data = [];
+        // Get the data for proposals
         $getData = DB::table("tr_pendaftaran as p")
             ->join("users as u", function ($join) {
                 $join->on("u.no_induk", "=", "p.no_induk");
@@ -110,6 +110,7 @@ class DashboardController extends Controller
         $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')->where('tipe', 'B')->get();
         $getDosenPenguji = DB::table('tr_pendaftaran_dosen')->where('tipe', 'U')->get();
 
+        // Prepare the data for proposals
         $resultDataProposals = [];
         foreach ($getDataProposals as $proposal) {
             $resultDataProposals[$proposal->id] = [
@@ -121,12 +122,14 @@ class DashboardController extends Controller
                 'is_ok' => $proposal->is_ok
             ];
 
+            // Get the name of the program
             foreach ($getProdi as $prodi) {
                 if ($prodi->kode_prodi == $proposal->prodi_kode) {
                     $resultDataProposals[$proposal->id]['prodi_nama'] = $prodi->prodi;
                 }
             }
 
+            // Get the name of the supervisor
             foreach ($getDosenPembimbing as $pembimbing) {
                 if ($pembimbing->pendaftaran_id == $proposal->id) {
                     $resultDataProposals[$proposal->id]['dosen_pembimbing'] = $pembimbing->nama;
@@ -134,10 +137,11 @@ class DashboardController extends Controller
             }
         }
 
-
+        // Get the number of waiting and approved proposals
         $getWaitProposals = $getDataProposals->where('is_ok', 0) ?? 0;
         $getDoneProposals = $getDataProposals->where('is_ok', 1) ?? 0;
 
+        // Prepare the data for the view
         $data = [
             'getDataProposals' => $resultDataProposals,
             'getWaitProposals' => $getWaitProposals,
