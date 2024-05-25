@@ -89,7 +89,7 @@ class ProposalController extends Controller
                     'nama' => $dataDosen->nama,
                     'tipe' => 'B', // B = Pembimbing
                     'created_at' => date('Y-m-d H:i:s'),
-                    'created_by' => auth()->user()->name,
+                    'created_by' => auth()->user()->nama,
                     'is_ok' => 0
                 ]);
 
@@ -111,13 +111,15 @@ class ProposalController extends Controller
     public function approveDosenProposal($id)
     {
         try {
-            $id = Crypt::decrypt($id);            
+            $id = Crypt::decrypt($id);    
+            $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')->where('tipe', 'B')->where('pendaftaran_id', $id)->first();
+            $value = $getDosenPembimbing->is_ok == 1 ? 0 : 1;        
             $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')->where('tipe', 'B')->where('pendaftaran_id', $id)->update([
-                'is_ok' => 1,
+                'is_ok' => $value,
                 'is_ok_by' => $no_induk = auth()->user()->nama,
                 'is_ok_at' => date('Y-m-d H:i:s')
             ]);
-            return response()->json($getDosenPembimbing);
+            return response()->json($value);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), $e->getCode());
         }

@@ -223,25 +223,40 @@
                 var id = $(this).data("id");
                 var nim = $(this).data("nim");
                 var name = $(this).data("name");
+                var status = $(this).data("status");
+
+                if (status == '1') {
+                    var msg = 'Tolak';
+                    var btn = 'unapprove';
+                } else {
+                    var msg = 'Setujui';
+                    var btn = 'approve';
+                }
+
                 Swal.fire({
                     title: "Perhatian",
-                    text: "Setujui pendaftaran Proposal " + nim + " - " + name + "?",
+                    text:  msg+ " pendaftaran Proposal " + nim + " - " + name + "?",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes, approve"
+                    confirmButtonText: "Yes, "+ btn
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.get("{{ URL::to('proposal/approve/') }}/" + id,
-                            function (data) {
+                            function(data) {
+                                if (data == '1') {
+                                    var msg = 'disetujui';
+                                } else {
+                                    var msg = 'ditolak';
+                                }
                                 table.ajax.reload(null, false);
                                 iziToast.success({
                                     title: 'Berhasil',
-                                    message: 'Proposal berhasil disetujui.',
+                                    message: 'Proposal berhasil ' + msg + '.',
                                     position: 'topRight'
                                 });
-                            });                        
+                            });
                     }
                 });
             });
