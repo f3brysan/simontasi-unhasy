@@ -29,7 +29,7 @@ class LogBookController extends Controller
                         $is_approve = $data->is_approve == '1' ? 'disabled' : '';
                         $btn = '<div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
                         <button type="button" class="btn btn-primary" ' . $is_approve . '><i class="fa-solid fa-gear"></i></button>
-                        <button type="button" class="btn btn-danger text-light" '.$is_approve   .'><i class="fa-solid fa-trash-can"></i></button>                        
+                        <button type="button" class="btn btn-danger text-light" ' . $is_approve . '><i class="fa-solid fa-trash-can"></i></button>                        
                       </div>';
                         return $btn;
                     })
@@ -135,11 +135,8 @@ class LogBookController extends Controller
             ->get();
 
         $countLogBooks = DB::table("tr_logbook")
-            ->select("pendaftaran_id", DB::raw("count (*)"))
             ->where("nip", $nip)
-            ->where('is_approve', '0')
-            ->groupBy("pendaftaran_id")
-            ->get();
+            ->get();            
 
         foreach ($getMahasiswaLogBooks as $logBook) {
             $prodi = (new GetDataAPISiakad)->getDataProdi($logBook->prodi_kode);
@@ -148,11 +145,16 @@ class LogBookController extends Controller
                 'no_induk' => $logBook->no_induk,
                 'nama' => $logBook->nama,
                 'title' => $logBook->title,
-                'prodi' => $prodi->prodi
+                'prodi' => $prodi->prodi,
+                'wait_logbook' => 0,
+                'total_logbook' => 0
             ];
         }
-        foreach ($countLogBooks as $count) {
-            $mahasiswaLogBooks[$count->pendaftaran_id]['total_logbook'] = $count->count;
+        foreach ($countLogBooks as $count) {            
+            if ($count->is_approve == 0) {
+                $mahasiswaLogBooks[$count->pendaftaran_id]['wait_logbook']++;
+            }
+            $mahasiswaLogBooks[$count->pendaftaran_id]['total_logbook']++;
         }
 
         if ($request->ajax()) {
@@ -165,7 +167,10 @@ class LogBookController extends Controller
                     return $data['title'];
                 })
                 ->addColumn('total_logbook', function ($data) {
-                    return '<span class="badge bg-warning text-dark">' . $data['total_logbook'] . ' Menunggu Approval</span>';
+                    $status = '<span class="badge bg-warning text-dark">' . $data['wait_logbook'] . ' Menunggu Approval</span>';
+                    $status .= '/';
+                    $status .= '<span class="badge bg-info text-light">' . $data['total_logbook'] . ' Data Log Book</span>';
+                    return $status;
                 })
                 // Make the columns raw so that HTML can be rendered
                 ->rawColumns(['action', 'title', 'total_logbook'])
