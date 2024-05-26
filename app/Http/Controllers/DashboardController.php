@@ -50,10 +50,16 @@ class DashboardController extends Controller
                     return DataTables::of($proposalData)
                         ->addColumn('action', function ($proposal) {
                             // Generate buttons for the datatable
-                            $approveBtn = $proposal['is_ok'] == 0 ? 'btn-success' : 'btn-danger';
-                            $approveBtnx = $proposal['is_ok'] == 0 ? 'fa-solid fa-check text-white' : 'fa-solid fa-close text-white';
-                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" title="Lihat" class="edit btn btn-primary btn-sm edit-user m-1"><em class="fa-solid fa-eye"></em></a>';
-                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" data-nim="' . $proposal['no_induk'] . '" data-name="'.$proposal['nama'].'" data-status="'.$proposal['is_ok'].'" title="Setujui" class="approve btn '.$approveBtn.' btn-sm m-1"><em class="'.$approveBtnx.'"></em></a>';
+                            $approveBtn = $proposal['is_ok'] == 0 ? 'Setujui Dosen Pembimbing' : 'Tidak Setujui Dosen Pembimbing';
+                            $btn = '<div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle text-light" type="button" data-coreui-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-gears"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                              <li><a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" title="Lihat" class="dropdown-item edit btn btn-primary btn-sm edit-user m-1">Lihat Detil</a></li>
+                              <li><a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" data-nim="' . $proposal['no_induk'] . '" data-name="' . $proposal['nama'] . '" data-status="' . $proposal['is_ok'] . '" title="Setujui" class="dropdown-item approve btn btn-sm m-1">' . $approveBtn . '</a></li>                              
+                            </ul>
+                          </div>';
                             return $btn;
                         })
                         ->addColumn('approved', function ($proposal) {
@@ -66,7 +72,7 @@ class DashboardController extends Controller
                         })
                         ->addColumn('dosen', function ($proposal) {
                             $result = '<ul>';
-                            $result .= ' <b>Dosen Pembimbing</b> <li>'.$proposal['dosen_pembimbing'].'</li>';
+                            $result .= ' <b>Dosen Pembimbing</b> <li>' . $proposal['dosen_pembimbing'] . '</li>';
                             $result .= '</ul>';
                             return $result;
                         })
