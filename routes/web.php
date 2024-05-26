@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LogBookController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\UserController;
 
@@ -29,7 +30,6 @@ Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () 
     Route::get('proposal/approve/{id}', [ProposalController::class, 'approveDosenProposal']);
 });
 
-
 Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::get('setting/users', [UserController::class, 'index']);
     Route::get('setting/users/{id}', [UserController::class, 'show']);
@@ -39,4 +39,13 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
 Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {
     Route::get('daftar/proposal', [ProposalController::class, 'index']);
     Route::post('daftar/proposal/store', [ProposalController::class, 'storeProposal']);
+});
+
+Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen'])->group(function () {
+    Route::get('log-book/get/{id}', [LogBookController::class, 'getLogBook']);
+    Route::post('log-book/store', [LogBookController::class, 'storeLogBook']);
+
+    Route::get('dosen/log-bimbingan', [LogBookController::class, 'getDosenLogBook']);
+    Route::get('dosen/log-bimbingan/detil/{id}', [LogBookController::class, 'getDetilLogBookMhs']);
+    Route::get('dosen/log-bimbingan/approve/{id}', [LogBookController::class, 'approveDetilLogBookMhs']);
 });

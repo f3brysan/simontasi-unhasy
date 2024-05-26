@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\Crypt;
 
 class ProposalController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         // Get list of dosen pembimbing
@@ -55,11 +50,9 @@ class ProposalController extends Controller
                 ->where('pendaftaran_id', $dataProposal->id)
                 ->where('tipe', 'like', 'U%')->get();
         }
-
-        // dd($data);
+        
         return view('proposal.index', $data);
     }
-
 
     public function storeProposal(Request $request)
     {
@@ -79,7 +72,7 @@ class ProposalController extends Controller
             $isExist = DB::table('tr_pendaftaran as p')
                 ->where('no_induk', $no_induk)->exists();
             DB::beginTransaction();
-            
+
             // If the user does not have a proposal, create a new one
             if (!$isExist) {
                 $idPendaftaran = Str::uuid();
@@ -121,7 +114,7 @@ class ProposalController extends Controller
             return $e->getMessage();
         }
     }
-    
+
     public function approveDosenProposal($id)
     {
         /**
