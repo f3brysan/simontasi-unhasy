@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -177,12 +178,67 @@ class LogBookController extends Controller
         return view('logbook.dosen.index');
     }
 
-    public function getDetilLogBookMhs($id)
+    public function getDetilLogBookMhs($id, Request $request)
     {
         $id = Crypt::decrypt($id);        
         $logBooks = DB::table("tr_logbook")        
         ->where("pendaftaran_id", $id)                
         ->get();   
-        dd($logBooks);
+        $dataProposal = DB::table('tr_pendaftaran as p')
+            ->where('id', $id)->first();
+        $dataMHS = User::where('no_induk', $dataProposal->no_induk)->first();
+        $prodi = (new GetDataAPISiakad)->getDataProdi($dataMHS->prodi_kode);
+        $data = [
+            'dataProposal' => $dataProposal,
+            'dataMHS' => $dataMHS,
+            'logBooks' => $logBooks,
+            'prodi' => $prodi
+        ];
+
+         // Check if the request is an AJAX request
+         if ($request->ajax()) {
+            // Use Datatables to display the data
+            return DataTables::of($logBooks)
+                ->addColumn('action', function ($data) {   
+                    $btnType = $data->is_approve == 0 ? 'btn-success' : 'btn-warning';               
+                    $btnIcon = $data->is_approve == 0 ? 'fa-check' : 'fa-arrows-rotate';               
+                    $btn = '<div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                    <button type="button" data-id="'.Crypt::encrypt($data->id).'" data-status="'.$data->is_approve.'" class="approve btn '.$btnType.' text-light"><i class="fa-solid '.$btnIcon.'"></i></button>                   
+                  </div>';
+                    return $btn;                    
+                })
+                // Add a column for the user's catatan
+                ->addColumn('catatan', function ($data) {
+                    // Return the catatan value
+                    return $data->catatan;
+                })
+                ->addColumn('status', function ($data) {
+                    $status = $data->is_approve == '1' ? '<span class="badge bg-success">Disetujui</span>' : '<span class="badge bg-warning">Belum disetujui</span>';
+                    return $status;
+                })
+                // Make the columns raw so that HTML can be rendered
+                ->rawColumns(['catatan', 'action', 'status'])
+                // Add an index column
+                ->addIndexColumn()
+                // Return the Datatables object
+                ->make(true);
+        }
+        
+        return view('logbook.dosen.detil-mhs', $data);
+    }
+
+    public function approveDetilLogBookMhs($id) {
+        try {
+            $id = Crypt::decrypt($id);
+            $get = DB::table('tr_logbook')->where('id', $id)->first();
+            $status = $get->is_approve == 1 ? 0 : 1;
+            $update = DB::table('tr_logbook')->where('id', $id)->update([
+                'is_approve' => $status,
+                'approve_at' => date('Y-m-d H:i:s')
+            ]);
+            return response()->json($status);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
     }
 }

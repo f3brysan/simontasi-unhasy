@@ -113,6 +113,7 @@
                     </div>
                 </div>
             </div>
+            {{-- END LOGBOOK --}}
         </div>
     </div>
 
