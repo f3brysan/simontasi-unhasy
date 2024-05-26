@@ -54,7 +54,6 @@ class ProposalController extends Controller
         return view('proposal.index', $data);
     }
 
-
     public function storeProposal(Request $request)
     {
         /**
