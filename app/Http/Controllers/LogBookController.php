@@ -117,4 +117,63 @@ class LogBookController extends Controller
             return response()->json($e->getMessage());
         }
     }
+
+    public function getDosenLogBook(Request $request)
+    {
+        $nip = auth()->user()->no_induk;
+        // dd($nip);
+        $getMahasiswaLogBooks = DB::table("tr_pendaftaran as p")
+            ->join("users as u", function ($join) {
+                $join->on("u.no_induk", "=", "p.no_induk");
+            })
+            ->join("tr_pendaftaran_dosen as pd", function ($join) {
+                $join->on("pd.pendaftaran_id", "=", "p.id");
+            })
+            ->select("p.*", "u.nama", "u.prodi_kode")
+            ->where("pd.nip", $nip)
+            ->get();
+
+        $countLogBooks = DB::table("tr_logbook")
+            ->select("pendaftaran_id", DB::raw("count (*)"))
+            ->where("nip", $nip)
+            ->groupBy("pendaftaran_id")
+            ->get();            
+        
+        foreach ($getMahasiswaLogBooks as $logBook) {
+            $prodi = (new GetDataAPISiakad)->getDataProdi($logBook->prodi_kode);
+            $mahasiswaLogBooks[$logBook->id] = [
+                'id' => $logBook->id,
+                'no_induk' => $logBook->no_induk,
+                'nama' => $logBook->nama,
+                'title' => $logBook->title,
+                'prodi' => $prodi->prodi
+            ];
+        }
+        foreach ($countLogBooks as $count) {
+            $mahasiswaLogBooks[$count->pendaftaran_id]['total_logbook'] = $count->count;
+        }
+        
+        if ($request->ajax()) {
+            // Use Datatables to display the data
+            return DataTables::of($mahasiswaLogBooks)
+                ->addColumn('action', function ($data) {
+                    $btn = '<a href="javascript:void(0)" class="btn btn-primary btn-sm">Lihat</a>';
+                    return $btn;
+                })      
+                ->addColumn('title', function ($data) {
+                    return $data['title'];
+                })  
+                ->addColumn('total_logbook', function ($data) {
+                    return '<span class="badge bg-info">'.$data['total_logbook'].' Asistensi</span>';
+                })  
+                // Make the columns raw so that HTML can be rendered
+                ->rawColumns(['action', 'title', 'total_logbook'])
+                // Add an index column
+                ->addIndexColumn()
+                // Return the Datatables object
+                ->make(true);
+        }
+
+        return view('logbook.dosen.index');
+    }
 }

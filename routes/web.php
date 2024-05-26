@@ -44,4 +44,6 @@ Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {
 Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen'])->group(function () {
     Route::get('log-book/get/{id}', [LogBookController::class, 'getLogBook']);
     Route::post('log-book/store', [LogBookController::class, 'storeLogBook']);
+
+    Route::get('dosen/log-bimbingan', [LogBookController::class, 'getDosenLogBook']);
 });
