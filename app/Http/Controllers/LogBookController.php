@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Crypt;
 
 class LogBookController extends Controller
@@ -120,8 +121,7 @@ class LogBookController extends Controller
 
     public function getDosenLogBook(Request $request)
     {
-        $nip = auth()->user()->no_induk;
-        // dd($nip);
+        $nip = auth()->user()->no_induk;        
         $getMahasiswaLogBooks = DB::table("tr_pendaftaran as p")
             ->join("users as u", function ($join) {
                 $join->on("u.no_induk", "=", "p.no_induk");
@@ -136,6 +136,7 @@ class LogBookController extends Controller
         $countLogBooks = DB::table("tr_logbook")
             ->select("pendaftaran_id", DB::raw("count (*)"))
             ->where("nip", $nip)
+            ->where('is_approve', '0')
             ->groupBy("pendaftaran_id")
             ->get();            
         
@@ -153,18 +154,17 @@ class LogBookController extends Controller
             $mahasiswaLogBooks[$count->pendaftaran_id]['total_logbook'] = $count->count;
         }
         
-        if ($request->ajax()) {
-            // Use Datatables to display the data
+        if ($request->ajax()) {            
             return DataTables::of($mahasiswaLogBooks)
                 ->addColumn('action', function ($data) {
-                    $btn = '<a href="javascript:void(0)" class="btn btn-primary btn-sm">Lihat</a>';
+                    $btn = '<a href="'.URL::to('dosen/log-bimbingan/detil/'.Crypt::encrypt($data['id'])).'" target="_blank" class="btn btn-primary btn-sm">Lihat</a>';
                     return $btn;
                 })      
                 ->addColumn('title', function ($data) {
                     return $data['title'];
                 })  
                 ->addColumn('total_logbook', function ($data) {
-                    return '<span class="badge bg-info">'.$data['total_logbook'].' Asistensi</span>';
+                    return '<span class="badge bg-warning text-dark">'.$data['total_logbook'].' Menunggu Approval</span>';
                 })  
                 // Make the columns raw so that HTML can be rendered
                 ->rawColumns(['action', 'title', 'total_logbook'])
@@ -175,5 +175,14 @@ class LogBookController extends Controller
         }
 
         return view('logbook.dosen.index');
+    }
+
+    public function getDetilLogBookMhs($id)
+    {
+        $id = Crypt::decrypt($id);        
+        $logBooks = DB::table("tr_logbook")        
+        ->where("pendaftaran_id", $id)                
+        ->get();   
+        dd($logBooks);
     }
 }

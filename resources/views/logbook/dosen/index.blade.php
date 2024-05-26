@@ -12,13 +12,13 @@
 
 @section('content')
     <div class="body flex-grow-1">
-        <div class="container-lg">           
+        <div class="container-lg">
             {{-- START LOGBOOK --}}
             <div class="card mb-4">
                 <div class="card-header">
                     <h5>Data Mahasiswa Bimbingan</h5>
                 </div>
-                <div class="card-body">                
+                <div class="card-body">
                     <div class="col-lg-12 table table-responsive">
                         <table class="table table-sm table-bordered table-striped" id="myTable">
                             <thead>
@@ -29,7 +29,7 @@
                                     <th class="text-center">Prodi</th>
                                     <th class="text-center" style="width: 30%">Judul</th>
                                     <th class="text-center">Total<br>LogBook</th>
-                                    <th class="text-center">Aksi</th>                                                                        
+                                    <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -38,7 +38,7 @@
                 </div>
             </div>
         </div>
-    </div>  
+    </div>
 
     {{-- MODAL LOG BOOK --}}
     <div class="modal fade" id="modalLogBook" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1"
@@ -53,7 +53,7 @@
                     <div class="modal-body">
                         <input type="hidden" name="idLogBook" id="idLogBook">
                         <input type="hidden" name="idProposal" id="idProposal">
-                        <input type="hidden" name="nimLogBook" id="nimLogBook">                        
+                        <input type="hidden" name="nimLogBook" id="nimLogBook">
                         <div class="mb-3">
                             <label for="exampleFormControlTextarea1" class="form-label">Tanggal Bimbingan</label>
                             <input type="date" class="form-control" id="tgl_bimbingan" name="tgl_bimbingan">
@@ -100,60 +100,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
-            $('.summernote').summernote({
-                placeholder: 'Judul Skripsi Anda',
-                tabsize: 2,
-                height: 100
-            });
-
-            $('#catatanLogBook').summernote({
-                placeholder: 'Detil catatan bimbingan',
-                tabsize: 2,
-                height: 100
-            });
         });
-    </script>
-    <script>
-        function daftarProposal() {
-            $('#allDosenPembimbing').select2({
-                dropdownParent: $('#modalDaftarProposal')
-            });
-            $("#modalDaftarProposal").modal('show');
-        }
-
-        if ($("#storeProposal").length > 0) {
-            $("#storeProposal").validate({
-                submitHandler: function(form) {
-                    $('#saveBtnDaftarProposal').html('Menyimpan . .');
-
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ URL::to('daftar/proposal/store') }}",
-                        data: $('#storeProposal').serializeArray(),
-                        dataType: 'json',
-                        success: function(data) {
-                            if (data == true) {
-                                $('#storeProposal').trigger("reset");
-                                $('#modalDaftarProposal').modal("hide");
-                                $('#saveBtnDaftarProposal').html('Simpan');
-                                iziToast.success({
-                                    title: 'Berhasil',
-                                    message: 'Proposal tersimpan.',
-                                    position: 'topRight'
-                                });
-                                location.reload();
-                            }
-                        },
-                        error: function(data) {
-                            console.log('Error', data);
-                            $('#tombol-simpan').html('Simpan');
-                        }
-                    });
-                }
-            });
-        }
-    </script>
+    </script>  
     <script>
         table = $('#myTable').DataTable({
             processing: true,
@@ -162,52 +110,49 @@
                 url: "{{ URL::to('dosen/log-bimbingan') }}",
                 type: 'GET'
             },
-            columns: [
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                },
                 {
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                    },
-                    {
-                        data: 'no_induk',
-                        name: 'no_induk'
-                    },
-                    {
-                        data: 'nama',
-                        name: 'nama'
-                    },                                              
-                    {
-                        data: 'prodi',
-                        name: 'prodi'
-                    },                             
-                    {
-                        data: 'title',
-                        name: 'title'
-                    },                             
-                    {
-                        data: 'total_logbook',
-                        name: 'total_logbook'
-                    },                             
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },               
-                ],
+                    data: 'no_induk',
+                    name: 'no_induk'
+                },
+                {
+                    data: 'nama',
+                    name: 'nama'
+                },
+                {
+                    data: 'prodi',
+                    name: 'prodi'
+                },
+                {
+                    data: 'title',
+                    name: 'title'
+                },
+                {
+                    data: 'total_logbook',
+                    name: 'total_logbook'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
+            ],
             order: [
                 [2, 'asc']
             ],
-            columnDefs: [
-                {
-                    className: 'text-center',
-                    targets: [0,1,3,5,6]
-                },
-            ],
+            columnDefs: [{
+                className: 'text-center',
+                targets: [0, 1, 3, 5, 6]
+            }, ],
         });
 
         function addKegiatanLogBook(id, nim) {
             $("#idProposal").val(id);
-            $("#nimLogBook").val(nim);            
+            $("#nimLogBook").val(nim);
             $("#modalLogBook").modal('show');
             console.log(id, nim);
         }
