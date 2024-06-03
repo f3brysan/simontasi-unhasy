@@ -106,7 +106,7 @@
                         <table class="table table-sm table-bordered table-striped" id="myTable">
                             <thead>
                                 <tr>
-                                    <th class="text-center">Aksi</th>                                    
+                                    <th class="text-center">Aksi</th>
                                     <th class="text-center">Tanggal Bimbingan</th>
                                     <th class="text-center" style="width: 50%">Catatan</th>
                                     <th class="text-center">Status</th>
@@ -168,10 +168,11 @@
                     <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="storeLogBook">
+                    @csrf
                     <div class="modal-body">
                         <input type="hidden" name="idLogBook" id="idLogBook">
                         <input type="hidden" name="idProposal" id="idProposal">
-                        <input type="hidden" name="nimLogBook" id="nimLogBook">                        
+                        <input type="hidden" name="nimLogBook" id="nimLogBook">
                         <div class="mb-3">
                             <label for="exampleFormControlTextarea1" class="form-label">Tanggal Bimbingan</label>
                             <input type="date" class="form-control" id="tgl_bimbingan" name="tgl_bimbingan">
@@ -210,6 +211,8 @@
     {{-- Data Tables --}}
     <link rel="stylesheet" href="//cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
     <script src="//cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
+    {{-- SWAL --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function() {
@@ -236,8 +239,7 @@
         function daftarProposal() {
             $('#allDosenPembimbing').select2({
                 dropdownParent: $('#modalDaftarProposal')
-            });
-            $("#storeLogBook").trigger(reset);
+            });            
             $("#modalDaftarProposal").modal('show');
         }
 
@@ -281,13 +283,12 @@
                 url: "{{ URL::to('log-book/get/' . Crypt::encrypt($dataProposal->id)) }}",
                 type: 'GET'
             },
-            columns: [
-                {
+            columns: [{
                     data: 'action',
                     name: 'action',
                     orderable: false,
                     searchable: false
-                },               
+                },
                 {
                     data: 'tgl_bimbingan',
                     name: 'tgl_bimbingan'
@@ -299,25 +300,66 @@
                 {
                     data: 'status',
                     name: 'status'
-                },                             
-            ],
-            order: [
-                [2, 'asc']
-            ],
-            columnDefs: [
-                {
-                    className: 'text-center',
-                    targets: [0,1,3]
                 },
             ],
+            order: [
+                [2, 'desc']
+            ],
+            columnDefs: [{
+                className: 'text-center',
+                targets: [0, 1, 3]
+            }, ],
         });
 
         function addKegiatanLogBook(id, nim) {
             $("#idProposal").val(id);
-            $("#nimLogBook").val(nim);            
+            $("#nimLogBook").val(nim);
+            $("#storeLogBook").trigger("reset");
+            $('#catatanLogBook').summernote('reset');
             $("#modalLogBook").modal('show');
-            console.log(id, nim);
         }
+
+        $(document).on('click', '.edit', function() {
+            var id = $(this).data('id')
+            $.get("{{ URL::to('log-book/show-detil') }}/" + id,
+                function(data) {
+                    $("#idLogBook").val(data.data.id);
+                    $("#idProposal").val(data.data.pendaftaran_id);
+                    $("#tgl_bimbingan").val(data.data.tgl_bimbingan);
+                    $('#catatanLogBook').summernote('code', data.data.catatan);
+                    $("#modalLogBook").modal('show');
+                });
+        });
+
+        $(document).on('click', '.delete', function() {
+            var id = $(this).data('id')
+            Swal.fire({
+                title: "Peringatan",
+                text: "Apakah Anda ingin menghapus catatan ini?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Iya, hapus!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ URL::to('log-book/delete-detil') }}/" + id,
+                        success: function(data) {
+                            table.ajax.reload(null, false);
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Catatan berhasil dihapus",
+                                icon: "success"
+                            });
+                        }
+                    });
+
+
+                }
+            });
+        });
 
         if ($("#storeLogBook").length > 0) {
             $("#storeLogBook").validate({

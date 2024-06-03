@@ -28,8 +28,8 @@ class LogBookController extends Controller
                     ->addColumn('action', function ($data) {
                         $is_approve = $data->is_approve == '1' ? 'disabled' : '';
                         $btn = '<div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
-                        <button type="button" class="btn btn-primary" ' . $is_approve . '><i class="fa-solid fa-gear"></i></button>
-                        <button type="button" class="btn btn-danger text-light" ' . $is_approve . '><i class="fa-solid fa-trash-can"></i></button>                        
+                        <button type="button" data-id="'.Crypt::encrypt($data->id).'" class="btn btn-primary edit" ' . $is_approve . '><i class="fa-solid fa-gear"></i></button>
+                        <button type="button" data-id="'.Crypt::encrypt($data->id).'" class="btn btn-danger text-light delete" ' . $is_approve . '><i class="fa-solid fa-trash-can"></i></button>                        
                       </div>';
                         return $btn;
                     })
@@ -55,6 +55,22 @@ class LogBookController extends Controller
         }
     }
 
+    public function getDetilLogBook($id)
+    {
+        try {
+           // Decrypt the ID parameter
+           $id = Crypt::decrypt($id);
+
+           // Retrieve the logbook entry
+           $get = DB::table('tr_logbook')->where('id', $id)->first();
+           $get->pendaftaran_id = Crypt::encrypt($get->pendaftaran_id);
+
+           return response()->json(['message' => 'success', 'data' => $get], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function storeLogBook(Request $request)
     {
         try {
@@ -71,12 +87,12 @@ class LogBookController extends Controller
             DB::beginTransaction();
             $taskDo = 0;  // Number of tasks completed
             $mustDo = count($getPembimbing);  // Total number of tasks
-
+            
             /**
              * Insert or update the logbook records for each pembimbing
              */
             foreach ($getPembimbing as $pembimbing) {
-                if (empty($idLogBook)) {
+                if (empty($request->idLogBook)) {
                     // Insert a new logbook record
                     DB::table('tr_logbook')->insert([
                         'id' => Str::uuid(),
@@ -90,8 +106,7 @@ class LogBookController extends Controller
                     ]);
                 } else {
                     // Update an existing logbook record
-                    DB::table('tr_logbook')->where('pendaftaran_id', $pendaftaran_id)->update([
-                        'id' => Str::uuid(),
+                    DB::table('tr_logbook')->where('id', $request->idLogBook)->update([                        
                         'pendaftaran_id' => $pendaftaran_id,
                         'nim' => $request->nimLogBook,
                         'nip' => $pembimbing->nip,
@@ -289,6 +304,30 @@ class LogBookController extends Controller
         } catch (\Exception $e) {
             // If an exception occurs, return the error message as a JSON response
             return response()->json($e->getMessage());
+        }
+    }
+
+    public function deleteDetilLogBookMhs($id)
+    {        
+        try {
+            // Decrypt the ID parameter
+            $id = Crypt::decrypt($id);
+
+            // Insert the logbook entry into the temporary table
+            // This is done to preserve the logbook entry in case it needs to be recovered
+            $sql = "INSERT INTO temp_tr_logbook
+            SELECT * FROM tr_logbook
+            WHERE id = '$id'";
+            $insertToTemp = DB::statement($sql); // Insert the logbook entry into the temporary table
+
+            // Delete the logbook entry from the main table
+            $get = DB::table('tr_logbook')->where('id', $id)->delete(); // Delete the logbook entry from the main table
+            
+            // Return the status of the deletion as a JSON response
+            return response()->json(['message' => 'success', 'data' => $get], 200);
+        } catch (\Exception $e) {
+            // If an exception occurs, return the error message as a JSON response
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }
