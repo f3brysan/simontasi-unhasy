@@ -15,8 +15,8 @@
                             class="fa-solid fa-book nav-icon"></i> Sidang</a></li> --}}
             </ul>
         </li>
-        <li class="nav-title">Monitoring</li>
         @role('dosen')
+        <li class="nav-title">Monitoring</li>
             <li class="nav-item"><a class="nav-link" href="{{ URL::to('dosen/log-bimbingan') }}">
                     <i class="fa-regular fa-rectangle-list nav-icon"></i> Log Bimbingan </a></li>
         @endrole
