@@ -88,7 +88,8 @@ class DashboardController extends Controller
 
         // If the user is a mahasiswa, return the mahasiswa dashboard
         if (in_array('mahasiswa', $roles)) {
-            return view('dashboard.mahasiswa');
+            $data['getProposal'] = DB::table('tr_pendaftaran')->where('no_induk', $user->no_induk)->first();            
+            return view('dashboard.mahasiswa', $data);
         }
 
         // If the user is a dosen, return the dosen dashboard
