@@ -41,6 +41,10 @@
                                     <td>{{ auth()->user()->nama }}</td>
                                 </tr>
                                 <tr>
+                                    <td><strong>Program Studi</strong></td>
+                                    <td>{{ $prodi }}</td>
+                                </tr>
+                                <tr>
                                     <td><strong>Judul</strong></td>
                                     <td>{!! $dataProposal->title !!}</td>
                                 </tr>
