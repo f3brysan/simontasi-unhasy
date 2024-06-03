@@ -233,6 +233,7 @@
             $('#allDosenPembimbing').select2({
                 dropdownParent: $('#modalDaftarProposal')
             });
+            $("#storeLogBook").trigger(reset);
             $("#modalDaftarProposal").modal('show');
         }
 
