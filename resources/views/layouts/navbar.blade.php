@@ -5,18 +5,20 @@
     <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
         <li class="nav-item"><a class="nav-link" href="{{ URL::to('/') }}">
                 <i class="fa-solid fa-house mr-2 nav-icon"></i> Beranda </a></li>
-        <li class="nav-title">Pendaftaran Proposal/Sidang</li>
-        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
-                <i class="fa-solid fa-right-to-bracket nav-icon"></i> Pendaftaran</a>
-            <ul class="nav-group-items">
-                <li class="nav-item"><a class="nav-link" href="{{ URL::to('daftar/proposal') }}"><i
-                            class="fa-solid fa-book nav-icon"></i> Sidang Proposal</a></li>
-                {{-- <li class="nav-item"><a class="nav-link" href="forms/form-control.html"><i
+        @role('mahasiswa')
+            <li class="nav-title">Pendaftaran Proposal/Sidang</li>
+            <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
+                    <i class="fa-solid fa-right-to-bracket nav-icon"></i> Pendaftaran</a>
+                <ul class="nav-group-items">
+                    <li class="nav-item"><a class="nav-link" href="{{ URL::to('daftar/proposal') }}"><i
+                                class="fa-solid fa-book nav-icon"></i> Sidang Proposal</a></li>
+                    {{-- <li class="nav-item"><a class="nav-link" href="forms/form-control.html"><i
                             class="fa-solid fa-book nav-icon"></i> Sidang</a></li> --}}
-            </ul>
-        </li>
+                </ul>
+            </li>
+        @endrole
         @role('dosen')
-        <li class="nav-title">Monitoring</li>
+            <li class="nav-title">Monitoring</li>
             <li class="nav-item"><a class="nav-link" href="{{ URL::to('dosen/log-bimbingan') }}">
                     <i class="fa-regular fa-rectangle-list nav-icon"></i> Log Bimbingan </a></li>
         @endrole
