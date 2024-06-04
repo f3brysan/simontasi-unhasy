@@ -145,7 +145,7 @@ class AdminProposalController extends Controller
             $data['penguji'] = DB::table('tr_pendaftaran_dosen')
                 ->where('pendaftaran_id', $dataProposal->id)
                 ->where('tipe', 'like', 'U%')->get();
-        }
+        }        
 
         return view('admin.proposal.detil', $data);
     }

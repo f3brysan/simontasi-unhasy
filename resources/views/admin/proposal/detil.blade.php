@@ -4,7 +4,9 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb my-0 ms-2">
-                <li class="breadcrumb-item active"><span>Proposal</span></li>
+                <li class="breadcrumb-item "><span>Proposal</span></li>
+                <li class="breadcrumb-item active"><span>Detil Proposal {{ $biodata->no_induk }} -
+                        {{ $biodata->nama }}</span></li>
             </ol>
         </nav>
     </div>
@@ -64,15 +66,23 @@
                                 <tr>
                                     <td><strong>Dosen Penguji</strong></td>
                                     <td>
-                                        <div class="row">
-                                            @foreach ($penguji as $item)
-                                                <div class="col-md-9">
-                                                    <u>{{ $item->nama }}</u>
-                                                    <hr>NIP: {{ $item->nip }}
-                                                </div>
-                                                <div class="col-md-3"><span class="badge text-bg-warning"> Menunggu
-                                                        Approval</span></div>
-                                            @endforeach
+                                        <div class="row">                                            
+                                            @if (count($penguji) == 0)
+                                            <div class="col-md-12">
+                                                <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end  "><i class="fa-solid fa-user-plus"></i> Tambah Penguji</a>
+                                            </div>
+                                            @else
+                                            wkwk
+                                                @foreach ($penguji as $item)
+                                                    <div class="col-md-9">
+                                                        <u>{{ $item->nama }}</u>
+                                                        <hr>NIP: {{ $item->nip }}
+                                                    </div>
+                                                    <div class="col-md-3"><span class="badge text-bg-warning"> Menunggu
+                                                            Approval</span></div>
+                                                @endforeach
+                                            @endif
+
                                         </div>
                                     </td>
                                 </tr>
@@ -88,11 +98,11 @@
                 <div class="card-header">
                     <h5>Log Book Bimbingan</h5>
                 </div>
-                <div class="card-body">                    
+                <div class="card-body">
                     <div class="col-lg-12 table table-responsive">
                         <table class="table table-sm table-bordered table-striped" id="myTable">
                             <thead>
-                                <tr>                                    
+                                <tr>
                                     <th class="text-center">Tanggal Bimbingan</th>
                                     <th class="text-center" style="width: 50%">Catatan</th>
                                     <th class="text-center">Status</th>
@@ -198,8 +208,7 @@
                 url: "{{ URL::to('log-book/get/' . Crypt::encrypt($dataProposal->id)) }}",
                 type: 'GET'
             },
-            columns: [
-                {
+            columns: [{
                     data: 'tgl_bimbingan',
                     name: 'tgl_bimbingan'
                 },

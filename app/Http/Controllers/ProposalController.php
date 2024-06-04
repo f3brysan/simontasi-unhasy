@@ -55,7 +55,7 @@ class ProposalController extends Controller
                 ->where('pendaftaran_id', $dataProposal->id)
                 ->where('tipe', 'like', 'U%')->get();
         }
-
+        
         return view('proposal.index', $data);
     }
 
