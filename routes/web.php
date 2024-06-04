@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminProposalController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -35,7 +36,7 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::get('setting/users/{id}', [UserController::class, 'show']);
     Route::post('setting/users/store', [UserController::class, 'store']);
 
-    Route::post('admin/data/proposal', [UserController::class, 'store']);
+    Route::get('admin/data/proposal', [AdminProposalController::class, 'index']);
 });
 
 Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {
