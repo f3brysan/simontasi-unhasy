@@ -52,7 +52,6 @@
                                                     @if ($item->is_ok == 1)
                                                         <span class="text-center badge text-bg-success text-light"><i
                                                                 class="fa-solid fa-check"></i> Disetujui</span>
-
                                                         <p class="text-muted">{{ $item->is_ok_at }}</p>
                                                     @else
                                                         <span class="badge text-bg-warning text-light"> Menunggu
@@ -66,13 +65,15 @@
                                 <tr>
                                     <td><strong>Dosen Penguji</strong></td>
                                     <td>
-                                        <div class="row">                                            
+                                        <div class="row">
                                             @if (count($penguji) == 0)
-                                            <div class="col-md-12">
-                                                <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end  "><i class="fa-solid fa-user-plus"></i> Tambah Penguji</a>
-                                            </div>
-                                            @else
-                                            wkwk
+                                                <div class="col-md-12">
+                                                    <a href="javascript:void(0)"
+                                                        onclick="tambahPenguji('{{ $dataProposal->id }}', '{{ $biodata->no_induk }}')"
+                                                        class="btn btn-sm btn-primary float-end  "><i
+                                                            class="fa-solid fa-user-plus"></i> Tambah Penguji</a>
+                                                </div>
+                                            @else                                                
                                                 @foreach ($penguji as $item)
                                                     <div class="col-md-9">
                                                         <u>{{ $item->nama }}</u>
@@ -116,6 +117,27 @@
             {{-- END LOGBOOK --}}
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="tambah-penguji" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Tambah Penguji</h5>
+                    <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- End Modal --}}
 @endsection
 @push('js')
     {{-- Summernote --}}
@@ -166,6 +188,10 @@
                 dropdownParent: $('#modalDaftarProposal')
             });
             $("#modalDaftarProposal").modal('show');
+        }
+
+        function tambahPenguji(id, nim) {
+            $("#tambah-penguji").modal('show');
         }
 
         if ($("#storeProposal").length > 0) {
