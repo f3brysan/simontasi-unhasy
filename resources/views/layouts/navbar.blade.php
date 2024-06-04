@@ -23,6 +23,16 @@
                     <i class="fa-regular fa-rectangle-list nav-icon"></i> Log Bimbingan </a></li>
         @endrole
         @role('superadmin')
+        <li class="nav-title">Data Pendaftar</li>
+            <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
+                    <i class="fa-solid fa-right-to-bracket nav-icon"></i> Data Pendaftaran</a>
+                <ul class="nav-group-items">
+                    <li class="nav-item"><a class="nav-link" href="{{ URL::to('admin/data/proposal') }}"><i
+                                class="fa-solid fa-book nav-icon"></i> Data Sidang Proposal</a></li>
+                    {{-- <li class="nav-item"><a class="nav-link" href="forms/form-control.html"><i
+                            class="fa-solid fa-book nav-icon"></i> Sidang</a></li> --}}
+                </ul>
+            </li>
             <li class="nav-title">Setting</li>
             <li class="nav-item"><a class="nav-link" href="{{ URL::to('setting/users') }}">
                     <i class="fa-solid fa-users nav-icon"></i> User</a></li>
