@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminProposalController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -34,6 +35,8 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::get('setting/users', [UserController::class, 'index']);
     Route::get('setting/users/{id}', [UserController::class, 'show']);
     Route::post('setting/users/store', [UserController::class, 'store']);
+
+    Route::get('admin/data/proposal', [AdminProposalController::class, 'index']);
 });
 
 Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {
@@ -43,6 +46,8 @@ Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {
 
 Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen'])->group(function () {
     Route::get('log-book/get/{id}', [LogBookController::class, 'getLogBook']);
+    Route::get('log-book/show-detil/{id}', [LogBookController::class, 'getDetilLogBook']);
+    Route::delete('log-book/delete-detil/{id}', [LogBookController::class, 'deleteDetilLogBookMhs']);
     Route::post('log-book/store', [LogBookController::class, 'storeLogBook']);
 
     Route::get('dosen/log-bimbingan', [LogBookController::class, 'getDosenLogBook']);

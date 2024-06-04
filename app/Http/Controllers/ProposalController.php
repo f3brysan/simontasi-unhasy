@@ -31,12 +31,17 @@ class ProposalController extends Controller
         $dataProposal = DB::table('tr_pendaftaran as p')
             ->where('no_induk', $no_induk)->first();
 
+        // Retrieve data of the current user's program study
+        $prodi = (new GetDataAPISiakad)->getDataProdi(auth()->user()->prodi_kode);
+
+        // Prepare data to be passed to the view        
         $data = [
             'allDosenPembimbing' => $allDosenPembimbing,
             'dataProposal' => $dataProposal,
             'berkasProposal' => null,
             'pembimbing' => null,
             'penguji' => null,
+            'prodi' => $prodi->prodi,
         ];
 
         // Get proposal berkas, pembimbing, dan penguji
@@ -50,7 +55,7 @@ class ProposalController extends Controller
                 ->where('pendaftaran_id', $dataProposal->id)
                 ->where('tipe', 'like', 'U%')->get();
         }
-        
+
         return view('proposal.index', $data);
     }
 
@@ -151,7 +156,7 @@ class ProposalController extends Controller
             return response()->json($value);
         } catch (\Exception $e) {
             // If an error occurs, return an error message along with the error code.
-            return response()->json($e->getMessage(), $e->getCode());
+            return response()->json($e->getMessage(), 500);
         }
     }
 }

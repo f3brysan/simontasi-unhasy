@@ -19,67 +19,26 @@
                 </div>
                 <div class="card-body">
                     <div class="example">
-                        <div class="tab-content rounded-bottom">
-                            <div class="tab-pane p-3 active preview" role="tabpanel" id="preview-1005">
-                                <div class="row">
-                                    {{-- Seluruh Proposal --}}
-                                    <div class="col-6 col-lg-3">
-                                        <div class="card">
-                                            <div class="card-body p-3 d-flex align-items-center">
-                                                <div class="bg-primary text-white p-3 me-3">
-                                                    <span class="icon">
-                                                        <i class="fa-solid fa-list-ol"></i>
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <div class="fs-6 fw-semibold text-primary">
-                                                        {{ count($getDataProposals) }} Proposal</div>
-                                                    <div class="text-medium-emphasis text-uppercase fw-semibold small">
-                                                        Seluruh Proposal</div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                    {{-- Proposal Menunggu Konfirmasi --}}
-                                    <div class="col-6 col-lg-3">
-                                        <div class="card">
-                                            <div class="card-body p-3 d-flex align-items-center">
-                                                <div class="bg-warning text-white p-3 me-3">
-                                                    <span class="icon">
-                                                        <i class="fa-solid fa-hourglass-start"></i>
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <div class="fs-6 fw-semibold text-primary">
-                                                        {{ count($getWaitProposals) }} Proposal</div>
-                                                    <div class="text-medium-emphasis text-uppercase fw-semibold small">
-                                                        Menunggu Konfirmasi</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {{-- Proposal Telah Dikonfirmasi --}}
-                                    <div class="col-6 col-lg-3">
-                                        <div class="card">
-                                            <div class="card-body p-3 d-flex align-items-center">
-                                                <div class="bg-success text-white p-3 me-3">
-                                                    <span class="icon">
-                                                        <i class="fa-solid fa-thumbs-up"></i>
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <div class="fs-6 fw-semibold text-primary">
-                                                        {{ count($getDoneProposals) }} Proposal</div>
-                                                    <div class="text-medium-emphasis text-uppercase fw-semibold small">
-                                                        Telah Konfirmasi</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Prodi</th>
+                                <th>Jumlah Sidang Proposal</th>
+                                <th>Jumlah TA/Skripsi/Tesis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($prodi as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->prodi }}</td>
+                                <td>0</td>
+                                <td>0</td>
+                            </tr>                                
+                            @endforeach
+                        </tbody>
+                       </table>
                     </div>
                 </div>
             </div>
@@ -88,30 +47,7 @@
                     <h5>Detail Pendaftar</h5>
                 </div>
                 <div class="card-body">
-                    <div class="example">
-                        <div class="tab-content rounded-bottom">
-                            <div class="tab-pane p-3 active preview" role="tabpanel" id="preview-1005">
-                                <div class="row">
-                                    <div class="col-lg-12 table table-responsive">
-                                        <table class="table table-sm table-bordered table-striped" id="myTable">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center">Aksi</th>
-                                                    <th class="text-center">No</th>
-                                                    <th class="text-center">NIM</th>
-                                                    <th class="text-center">Nama</th>
-                                                    <th class="text-center">Prodi</th>
-                                                    <th class="text-center">Dosen</th>
-                                                    <th class="text-center">Judul Proposal</th>
-                                                    <th class="text-center">Disetujui</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="example">                        
                     </div>
                 </div>
             </div>
@@ -144,122 +80,5 @@
     {{-- Data Tables --}}
     <link rel="stylesheet" href="//cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
     <script src="//cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        $(document).ready(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            table = $('#myTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ URL::to('/') }}",
-                    type: 'GET'
-                },
-                columns: [{
-                        data: 'action',
-                        name: 'action',
-                        className: 'text-center',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                    },
-                    {
-                        data: 'no_induk',
-                        name: 'no_induk'
-                    },
-                    {
-                        data: 'nama',
-                        name: 'nama'
-                    },
-                    {
-                        data: 'prodi_nama',
-                        name: 'prodi_nama'
-                    },
-                    {
-                        data: 'dosen',
-                        name: 'dosen'
-                    },
-                    {
-                        data: 'title',
-                        name: 'title'
-                    },
-                    {
-                        data: 'approved',
-                        name: 'approved'
-                    },
-                ],
-                order: [
-                    [1, 'asc']
-                ],
-                columnDefs: [{
-                        className: 'text-end',
-                        targets: [1]
-                    },
-                    {
-                        className: 'text-center',
-                        targets: [2, 4, 7]
-                    },
-                    {
-                        className: 'text-justify',
-                        targets: [6]
-                    },
-                ],
-            });
-
-            $(document).on("click", ".edit", function() {
-                var id = $(this).data("id");
-                $("#viewDetailModal").modal('show');
-            });
-
-            $(document).on("click", ".approve", function() {
-                var id = $(this).data("id");
-                var nim = $(this).data("nim");
-                var name = $(this).data("name");
-                var status = $(this).data("status");
-
-                if (status == '1') {
-                    var msg = 'Tolak';
-                    var btn = 'unapprove';
-                } else {
-                    var msg = 'Setujui';
-                    var btn = 'approve';
-                }
-
-                Swal.fire({
-                    title: "Perhatian",
-                    text:  msg+ " pendaftaran Proposal " + nim + " - " + name + "?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes, "+ btn
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.get("{{ URL::to('proposal/approve/') }}/" + id,
-                            function(data) {
-                                if (data == '1') {
-                                    var msg = 'disetujui';
-                                } else {
-                                    var msg = 'ditolak';
-                                }
-                                table.ajax.reload(null, false);
-                                iziToast.success({
-                                    title: 'Berhasil',
-                                    message: 'Proposal berhasil ' + msg + '.',
-                                    position: 'topRight'
-                                });
-                            });
-                    }
-                });
-            });
-        })
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>   
 @endpush
