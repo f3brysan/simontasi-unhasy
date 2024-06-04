@@ -37,6 +37,7 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::post('setting/users/store', [UserController::class, 'store']);
 
     Route::get('admin/data/proposal', [AdminProposalController::class, 'index']);
+    Route::get('admin/data/proposal/detil/{id}', [AdminProposalController::class, 'detil']);
 });
 
 Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {

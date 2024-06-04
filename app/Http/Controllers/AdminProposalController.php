@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Crypt;
 
 class AdminProposalController extends Controller
@@ -28,7 +30,7 @@ class AdminProposalController extends Controller
                     <i class="fa-solid fa-gears"></i>
                     </button>
                     <ul class="dropdown-menu">
-                      <li><a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" title="Lihat" class="dropdown-item edit btn btn-primary btn-sm edit-user m-1">Lihat Detil</a></li>
+                      <li><a href="'.URL::to('admin/data/proposal/detil/'.Crypt::encrypt($proposal['id'])).'" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" title="Lihat" class="dropdown-item btn btn-primary btn-sm edit-user m-1">Lihat Detil</a></li>
                       <li><a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" data-nim="' . $proposal['no_induk'] . '" data-name="' . $proposal['nama'] . '" data-status="' . $proposal['is_ok'] . '" title="Setujui" class="dropdown-item approve btn btn-sm m-1">' . $approveBtn . '</a></li>                              
                     </ul>
                   </div>';
@@ -112,5 +114,39 @@ class AdminProposalController extends Controller
         ];
 
         return $data;
+    }
+
+    public function detil($id){
+        $id = Crypt::decrypt($id);        
+
+        $dataProposal = DB::table('tr_pendaftaran as p')
+            ->where('id', $id)->first();
+        $mhs = User::where('no_induk', $dataProposal->no_induk)->first();
+        
+        // Retrieve data of the current user's program study
+        $prodi = (new GetDataAPISiakad)->getDataProdi($mhs->prodi_kode);
+        // Prepare data to be passed to the view        
+        $data = [            
+            'dataProposal' => $dataProposal,
+            'berkasProposal' => null,
+            'biodata' => $mhs,
+            'pembimbing' => null,
+            'penguji' => null,
+            'prodi' => $prodi->prodi,
+        ];
+
+        // Get proposal berkas, pembimbing, dan penguji
+        if (!empty($dataProposal)) {
+            $data['berkasProposal'] = DB::table('tr_pendaftaran_berkas')
+                ->where('pendaftaran_id', $dataProposal->id)->get();
+            $data['pembimbing'] = DB::table('tr_pendaftaran_dosen')
+                ->where('pendaftaran_id', $dataProposal->id)
+                ->where('tipe', 'like', 'B%')->get();
+            $data['penguji'] = DB::table('tr_pendaftaran_dosen')
+                ->where('pendaftaran_id', $dataProposal->id)
+                ->where('tipe', 'like', 'U%')->get();
+        }
+
+        return view('admin.proposal.detil', $data);
     }
 }
