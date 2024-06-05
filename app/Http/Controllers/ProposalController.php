@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 class ProposalController extends Controller
 {
@@ -55,7 +56,16 @@ class ProposalController extends Controller
                 ->where('pendaftaran_id', $dataProposal->id)
                 ->where('tipe', 'like', 'U%')->get();
         }
-        
+
+        $data['berkas'] = DB::table('ms_berkas')->where('type', 'P')->get();
+        $data['berkas'] = DB::table('ms_berkas as b')
+            ->select('b.*', 'pb.id as doc_id', 'pb.file')
+            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) {
+                $join->on('pb.berkas_id', '=', 'b.id')
+                    ->where('pb.pendaftaran_id', '=', '4e47af69-fe7c-482b-a2d0-84265b334c9b');
+            })
+            ->where('b.type', 'P')
+            ->get();        
         return view('proposal.index', $data);
     }
 
@@ -157,6 +167,42 @@ class ProposalController extends Controller
         } catch (\Exception $e) {
             // If an error occurs, return an error message along with the error code.
             return response()->json($e->getMessage(), 500);
+        }
+    }
+    public function storeBerkasProposal(Request $request)
+    {
+        try {            
+            $file = $request->file('document');
+            $getJenisBerkas = DB::table('ms_berkas')->where('id', $request->berkas_id)->first();            
+            $extension = $file->getClientOriginalExtension();
+            $path = 'uploads/'.str_replace(' ', '', $getJenisBerkas->nama);
+            $storage = Storage::disk('my_files')->put($path, $file);            
+
+            $checkExist = false;
+            if ($request->pendaftaran_berkas_id) {
+                $checkExist = DB::table('tr_pendaftaran_berkas')->where('id', $request->pendaftaran_berkas_id)->exists();
+            }
+
+            if ($checkExist == true) {
+                $store = DB::table('tr_pendaftaran_berkas')->where('id', $request->pendaftaran_berkas_id)->update([
+                    'pendaftaran_id' => $request->pendaftaran_id,
+                    'berkas_id' => $request->berkas_id,
+                    'file' => $storage,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
+            } else {
+                $store = DB::table('tr_pendaftaran_berkas')->insert([
+                    'id' => Str::uuid(),
+                    'pendaftaran_id' => $request->pendaftaran_id,
+                    'berkas_id' => $request->berkas_id,
+                    'file' => $storage,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
+            }
+
+            return response()->json($store);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
         }
     }
 }

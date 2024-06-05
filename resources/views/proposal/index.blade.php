@@ -86,6 +86,29 @@
                                         </div>
                                     </td>
                                 </tr>
+                                @foreach ($berkas as $item)
+                                    <tr>
+                                        <td><strong>{{ $item->nama }}</strong></td>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    @if ($item->file)
+                                                        <a href="{{ URL::to('/') }}/{{ $item->file }}" target="_blank" class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
+                                                    @else
+                                                        
+                                                    @endif
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <a href="javascript:void(0)"
+                                                        onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')"
+                                                        class="btn btn-sm btn-primary float-end"><i
+                                                            class="fas fa-upload"></i>
+                                                        Unggah</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </table>
                         </div>
                     @endif
@@ -191,16 +214,47 @@
         </div>
     </div>
     {{-- END MODAL LOG BOOK --}}
+
+    {{-- MODAL LOG BOOK --}}
+    <div class="modal fade" id="modalUnggah" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="judulUnggah"></h5>
+                    <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formUnggah">
+                    @csrf
+                    <input type="hidden" name="pendaftaran_berkas_id" id="pendaftaran_berkas_id">
+                    <input type="hidden" name="berkas_id" id="berkas_id">
+                    <input type="hidden" name="pendaftaran_id" id="pendaftaran_id">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">Unggah Berkas</label>
+                            <p><code>Pastikan ekstensi file adalah .pdf</code></p>
+                            <input class="form-control" type="file" id="document" name="document" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtnUnggah">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL LOG BOOK --}}
 @endsection
 @push('js')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     {{-- Summernote --}}
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
     {{-- Select2 --}}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    {{-- JQuery Validate --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
     {{-- TOAST JS --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"
         integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA=="
@@ -213,6 +267,10 @@
     <script src="//cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
     {{-- SWAL --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- JQ Validate --}}
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -233,13 +291,18 @@
                 tabsize: 2,
                 height: 100
             });
+            // cek ukuran file yg diupload
+            $.validator.addMethod('filesize', function(value, element, param) {
+                    return this.optional(element) || (element.files[0].size <= param)
+                },
+                'Ukuran dokumen terlalu besar'); // notifikasi apabila file > 2mb
         });
     </script>
     <script>
         function daftarProposal() {
             $('#allDosenPembimbing').select2({
                 dropdownParent: $('#modalDaftarProposal')
-            });            
+            });
             $("#modalDaftarProposal").modal('show');
         }
 
@@ -269,6 +332,59 @@
                         error: function(data) {
                             console.log('Error', data);
                             $('#tombol-simpan').html('Simpan');
+                        }
+                    });
+                }
+            });
+        }
+
+        function unggahBerkas(idjenis, nama, id) {
+            $("#pendaftaran_id").val(id);
+            $("#berkas_id").val(idjenis);
+            $("#judulUnggah").html(nama);
+            $("#modalUnggah").modal('show');
+        }
+
+        if ($("#formUnggah").length > 0) {
+            $("#formUnggah").validate({
+                // validasi mime type
+                rules: {
+                    document: {
+                        required: true, // wajib
+                        extension: "pdf|PDF", // ekstensi pdf
+                        filesize: 5097152, // ukuran file < 2mb
+
+                    }
+                },
+                messages: {
+                    document: {
+                        required: "Tidak Boleh Kosong",
+                        extension: "Mohon mengunggah dokumen berekstensi *pdf"
+                    }
+                },
+                submitHandler: function(form) {                    
+                    var actionType = $('#saveBtnUnggah').val();
+                    var formData = new FormData(form);
+                    $('#saveBtnUnggah').html('Menyimpan . .');
+                    console.log(formData);
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('daftar/proposal/berkas/store') }}",
+                        data: formData,
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {                           
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Berkas berhasil disimpan",
+                                icon: "success"
+                            });
+                            location.reload();
+                        },
+                        error: function(data) {
+                            console.log('Error', data);
+                            $('#saveBtnUnggah').html('Simpan');
                         }
                     });
                 }
@@ -365,7 +481,6 @@
             $("#storeLogBook").validate({
                 submitHandler: function(form) {
                     $('#saveBtnLogBook').html('Menyimpan . .');
-
                     $.ajax({
                         type: "POST",
                         url: "{{ URL::to('log-book/store') }}",
