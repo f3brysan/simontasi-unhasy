@@ -70,7 +70,7 @@
                                                 <div class="col-md-12">
                                                     <a href="javascript:void(0)"
                                                         onclick="tambahPenguji('{{ $dataProposal->id }}', '{{ $biodata->no_induk }}')"
-                                                        class="btn btn-sm btn-primary float-end  "><i
+                                                        class="btn btn-sm btn-primary float-end  {{ count($logbookDone) < 3 ? 'disabled' : '' }}"><i
                                                             class="fa-solid fa-user-plus"></i> Tambah Penguji</a>
                                                 </div>
                                             @else                                                
@@ -128,7 +128,17 @@
                     <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <div class="mb-3">
+                        <label for="exampleFormControlTextarea1" class="form-label">Dosen Pembimbing</label>
+                        <select class="form-select form-select-lg mb-3" id="allDosenPembimbing" name="dosen_penguji"
+                            style="width: 100%">
+                            <option value="">--- Pilih Dosen ---</option>
+                            @foreach ($allDosenPenguji as $item)
+                                <option value="{{ $item['nip'] }}">{{ $item['nip'] }} - {{ $item['nama'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Close</button>
@@ -183,14 +193,11 @@
         });
     </script>
     <script>
-        function daftarProposal() {
-            $('#allDosenPembimbing').select2({
-                dropdownParent: $('#modalDaftarProposal')
-            });
-            $("#modalDaftarProposal").modal('show');
-        }
 
         function tambahPenguji(id, nim) {
+            $('#allDosenPembimbing').select2({
+                dropdownParent: $('#tambah-penguji')
+            });  
             $("#tambah-penguji").modal('show');
         }
 

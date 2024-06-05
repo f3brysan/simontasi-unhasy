@@ -117,36 +117,75 @@ class AdminProposalController extends Controller
     }
 
     public function detil($id){
-        $id = Crypt::decrypt($id);        
+        /**
+         * Retrieves the detail of a proposal based on its ID.
+         *
+         * @param string $id The encrypted ID of the proposal.
+         * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+         */        
+            // Decrypt the ID
+            $id = Crypt::decrypt($id);
 
-        $dataProposal = DB::table('tr_pendaftaran as p')
-            ->where('id', $id)->first();
-        $mhs = User::where('no_induk', $dataProposal->no_induk)->first();
-        
-        // Retrieve data of the current user's program study
-        $prodi = (new GetDataAPISiakad)->getDataProdi($mhs->prodi_kode);
-        // Prepare data to be passed to the view        
-        $data = [            
-            'dataProposal' => $dataProposal,
-            'berkasProposal' => null,
-            'biodata' => $mhs,
-            'pembimbing' => null,
-            'penguji' => null,
-            'prodi' => $prodi->prodi,
-        ];
+            // Retrieve the proposal data from the database
+            $dataProposal = DB::table('tr_pendaftaran as p')
+                ->where('id', $id)->first();
+            
+            // Retrieve the user data associated with the proposal
+            $mhs = User::where('no_induk', $dataProposal->no_induk)->first();
 
-        // Get proposal berkas, pembimbing, dan penguji
-        if (!empty($dataProposal)) {
-            $data['berkasProposal'] = DB::table('tr_pendaftaran_berkas')
-                ->where('pendaftaran_id', $dataProposal->id)->get();
-            $data['pembimbing'] = DB::table('tr_pendaftaran_dosen')
-                ->where('pendaftaran_id', $dataProposal->id)
-                ->where('tipe', 'like', 'B%')->get();
-            $data['penguji'] = DB::table('tr_pendaftaran_dosen')
-                ->where('pendaftaran_id', $dataProposal->id)
-                ->where('tipe', 'like', 'U%')->get();
-        }        
+            // Retrieve the data of the current user's program study
+            $prodi = (new GetDataAPISiakad)->getDataProdi($mhs->prodi_kode);
 
-        return view('admin.proposal.detil', $data);
+            // Prepare the data to be passed to the view
+            $data = [
+                'dataProposal' => $dataProposal,
+                'berkasProposal' => null,
+                'biodata' => $mhs,
+                'pembimbing' => null,
+                'penguji' => null,
+                'prodi' => $prodi->prodi,
+            ];
+
+            // Retrieve the proposal berkas, pembimbing, and penguji
+            if (!empty($dataProposal)) {
+                $data['berkasProposal'] = DB::table('tr_pendaftaran_berkas')
+                    ->where('pendaftaran_id', $dataProposal->id)->get();
+                $data['pembimbing'] = DB::table('tr_pendaftaran_dosen')
+                    ->where('pendaftaran_id', $dataProposal->id)
+                    ->where('tipe', 'like', 'B%')->get();
+                $data['penguji'] = DB::table('tr_pendaftaran_dosen')
+                    ->where('pendaftaran_id', $dataProposal->id)
+                    ->where('tipe', 'like', 'U%')->get();
+            }
+
+            // Get the NIPs of the pembimbing and penguji
+            $pembimbing = $data['pembimbing']->pluck('nip')->toArray();
+            $penguji = $data['penguji']->pluck('nip')->toArray();
+
+            // Retrieve all the dosens
+            $getDosen = (new GetDataAPISiakad)->getDataDosen();
+
+            // Filter the dosens by the current user's program study
+            $allDosenPenguji = [];
+            foreach ($getDosen as $item) {
+                if ($item->prodi_kode == $mhs->prodi_kode 
+                    AND !in_array($item->no_identitas, $pembimbing) 
+                    AND !in_array($item->no_identitas, $penguji)
+                ) {
+                    $allDosenPenguji[$item->no_identitas] = [
+                        'nip' => $item->no_identitas,
+                        'nama' => $item->nama,
+                    ];
+                }
+            }
+            ksort($allDosenPenguji);
+
+            // Add the filtered dosens to the data array
+            $data['allDosenPenguji'] = $allDosenPenguji;
+
+            $data['logbookDone'] = DB::table('tr_logbook')->where('pendaftaran_id', $dataProposal->id)->where('is_approve', 1)->get();
+
+            // Return the view with the data
+            return view('admin.proposal.detil', $data);
     }
 }
