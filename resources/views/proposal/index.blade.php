@@ -99,6 +99,7 @@
                                                     @endif
                                                 </div>
                                                 <div class="col-md-3">
+                                                    if
                                                     <a href="javascript:void(0)"
                                                         onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')"
                                                         class="btn btn-sm btn-primary float-end"><i

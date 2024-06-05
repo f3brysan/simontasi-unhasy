@@ -56,16 +56,21 @@ class ProposalController extends Controller
                 ->where('pendaftaran_id', $dataProposal->id)
                 ->where('tipe', 'like', 'U%')->get();
         }
-
-        $data['berkas'] = DB::table('ms_berkas')->where('type', 'P')->get();
+        
+        // Retrieve the proposal documents
         $data['berkas'] = DB::table('ms_berkas as b')
-            ->select('b.*', 'pb.id as doc_id', 'pb.file')
+            // Select the necessary fields
+            ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_ok')
+            // Join the tr_pendaftaran_berkas table to retrieve the associated file
             ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) {
+                // Use the on and where methods to specify the join condition
                 $join->on('pb.berkas_id', '=', 'b.id')
                     ->where('pb.pendaftaran_id', '=', '4e47af69-fe7c-482b-a2d0-84265b334c9b');
             })
+            // Filter the documents to only include those of type 'P'
             ->where('b.type', 'P')
-            ->get();        
+            // Get the results
+            ->get();
         return view('proposal.index', $data);
     }
 
@@ -171,19 +176,31 @@ class ProposalController extends Controller
     }
     public function storeBerkasProposal(Request $request)
     {
-        try {            
+        try {
+            // Get the uploaded file from the request.
             $file = $request->file('document');
-            $getJenisBerkas = DB::table('ms_berkas')->where('id', $request->berkas_id)->first();            
-            $extension = $file->getClientOriginalExtension();
-            $path = 'uploads/'.str_replace(' ', '', $getJenisBerkas->nama);
-            $storage = Storage::disk('my_files')->put($path, $file);            
 
+            // Get the details of the selected berkas from the database.
+            $getJenisBerkas = DB::table('ms_berkas')->where('id', $request->berkas_id)->first();
+
+            // Get the extension of the uploaded file.
+            $extension = $file->getClientOriginalExtension();
+
+            // Generate the path where the file will be stored.
+            $path = 'uploads/' . str_replace(' ', '', $getJenisBerkas->nama);
+
+            // Store the file in the specified path.
+            $storage = Storage::disk('my_files')->put($path, $file);
+
+            // Check if a record with the same pendaftaran_berkas_id already exists.
             $checkExist = false;
             if ($request->pendaftaran_berkas_id) {
                 $checkExist = DB::table('tr_pendaftaran_berkas')->where('id', $request->pendaftaran_berkas_id)->exists();
             }
 
+            // Update or insert a new record in the tr_pendaftaran_berkas table.
             if ($checkExist == true) {
+                // Update the existing record.
                 $store = DB::table('tr_pendaftaran_berkas')->where('id', $request->pendaftaran_berkas_id)->update([
                     'pendaftaran_id' => $request->pendaftaran_id,
                     'berkas_id' => $request->berkas_id,
@@ -191,6 +208,7 @@ class ProposalController extends Controller
                     'created_at' => date('Y-m-d H:i:s')
                 ]);
             } else {
+                // Insert a new record.
                 $store = DB::table('tr_pendaftaran_berkas')->insert([
                     'id' => Str::uuid(),
                     'pendaftaran_id' => $request->pendaftaran_id,
@@ -200,8 +218,10 @@ class ProposalController extends Controller
                 ]);
             }
 
+            // Return the result of the update/insert operation.
             return response()->json($store);
         } catch (\Exception $e) {
+            // If an error occurs, return the error message.
             return response()->json($e->getMessage());
         }
     }
