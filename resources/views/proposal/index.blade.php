@@ -99,12 +99,23 @@
                                                     @endif
                                                 </div>
                                                 <div class="col-md-3">
-                                                    if
-                                                    <a href="javascript:void(0)"
+                                                    @if ($item->is_lock == 1)
+                                                        <span class="badge bg-info">Sudah terkunci.</span>
+                                                    @else
+                                                        @if ($item->doc_id)
+                                                        <a href="javascript:void(0)"
+                                                        onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}', '{{ $item->doc_id }}')"
+                                                        class="btn btn-sm btn-info float-end text-light"><i class="fas fa-redo-alt"></i></i>
+                                                        Ganti</a>
+                                                        @else
+                                                        <a href="javascript:void(0)"
                                                         onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')"
                                                         class="btn btn-sm btn-primary float-end"><i
                                                             class="fas fa-upload"></i>
                                                         Unggah</a>
+                                                        @endif
+                                                    @endif
+                                                    
                                                 </div>
                                             </div>
                                         </td>
@@ -341,6 +352,13 @@
 
         function unggahBerkas(idjenis, nama, id) {
             $("#pendaftaran_id").val(id);
+            $("#berkas_id").val(idjenis);
+            $("#judulUnggah").html(nama);
+            $("#modalUnggah").modal('show');
+        }
+        function gantiBerkas(idjenis, nama, id, iddoc) {
+            $("#pendaftaran_id").val(id);
+            $("#pendaftaran_berkas_id").val(iddoc);
             $("#berkas_id").val(idjenis);
             $("#judulUnggah").html(nama);
             $("#modalUnggah").modal('show');

@@ -60,7 +60,7 @@ class ProposalController extends Controller
         // Retrieve the proposal documents
         $data['berkas'] = DB::table('ms_berkas as b')
             // Select the necessary fields
-            ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_ok')
+            ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
             // Join the tr_pendaftaran_berkas table to retrieve the associated file
             ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) {
                 // Use the on and where methods to specify the join condition
@@ -71,6 +71,7 @@ class ProposalController extends Controller
             ->where('b.type', 'P')
             // Get the results
             ->get();
+            
         return view('proposal.index', $data);
     }
 
