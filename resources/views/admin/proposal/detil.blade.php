@@ -67,13 +67,18 @@
                                     <td>
                                         <div class="row">
                                             @if (count($penguji) == 0)
-                                                <div class="col-md-12">
+                                                <div class="col-md-9">
+                                                   @if (count($logbookDone) < 3)
+                                                   <span class="badge text-bg-warning text-light"> Minimal 4x bimbingan</span>
+                                                   @endif
+                                                </div>
+                                                <div class="col-md-3">
                                                     <a href="javascript:void(0)"
                                                         onclick="tambahPenguji('{{ $dataProposal->id }}', '{{ $biodata->no_induk }}')"
                                                         class="btn btn-sm btn-primary float-end  {{ count($logbookDone) < 3 ? 'disabled' : '' }}"><i
                                                             class="fa-solid fa-user-plus"></i> Tambah Penguji</a>
                                                 </div>
-                                            @else                                                
+                                            @else
                                                 @foreach ($penguji as $item)
                                                     <div class="col-md-9">
                                                         <u>{{ $item->nama }}</u>
@@ -83,7 +88,6 @@
                                                             Approval</span></div>
                                                 @endforeach
                                             @endif
-
                                         </div>
                                     </td>
                                 </tr>
@@ -128,6 +132,9 @@
                     <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <form action="{{ URL::to('admin/data/proposal/store-penguji') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="id_pendaftaran" id="id_pendaftaran" value="{{ Crypt::encrypt($dataProposal->id) }}">
                     <div class="mb-3">
                         <label for="exampleFormControlTextarea1" class="form-label">Dosen Pembimbing</label>
                         <select class="form-select form-select-lg mb-3" id="allDosenPembimbing" name="dosen_penguji"
@@ -142,8 +149,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Understood</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
+            </form>
             </div>
         </div>
     </div>
@@ -193,11 +201,10 @@
         });
     </script>
     <script>
-
         function tambahPenguji(id, nim) {
             $('#allDosenPembimbing').select2({
                 dropdownParent: $('#tambah-penguji')
-            });  
+            });
             $("#tambah-penguji").modal('show');
         }
 

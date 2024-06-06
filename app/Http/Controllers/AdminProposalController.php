@@ -9,6 +9,7 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Redirect;
 
 class AdminProposalController extends Controller
 {
@@ -187,5 +188,29 @@ class AdminProposalController extends Controller
 
             // Return the view with the data
             return view('admin.proposal.detil', $data);
+    }
+
+    public function storePenguji(Request $request)
+    {        
+        $dataDosen = (new GetDataAPISiakad)->getDataDosen($request->dosen_penguji);
+        $pendaftaran_id = Crypt::decrypt($request->id_pendaftaran);
+
+        $insertDosen = DB::table('tr_pendaftaran_dosen')->insert([
+            'id' => Str::uuid(),
+            'pendaftaran_id' => $pendaftaran_id,
+            'nip' => $request->dosen_penguji,
+            'nama' => $dataDosen->nama,
+            'tipe' => 'U', // U = Pembimbing
+            'created_at' => date('Y-m-d H:i:s'),
+            'created_by' => auth()->user()->nama,
+            'is_ok' => 1
+        ]);
+
+        if ($insertDosen) {
+            return Redirect::back()->with('success', 'Dosen penguji disimpan.');
+        } else {
+            return Redirect::back()->with('error', 'Dosen penguji gagal disimpan.');
+        }
+        
     }
 }
