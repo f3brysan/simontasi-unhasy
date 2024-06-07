@@ -33,7 +33,7 @@ class UserController extends Controller
                 'no_induk' => $user->no_induk ?? '',
                 // User's program of study
                 // 'prodi' => $user->prodi_kode ? [(new GetDataAPISiakad)->getDataProdi($user->prodi_kode)->prodi ?? ''] : [],
-                'prodi' => $user->prodi_kode ? [DB::table('ms_prodi')->where('kode_prodi', $user->prodi_kode)->first('prodi') ?? ''] : [],
+                'prodi' => $user->prodi_kode ? [DB::table('ms_prodi')->where('kode_prodi', $user->prodi_kode)->first()->prodi ?? ''] : [],
                 // User's roles
                 'roles' => $user->roles->pluck('name')->toArray(),
             ];
@@ -50,7 +50,7 @@ class UserController extends Controller
             // Add the program of study to the user's data
             $usersData[$prodiIndex]['prodi'][] = $prodi;
         }
-
+        
         // Get all programs of study        
         $prodiList = DB::table('ms_prodi')->get() ?? [];
 
