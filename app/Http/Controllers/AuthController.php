@@ -65,14 +65,15 @@ class AuthController extends Controller
                 }
                 if ($cekAuthSiakad->message == "Login succeed.") {
                     // Extract user data from the response
-                    $dataUser = $cekAuthSiakad->data;                    
+                    $dataUser = $cekAuthSiakad->data;          
+                    $prodi_kode = $dataUser->prodi_kode ?? NULL;                    
                     // Create a new user in the local system
                     $register = User::create([
                         'nama' => $dataUser->name,
                         'no_induk' => $dataUser->no_identitas,
                         'email' => $dataUser->email,
                         'password' => bcrypt($request->password),
-                        'prodi_kode' => $dataUser->prodi_kode ?? NULL,
+                        'prodi_kode' => $prodi_kode,
                     ]);
 
                     // Assign role based on user type
