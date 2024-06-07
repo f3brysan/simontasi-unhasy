@@ -55,23 +55,22 @@ class ProposalController extends Controller
             $data['penguji'] = DB::table('tr_pendaftaran_dosen')
                 ->where('pendaftaran_id', $dataProposal->id)
                 ->where('tipe', 'like', 'U%')->get();
+            // Retrieve the proposal documents
+            $data['berkas'] = DB::table('ms_berkas as b')
+                // Select the necessary fields
+                ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
+                // Join the tr_pendaftaran_berkas table to retrieve the associated file
+                ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use ($dataProposal) {
+                    // Use the on and where methods to specify the join condition
+                    $join->on('pb.berkas_id', '=', 'b.id')
+                        ->where('pb.pendaftaran_id', '=', $dataProposal->id);
+                })
+                // Filter the documents to only include those of type 'P'
+                ->where('b.type', 'P')
+                // Get the results
+                ->get();
         }
-        
-        // Retrieve the proposal documents
-        $data['berkas'] = DB::table('ms_berkas as b')
-            // Select the necessary fields
-            ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
-            // Join the tr_pendaftaran_berkas table to retrieve the associated file
-            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use ($dataProposal) {
-                // Use the on and where methods to specify the join condition
-                $join->on('pb.berkas_id', '=', 'b.id')
-                    ->where('pb.pendaftaran_id', '=', $dataProposal->id);
-            })
-            // Filter the documents to only include those of type 'P'
-            ->where('b.type', 'P')
-            // Get the results
-            ->get();
-            
+
         return view('proposal.index', $data);
     }
 
@@ -98,14 +97,14 @@ class ProposalController extends Controller
         try {
             // Get the user's student number and the data of the selected professor
             $no_induk = auth()->user()->no_induk;
-            $pendaftaran_id = $request->pendaftaran_id;            
+            $pendaftaran_id = $request->pendaftaran_id;
             $dataDosen = DB::table('ms_dosen')->where('no_identitas', $request->dosen_pembimbing)->first();
 
             // Check if the user already has a proposal
             $isExist = DB::table('tr_pendaftaran as p')
                 ->where('id', $pendaftaran_id)->exists();
             DB::beginTransaction();
-            
+
             // If the user does not have a proposal, create a new one
             if (!$isExist) {
                 $idPendaftaran = Str::uuid();
@@ -140,10 +139,10 @@ class ProposalController extends Controller
             } else {
                 // If the user already has a proposal, return a failure response
                 $updatePropsoal = DB::table('tr_pendaftaran as p')
-                ->where('id', $pendaftaran_id)->update([
-                    'title' => $request->judul,
-                    'updated_at' => date('Y-m-d H:i:s')
-                ]);
+                    ->where('id', $pendaftaran_id)->update([
+                            'title' => $request->judul,
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ]);
 
                 if ($updatePropsoal) {
                     DB::commit();
@@ -252,7 +251,7 @@ class ProposalController extends Controller
         try {
             $id = Crypt::decrypt($id);
             $getData = DB::table('tr_pendaftaran')->where('id', $id)->first();
-            
+
             if ($getData->is_ok == NULL) {
                 $update = DB::table('tr_pendaftaran')->where('id', $id)->update([
                     'is_ok' => 1

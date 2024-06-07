@@ -142,22 +142,24 @@
                     <h5>Log Book Bimbingan</h5>
                 </div>
                 <div class="card-body">
+                    @if ($dataProposal)
                     <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4"
-                        onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataProposal->id) }}', '{{ auth()->user()->no_induk }}')"><i
-                            class="fa-solid fa-file-circle-plus"></i></i> Tambah</a>
-                    <div class="col-lg-12 table table-responsive">
-                        <table class="table table-sm table-bordered table-striped" id="myTable">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">Aksi</th>
-                                    <th class="text-center">Tanggal Bimbingan</th>
-                                    <th class="text-center" style="width: 50%">Catatan</th>
-                                    <th class="text-center">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
+                    onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataProposal->id) }}', '{{ auth()->user()->no_induk }}')"><i
+                        class="fa-solid fa-file-circle-plus"></i></i> Tambah</a>
+                <div class="col-lg-12 table table-responsive">
+                    <table class="table table-sm table-bordered table-striped" id="myTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Aksi</th>
+                                <th class="text-center">Tanggal Bimbingan</th>
+                                <th class="text-center" style="width: 50%">Catatan</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                    @endif
                 </div>
             </div>
             {{-- END LOGBOOK --}}
@@ -493,7 +495,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ URL::to('log-book/get/' . Crypt::encrypt($dataProposal->id)) }}",
+                url: "{{ URL::to('log-book/get/' . Crypt::encrypt($dataProposal->id ?? '')) }}",
                 type: 'GET'
             },
             columns: [{
