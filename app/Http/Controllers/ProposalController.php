@@ -75,6 +75,17 @@ class ProposalController extends Controller
         return view('proposal.index', $data);
     }
 
+    public function getJudul($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $data = DB::table('tr_pendaftaran')->where('id', $id)->first();
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
+    }
+
     public function storeProposal(Request $request)
     {
         /**
@@ -87,13 +98,14 @@ class ProposalController extends Controller
         try {
             // Get the user's student number and the data of the selected professor
             $no_induk = auth()->user()->no_induk;
+            $pendaftaran_id = $request->pendaftaran_id;
             $dataDosen = (new GetDataAPISiakad)->getDataDosen($request->dosen_pembimbing);
 
             // Check if the user already has a proposal
             $isExist = DB::table('tr_pendaftaran as p')
-                ->where('no_induk', $no_induk)->exists();
+                ->where('id', $pendaftaran_id)->exists();
             DB::beginTransaction();
-
+            
             // If the user does not have a proposal, create a new one
             if (!$isExist) {
                 $idPendaftaran = Str::uuid();
@@ -127,7 +139,15 @@ class ProposalController extends Controller
                 }
             } else {
                 // If the user already has a proposal, return a failure response
-                return response()->json(false);
+                $updatePropsoal = DB::table('tr_pendaftaran as p')
+                ->where('id', $pendaftaran_id)->update([
+                    'title' => $request->judul,
+                ]);
+
+                if ($updatePropsoal) {
+                    DB::commit();
+                    return response()->json(true);
+                }
             }
         } catch (\Exception $e) {
             // If an error occurs during the transaction, rollback the transaction and return the error message

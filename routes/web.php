@@ -43,6 +43,7 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
 
 Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {
     Route::get('daftar/proposal', [ProposalController::class, 'index']);
+    Route::get('daftar/proposal/get-judul/{id}', [ProposalController::class, 'getJudul']);
     Route::post('daftar/proposal/store', [ProposalController::class, 'storeProposal']);
     Route::post('daftar/proposal/berkas/store', [ProposalController::class, 'storeBerkasProposal']);
 });

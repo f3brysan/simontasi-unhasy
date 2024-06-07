@@ -46,7 +46,15 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Judul</strong></td>
-                                    <td>{!! $dataProposal->title !!}</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-md-10">{!! $dataProposal->title !!}</div>
+                                            <div class="col-md-2"><a href="javascript:void(0)"
+                                                    onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                    class="btn btn-sm btn-primary float-end"><i class="fas fa-pencil"></i>
+                                                    Ubah</a></div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><strong>Dosen Pembimbing</strong></td>
@@ -80,7 +88,7 @@
                                                     <u>{{ $item->nama }}</u>
                                                     <br>NIP: {{ $item->nip }}
                                                     <br>
-                                                </div>                                              
+                                                </div>
                                             @endforeach
                                         </div>
                                     </td>
@@ -92,9 +100,9 @@
                                             <div class="row">
                                                 <div class="col-md-9">
                                                     @if ($item->file)
-                                                        <a href="{{ URL::to('/') }}/{{ $item->file }}" target="_blank" class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
+                                                        <a href="{{ URL::to('/') }}/{{ $item->file }}" target="_blank"
+                                                            class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
                                                     @else
-                                                        
                                                     @endif
                                                 </div>
                                                 <div class="col-md-3">
@@ -102,19 +110,20 @@
                                                         <span class="badge bg-info">Sudah terkunci.</span>
                                                     @else
                                                         @if ($item->doc_id)
-                                                        <a href="javascript:void(0)"
-                                                        onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}', '{{ $item->doc_id }}')"
-                                                        class="btn btn-sm btn-info float-end text-light"><i class="fas fa-redo-alt"></i></i>
-                                                        Ganti</a>
+                                                            <a href="javascript:void(0)"
+                                                                onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}', '{{ $item->doc_id }}')"
+                                                                class="btn btn-sm btn-info float-end text-light"><i
+                                                                    class="fas fa-redo-alt"></i></i>
+                                                                Ganti</a>
                                                         @else
-                                                        <a href="javascript:void(0)"
-                                                        onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')"
-                                                        class="btn btn-sm btn-primary float-end"><i
-                                                            class="fas fa-upload"></i>
-                                                        Unggah</a>
+                                                            <a href="javascript:void(0)"
+                                                                onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')"
+                                                                class="btn btn-sm btn-primary float-end"><i
+                                                                    class="fas fa-upload"></i>
+                                                                Unggah</a>
                                                         @endif
                                                     @endif
-                                                    
+
                                                 </div>
                                             </div>
                                         </td>
@@ -180,6 +189,33 @@
                                     </option>
                                 @endforeach
                             </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtnDaftarProposal">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL PROPOSAL --}}
+
+    {{-- MODAL PROPOSAL --}}
+    <div class="modal fade" id="modalEditProposal" data-coreui-backdrop="static" data-coreui-keyboard="false"
+        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Proposal</h5>
+                    <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editProposal">
+                    <input type="hidden" id="pendaftaran_id" name="pendaftaran_id">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Judul Skripsi</label>
+                            <textarea class="form-control summernote" id="judul_skripsi" rows="3" name="judul"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -258,7 +294,7 @@
     {{-- END MODAL LOG BOOK --}}
 @endsection
 @push('js')
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     {{-- Summernote --}}
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
@@ -279,7 +315,7 @@
     {{-- SWAL --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- JQ Validate --}}
-    
+
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
 
@@ -349,12 +385,55 @@
             });
         }
 
+        function gantiJudul(id) {
+            console.log(id);
+            $.get("{{ URL::to('daftar/proposal/get-judul') }}/" + id,
+                function (data) {
+                    $("#pendaftaran_id").val(data.id);
+                    $('#judul_skripsi').summernote('code', data.title);
+                    $("#modalEditProposal").modal('show');
+                });
+        }
+
+        if ($("#editProposal").length > 0) {
+            $("#editProposal").validate({
+                submitHandler: function(form) {
+                    $('#saveBtnDaftarProposal').html('Menyimpan . .');
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('daftar/proposal/store') }}",
+                        data: $('#editProposal').serializeArray(),
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data == true) {
+                                $('#editProposal').trigger("reset");
+                                $('#modalEditProposal').modal("hide");
+                                $('#saveBtnDaftarProposal').html('Simpan');
+                                iziToast.success({
+                                    title: 'Berhasil',
+                                    message: 'Proposal tersimpan.',
+                                    position: 'topRight'
+                                });
+                                location.reload();
+                            }
+                        },
+                        error: function(data) {
+                            console.log('Error', data);
+                            $('#tombol-simpan').html('Simpan');
+                        }
+                    });
+                }
+            });
+        }
+
         function unggahBerkas(idjenis, nama, id) {
             $("#pendaftaran_id").val(id);
             $("#berkas_id").val(idjenis);
             $("#judulUnggah").html(nama);
             $("#modalUnggah").modal('show');
         }
+
         function gantiBerkas(idjenis, nama, id, iddoc) {
             $("#pendaftaran_id").val(id);
             $("#pendaftaran_berkas_id").val(iddoc);
@@ -380,7 +459,7 @@
                         extension: "Mohon mengunggah dokumen berekstensi *pdf"
                     }
                 },
-                submitHandler: function(form) {                    
+                submitHandler: function(form) {
                     var actionType = $('#saveBtnUnggah').val();
                     var formData = new FormData(form);
                     $('#saveBtnUnggah').html('Menyimpan . .');
@@ -392,7 +471,7 @@
                         dataType: 'json',
                         processData: false,
                         contentType: false,
-                        success: function(data) {                           
+                        success: function(data) {
                             Swal.fire({
                                 title: "Berhasil!",
                                 text: "Berkas berhasil disimpan",
