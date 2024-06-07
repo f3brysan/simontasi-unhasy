@@ -57,4 +57,6 @@ Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen'])->group(functi
     Route::get('dosen/log-bimbingan', [LogBookController::class, 'getDosenLogBook']);
     Route::get('dosen/log-bimbingan/detil/{id}', [LogBookController::class, 'getDetilLogBookMhs']);
     Route::get('dosen/log-bimbingan/approve/{id}', [LogBookController::class, 'approveDetilLogBookMhs']);
+
+    Route::get('dosen/proposal/approval-dosen/{id}', [ProposalController::class, 'approvalProposalDosen']);
 });

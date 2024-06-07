@@ -62,10 +62,10 @@ class ProposalController extends Controller
             // Select the necessary fields
             ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
             // Join the tr_pendaftaran_berkas table to retrieve the associated file
-            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) {
+            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use ($dataProposal) {
                 // Use the on and where methods to specify the join condition
                 $join->on('pb.berkas_id', '=', 'b.id')
-                    ->where('pb.pendaftaran_id', '=', '4e47af69-fe7c-482b-a2d0-84265b334c9b');
+                    ->where('pb.pendaftaran_id', '=', $dataProposal->id);
             })
             // Filter the documents to only include those of type 'P'
             ->where('b.type', 'P')
@@ -142,6 +142,7 @@ class ProposalController extends Controller
                 $updatePropsoal = DB::table('tr_pendaftaran as p')
                 ->where('id', $pendaftaran_id)->update([
                     'title' => $request->judul,
+                    'updated_at' => date('Y-m-d H:i:s')
                 ]);
 
                 if ($updatePropsoal) {
@@ -244,6 +245,26 @@ class ProposalController extends Controller
         } catch (\Exception $e) {
             // If an error occurs, return the error message.
             return response()->json($e->getMessage());
+        }
+    }
+    public function approvalProposalDosen($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $getData = DB::table('tr_pendaftaran')->where('id', $id)->first();
+            
+            if ($getData->is_ok == NULL) {
+                $update = DB::table('tr_pendaftaran')->where('id', $id)->update([
+                    'is_ok' => 1
+                ]);
+            } else {
+                $update = DB::table('tr_pendaftaran')->where('id', $id)->update([
+                    'is_ok' => NULL
+                ]);
+            }
+            return response()->json($update);
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
     }
 }

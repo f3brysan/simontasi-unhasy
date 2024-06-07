@@ -13,6 +13,113 @@
 @section('content')
     <div class="body flex-grow-1">
         <div class="container-lg">
+            {{-- START DAFTAR PROPOSAL --}}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Pendaftaran Proposal</h5></span>
+                </div>
+                <div class="card-body">
+                    @if (empty($dataProposal))
+                        <div class="alert alert-danger text-center" role="alert">
+                            Anda belum mendaftarkan Proposal Anda.
+                        </div>
+                        <div>
+                            <a href="javascript:void(0)" class="btn btn-primary float-end"
+                                onclick="daftarProposal()">Daftar</a>
+                        </div>
+                    @endif
+
+                    @if (!empty($dataProposal))
+                        <div class="table container-fluid">
+                            <table class="table table-bordered table-hover">
+                                <tr>
+                                    <td style="width: 20%"><strong>NIM</strong></td>
+                                    <td>{{ auth()->user()->no_induk }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>NAMA</strong></td>
+                                    <td>{{ auth()->user()->nama }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Program Studi</strong></td>
+                                    <td>{{ $prodi->prodi }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Judul</strong></td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-md-10">{!! $dataProposal->title !!}</div>
+                                            @if ($dataProposal->is_ok == NULL)
+                                            <div class="col-md-2"><a href="javascript:void(0)"
+                                                onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                class="btn btn-sm btn-primary float-end"><i class="fas fa-check"></i>
+                                                Setujui</a></div>
+                                            @else
+                                            <div class="col-md-2"><a href="javascript:void(0)"
+                                                onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                class="btn btn-sm btn-warning float-end"><i class="fas fa-refresh"></i>
+                                                Batal Setujui</a></div>
+                                            @endif                                            
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Dosen Pembimbing</strong></td>
+                                    <td>
+                                        <div class="row">
+                                            @foreach ($pembimbing as $item)
+                                                <div class="col-md-9">
+                                                    <u>{{ $item->nama }}</u><br>NIP: {{ $item->nip }}
+                                                </div>
+                                                <div class="col-md-3">
+                                                    @if ($item->is_ok == 1)
+                                                        <span class="text-center badge text-bg-success text-light"><i
+                                                                class="fa-solid fa-check"></i> Disetujui</span>
+
+                                                        <p class="text-muted">{{ $item->is_ok_at }}</p>                                                   
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Dosen Penguji</strong></td>
+                                    <td>
+                                        <div class="row">
+                                            @foreach ($penguji as $item)
+                                                <div class="col-md-9">
+                                                    <u>{{ $item->nama }}</u>
+                                                    <br>NIP: {{ $item->nip }}
+                                                    <br>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </td>
+                                </tr>
+                                @foreach ($berkas as $item)
+                                    <tr>
+                                        <td><strong>{{ $item->nama }}</strong></td>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    @if ($item->file)
+                                                        <a href="{{ URL::to('/') }}/{{ $item->file }}" target="_blank"
+                                                            class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
+                                                    @else
+                                                    @endif
+                                                </div>                                                
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            {{-- END DAFTAR PROPOSAL --}}
+
             {{-- START LOGBOOK --}}
             <div class="card mb-4">
                 <div class="card-header">
@@ -183,5 +290,18 @@
                 }
             });
         });
+
+        function approveJudul(id) {
+            console.log(id); 
+            $.get("{{ URL::to('dosen/proposal/approval-dosen/') }}/" + id,
+                function (data) {
+                    iziToast.success({
+                                    title: 'Berhasil',
+                                    message: 'Data tersimpan.',
+                                    position: 'topRight'
+                                });
+                                location.reload();
+                });           
+        }
     </script>
 @endpush

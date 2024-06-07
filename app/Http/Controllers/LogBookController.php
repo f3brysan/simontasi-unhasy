@@ -28,8 +28,8 @@ class LogBookController extends Controller
                     ->addColumn('action', function ($data) {
                         $is_approve = $data->is_approve == '1' ? 'disabled' : '';
                         $btn = '<div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
-                        <button type="button" data-id="'.Crypt::encrypt($data->id).'" class="btn btn-primary edit" ' . $is_approve . '><i class="fa-solid fa-gear"></i></button>
-                        <button type="button" data-id="'.Crypt::encrypt($data->id).'" class="btn btn-danger text-light delete" ' . $is_approve . '><i class="fa-solid fa-trash-can"></i></button>                        
+                        <button type="button" data-id="' . Crypt::encrypt($data->id) . '" class="btn btn-primary edit" ' . $is_approve . '><i class="fa-solid fa-gear"></i></button>
+                        <button type="button" data-id="' . Crypt::encrypt($data->id) . '" class="btn btn-danger text-light delete" ' . $is_approve . '><i class="fa-solid fa-trash-can"></i></button>                        
                       </div>';
                         return $btn;
                     })
@@ -58,14 +58,14 @@ class LogBookController extends Controller
     public function getDetilLogBook($id)
     {
         try {
-           // Decrypt the ID parameter
-           $id = Crypt::decrypt($id);
+            // Decrypt the ID parameter
+            $id = Crypt::decrypt($id);
 
-           // Retrieve the logbook entry
-           $get = DB::table('tr_logbook')->where('id', $id)->first();
-           $get->pendaftaran_id = Crypt::encrypt($get->pendaftaran_id);
+            // Retrieve the logbook entry
+            $get = DB::table('tr_logbook')->where('id', $id)->first();
+            $get->pendaftaran_id = Crypt::encrypt($get->pendaftaran_id);
 
-           return response()->json(['message' => 'success', 'data' => $get], 200);
+            return response()->json(['message' => 'success', 'data' => $get], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -87,7 +87,7 @@ class LogBookController extends Controller
             DB::beginTransaction();
             $taskDo = 0;  // Number of tasks completed
             $mustDo = count($getPembimbing);  // Total number of tasks
-            
+
             /**
              * Insert or update the logbook records for each pembimbing
              */
@@ -106,7 +106,7 @@ class LogBookController extends Controller
                     ]);
                 } else {
                     // Update an existing logbook record
-                    DB::table('tr_logbook')->where('id', $request->idLogBook)->update([                        
+                    DB::table('tr_logbook')->where('id', $request->idLogBook)->update([
                         'pendaftaran_id' => $pendaftaran_id,
                         'nim' => $request->nimLogBook,
                         'nip' => $pembimbing->nip,
@@ -151,7 +151,7 @@ class LogBookController extends Controller
 
         $countLogBooks = DB::table("tr_logbook")
             ->where("nip", $nip)
-            ->get();            
+            ->get();
 
         foreach ($getMahasiswaLogBooks as $logBook) {
             $prodi = (new GetDataAPISiakad)->getDataProdi($logBook->prodi_kode);
@@ -165,7 +165,7 @@ class LogBookController extends Controller
                 'total_logbook' => 0
             ];
         }
-        foreach ($countLogBooks as $count) {            
+        foreach ($countLogBooks as $count) {
             if ($count->is_approve == 0) {
                 $mahasiswaLogBooks[$count->pendaftaran_id]['wait_logbook']++;
             }
@@ -225,6 +225,32 @@ class LogBookController extends Controller
             'logBooks' => $logBooks,
             'prodi' => $prodi
         ];
+
+        if (!empty($dataProposal)) {
+            $data['berkasProposal'] = DB::table('tr_pendaftaran_berkas')
+                ->where('pendaftaran_id', $dataProposal->id)->get();
+            $data['pembimbing'] = DB::table('tr_pendaftaran_dosen')
+                ->where('pendaftaran_id', $dataProposal->id)
+                ->where('tipe', 'like', 'B%')->get();
+            $data['penguji'] = DB::table('tr_pendaftaran_dosen')
+                ->where('pendaftaran_id', $dataProposal->id)
+                ->where('tipe', 'like', 'U%')->get();
+        }
+
+        // Retrieve the proposal documents
+        $data['berkas'] = DB::table('ms_berkas as b')
+            // Select the necessary fields
+            ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
+            // Join the tr_pendaftaran_berkas table to retrieve the associated file
+            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use($dataProposal) {
+                // Use the on and where methods to specify the join condition
+                $join->on('pb.berkas_id', '=', 'b.id')
+                    ->where('pb.pendaftaran_id', '=', $dataProposal->id);
+            })
+            // Filter the documents to only include those of type 'P'
+            ->where('b.type', 'P')
+            // Get the results
+            ->get();
 
         /**
          * Check if the request is an AJAX request
@@ -308,7 +334,7 @@ class LogBookController extends Controller
     }
 
     public function deleteDetilLogBookMhs($id)
-    {        
+    {
         try {
             // Decrypt the ID parameter
             $id = Crypt::decrypt($id);
@@ -322,7 +348,7 @@ class LogBookController extends Controller
 
             // Delete the logbook entry from the main table
             $get = DB::table('tr_logbook')->where('id', $id)->delete(); // Delete the logbook entry from the main table
-            
+
             // Return the status of the deletion as a JSON response
             return response()->json(['message' => 'success', 'data' => $get], 200);
         } catch (\Exception $e) {
