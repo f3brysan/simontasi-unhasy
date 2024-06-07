@@ -125,7 +125,9 @@
                                         </tr>
                                     @else
                                         <tr>
-                                            <td class="text-center">{{ $jadwal->awal }}</td>
+                                            <td class="text-center">{{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
+                                                {{ date('H:i', strtotime($jadwal->awal)) }} - {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
+                                            </td>
                                             <td class="text-center">Di {{ $jadwal->lokasi }}</td>
                                             <td class="text-center"><a href="javascript:void(0)"
                                                     class="btn btn-sm btn-primary">Edit</a></td>
