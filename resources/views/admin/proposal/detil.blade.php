@@ -50,12 +50,17 @@
                                                 </div>
                                                 <div class="col-md-3">
                                                     @if ($item->is_ok == 1)
-                                                        <span class="text-center badge text-bg-success text-light"><i
-                                                                class="fa-solid fa-check"></i> Disetujui</span>
-                                                        <p class="text-muted">{{ $item->is_ok_at }}</p>
-                                                    @else
-                                                        <span class="badge text-bg-warning text-light"> Menunggu
-                                                            Persetujuan</span>
+                                                    Disetujui Pada : {{ $item->is_ok_at }}                                                    
+                                                        <a href="javascript:void(0)"
+                                                            class="btn btn-sm btn-danger text-light float-end" onclick="unapprovePembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                                                class="fas fa-refresh"></i> Batal Setujui</a>
+                                                    @else                                                    
+                                                        <a href="javascript:void(0)"
+                                                            class="btn btn-sm btn-success float-end m-1" onclick="approvePembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                                                class="fas fa-check"></i> Setujui</a>
+                                                                <a href="javascript:void(0)"
+                                                            class="btn btn-sm btn-primary float-end m-1" onclick="ubahPembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                                                class="fas fa-pencil"></i> Ubah</a>
                                                     @endif
                                                 </div>
                                             @endforeach
@@ -126,10 +131,12 @@
                                     @else
                                         <tr>
                                             <td class="text-center">{{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
-                                                {{ date('H:i', strtotime($jadwal->awal)) }} - {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
+                                                {{ date('H:i', strtotime($jadwal->awal)) }} -
+                                                {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
                                             </td>
                                             <td class="text-center">Di {{ $jadwal->lokasi }}</td>
                                             <td class="text-center"><a href="javascript:void(0)"
+                                                    onclick="editJadwal('{{ Crypt::encrypt($dataProposal->id) }}')"
                                                     class="btn btn-sm btn-primary">Edit</a></td>
                                         </tr>
                                     @endif
@@ -202,8 +209,8 @@
     {{-- End Modal --}}
 
     <!-- Modal -->
-    <div class="modal fade" id="modalSetJadwal" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="modalSetJadwal" data-coreui-backdrop="static" data-coreui-keyboard="false"
+        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -254,7 +261,7 @@
     <link rel="stylesheet" href="//cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
     <script src="//cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
     {{-- SWAL --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>   
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function() {
@@ -274,10 +281,76 @@
                 placeholder: 'Detil catatan bimbingan',
                 tabsize: 2,
                 height: 100
-            });           
-        });        
+            });
+        });
     </script>
     <script>
+        function approvePembimbing(id) {
+            console.log(id);
+            Swal.fire({
+                    title: "Perhatian",
+                    text:  "Kunci Dosen Pembimbing?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.get("{{ URL::to('proposal/approve/') }}/" + id,
+                            function(data) {
+                                if (data == '1') {
+                                    var msg = 'disetujui';
+                                } else {
+                                    var msg = 'ditolak';
+                                }
+                                table.ajax.reload(null, false);
+                                iziToast.success({
+                                    title: 'Berhasil',
+                                    message: 'Data berhasil diperbarui.',
+                                    position: 'topRight'
+                                });
+                                location.reload();
+                            });
+                    }
+                });
+        }
+
+        function unapprovePembimbing(id) {
+            console.log(id);
+            Swal.fire({
+                    title: "Perhatian",
+                    text:  "Buka kunci Dosen Pembimbing?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.get("{{ URL::to('proposal/approve/') }}/" + id,
+                            function(data) {
+                                if (data == '1') {
+                                    var msg = 'disetujui';
+                                } else {
+                                    var msg = 'ditolak';
+                                }
+                                table.ajax.reload(null, false);
+                                iziToast.success({
+                                    title: 'Berhasil',
+                                    message: 'Data berhasil diperbarui.',
+                                    position: 'topRight'
+                                });
+                                location.reload();
+                            });
+                    }
+                });
+        }
+
+        function ubahPembimbing(id) {
+            console.log(id);
+        }
+
         function tambahPenguji(id, nim) {
             $('#allDosenPembimbing').select2({
                 dropdownParent: $('#tambah-penguji')
@@ -318,7 +391,6 @@
         }
 
         function setJadwal(id) {
-            console.log(id);
             $("#modalSetJadwal").modal('show');
         }
     </script>

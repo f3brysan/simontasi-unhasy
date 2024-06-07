@@ -168,7 +168,7 @@ class ProposalController extends Controller
         try {
             // Decrypt the encrypted ID.
             $id = Crypt::decrypt($id);
-
+            
             // Get the proposal_head with the specified ID.
             $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')
                 ->where('tipe', 'B')

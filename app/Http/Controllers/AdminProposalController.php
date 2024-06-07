@@ -31,8 +31,7 @@ class AdminProposalController extends Controller
                     <i class="fa-solid fa-gears"></i>
                     </button>
                     <ul class="dropdown-menu">
-                      <li><a href="'.URL::to('admin/data/proposal/detil/'.Crypt::encrypt($proposal['id'])).'" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" title="Lihat" class="dropdown-item btn btn-primary btn-sm edit-user m-1">Lihat Detil</a></li>
-                      <li><a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" data-nim="' . $proposal['no_induk'] . '" data-name="' . $proposal['nama'] . '" data-status="' . $proposal['is_ok'] . '" title="Setujui" class="dropdown-item approve btn btn-sm m-1">' . $approveBtn . '</a></li>                              
+                      <li><a href="'.URL::to('admin/data/proposal/detil/'.Crypt::encrypt($proposal['id'])).'" data-toggle="tooltip" data-id="' . Crypt::encrypt($proposal['id']) . '" title="Lihat" class="dropdown-item btn btn-primary btn-sm edit-user m-1">Lihat Detil</a></li>                                                 
                     </ul>
                   </div>';
                     return $btn;
