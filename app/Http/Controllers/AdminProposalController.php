@@ -60,8 +60,22 @@ class AdminProposalController extends Controller
 
     public function indexSuperAdmin()
     {
+        $getUserProdi = DB::table('tr_user_prodi')->where('user_id', auth()->user()->id)->get()->pluck('kode_prodi');
         // Get the data for proposals
-        $getData = DB::table("tr_pendaftaran as p")
+        if (auth()->user()->hasRole('pengelola')) {
+            $getData = DB::table("tr_pendaftaran as p")
+                ->join("users as u", function ($join) use ($getUserProdi) {
+                    $join->on("u.no_induk", "=", "p.no_induk")
+                        ->whereIn("u.prodi_kode", $getUserProdi);
+                })
+                ->join("tr_pendaftaran_dosen as pd", function ($join) {
+                    $join->on("pd.pendaftaran_id", "=", "p.id");
+                })
+                ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok")
+                ->get();
+        }
+        if (auth()->user()->hasRole('superadmin')) {
+            $getData = DB::table("tr_pendaftaran as p")
             ->join("users as u", function ($join) {
                 $join->on("u.no_induk", "=", "p.no_induk");
             })
@@ -70,6 +84,8 @@ class AdminProposalController extends Controller
             })
             ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok")
             ->get();
+        }
+        
         $getDataProposals = $getData->where('type', 'P');
         $getProdi = DB::table('ms_prodi')->get();
         $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')->where('tipe', 'B')->get();
@@ -185,7 +201,7 @@ class AdminProposalController extends Controller
             }
 
             if (
-                $item->prodi_kode == $mhs->prodi_kode                
+                $item->prodi_kode == $mhs->prodi_kode
                 and !in_array($item->no_identitas, $penguji)
             ) {
                 $allDosenPembimbing[$item->no_identitas] = [
@@ -223,13 +239,13 @@ class AdminProposalController extends Controller
     }
 
     public function storePembimbing(Request $request)
-    {        
-        $dataDosen = DB::table('ms_dosen')->where('no_identitas', $request->dosen_pembimbing)->first();        
+    {
+        $dataDosen = DB::table('ms_dosen')->where('no_identitas', $request->dosen_pembimbing)->first();
         $pendaftaran_id = Crypt::decrypt($request->id_pendaftaran);
 
-        $insertDosen = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $pendaftaran_id)->where('tipe', 'B')->update([                        
+        $insertDosen = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $pendaftaran_id)->where('tipe', 'B')->update([
             'nip' => $request->dosen_pembimbing,
-            'nama' => $dataDosen->nama,            
+            'nama' => $dataDosen->nama,
             'updated_at' => date('Y-m-d H:i:s'),
             'created_by' => auth()->user()->nama,
             'is_ok' => NULL,

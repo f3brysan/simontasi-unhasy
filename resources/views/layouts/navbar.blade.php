@@ -22,7 +22,7 @@
             <li class="nav-item"><a class="nav-link" href="{{ URL::to('dosen/log-bimbingan') }}">
                     <i class="fa-regular fa-rectangle-list nav-icon"></i> Log Bimbingan </a></li>
         @endrole
-        @role('superadmin')
+        @role('superadmin|pengelola')
         <li class="nav-title">Data Pendaftar</li>
             <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
                     <i class="fa-solid fa-right-to-bracket nav-icon"></i> Data Pendaftaran</a>

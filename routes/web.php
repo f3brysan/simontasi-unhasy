@@ -54,7 +54,7 @@ Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {
     Route::post('daftar/proposal/berkas/store', [ProposalController::class, 'storeBerkasProposal']);
 });
 
-Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen'])->group(function () {
+Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen|pengelola'])->group(function () {
     Route::get('log-book/get/{id}', [LogBookController::class, 'getLogBook']);
     Route::get('log-book/show-detil/{id}', [LogBookController::class, 'getDetilLogBook']);
     Route::delete('log-book/delete-detil/{id}', [LogBookController::class, 'deleteDetilLogBookMhs']);

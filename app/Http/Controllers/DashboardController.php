@@ -38,7 +38,9 @@ class DashboardController extends Controller
         if (array_intersect($useIndex, $roles)) {
             // If the user is pengelola, we do not need to display the pengelola page
             if ($user->hasRole('pengelola')) {
-
+                $getUserProdi = DB::table('tr_user_prodi')->where('user_id', auth()->user()->id)->get()->pluck('kode_prodi');                
+                $getProdi = DB::table('ms_prodi')->whereIn('kode_prodi', $getUserProdi)->get();
+                $data['prodi'] = $getProdi;
             } else {                
                 $getProdi = DB::table('ms_prodi')->get();
                 $data['prodi'] = $getProdi;
