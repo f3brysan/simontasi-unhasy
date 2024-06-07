@@ -39,8 +39,8 @@ class DashboardController extends Controller
             // If the user is pengelola, we do not need to display the pengelola page
             if ($user->hasRole('pengelola')) {
 
-            } else {
-                $getProdi = (new GetDataAPISiakad)->getDataProdi();
+            } else {                
+                $getProdi = DB::table('ms_prodi')->get();
                 $data['prodi'] = $getProdi;
             }
 

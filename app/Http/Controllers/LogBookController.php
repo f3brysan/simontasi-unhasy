@@ -153,8 +153,8 @@ class LogBookController extends Controller
             ->where("nip", $nip)
             ->get();
 
-        foreach ($getMahasiswaLogBooks as $logBook) {
-            $prodi = (new GetDataAPISiakad)->getDataProdi($logBook->prodi_kode);
+        foreach ($getMahasiswaLogBooks as $logBook) {            
+            $prodi = DB::table('ms_prodi')->where('kode_prodi', $logBook->prodi_kode)->first();
             $mahasiswaLogBooks[$logBook->id] = [
                 'id' => $logBook->id,
                 'no_induk' => $logBook->no_induk,
@@ -215,8 +215,8 @@ class LogBookController extends Controller
         // Retrieve the user data (mahasiswa) for the given proposal data
         $dataMHS = User::where('no_induk', $dataProposal->no_induk)->first();
 
-        // Retrieve the program study data for the given user data
-        $prodi = (new GetDataAPISiakad)->getDataProdi($dataMHS->prodi_kode);
+        // Retrieve the program study data for the given user data        
+        $prodi = DB::table('ms_prodi')->where('kode_prodi', $dataMHS->prodi_kode)->first();
 
         // Prepare the data for the view
         $data = [

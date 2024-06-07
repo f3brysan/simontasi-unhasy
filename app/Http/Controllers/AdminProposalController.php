@@ -71,8 +71,8 @@ class AdminProposalController extends Controller
             })
             ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok")
             ->get();
-        $getDataProposals = $getData->where('type', 'P');
-        $getProdi = (new GetDataAPISiakad)->getDataProdi();
+        $getDataProposals = $getData->where('type', 'P');        
+        $getProdi = DB::table('ms_prodi')->get();
         $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')->where('tipe', 'B')->get();
         $getDosenPenguji = DB::table('tr_pendaftaran_dosen')->where('tipe', 'U')->get();
 
@@ -134,8 +134,8 @@ class AdminProposalController extends Controller
             // Retrieve the user data associated with the proposal
             $mhs = User::where('no_induk', $dataProposal->no_induk)->first();
 
-            // Retrieve the data of the current user's program study
-            $prodi = (new GetDataAPISiakad)->getDataProdi($mhs->prodi_kode);
+            // Retrieve the data of the current user's program study            
+            $prodi = DB::table('ms_prodi')->where('kode_prodi', $mhs->prodi_kode)->first();
 
             // Prepare the data to be passed to the view
             $data = [
@@ -163,8 +163,8 @@ class AdminProposalController extends Controller
             $pembimbing = $data['pembimbing']->pluck('nip')->toArray();
             $penguji = $data['penguji']->pluck('nip')->toArray();
 
-            // Retrieve all the dosens
-            $getDosen = (new GetDataAPISiakad)->getDataDosen();
+            // Retrieve all the dosens            
+            $getDosen = DB::table('ms_dosen')->get();
 
             // Filter the dosens by the current user's program study
             $allDosenPenguji = [];
@@ -191,8 +191,8 @@ class AdminProposalController extends Controller
     }
 
     public function storePenguji(Request $request)
-    {        
-        $dataDosen = (new GetDataAPISiakad)->getDataDosen($request->dosen_penguji);
+    {                
+        $dataDosen = DB::table('ms_dosen')->where('no_identitas', $request->dosen_penguji)->first();
         $pendaftaran_id = Crypt::decrypt($request->id_pendaftaran);
 
         $insertDosen = DB::table('tr_pendaftaran_dosen')->insert([

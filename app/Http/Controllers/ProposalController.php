@@ -12,8 +12,8 @@ class ProposalController extends Controller
 {
     public function index()
     {
-        // Get list of dosen pembimbing
-        $getDosen = (new GetDataAPISiakad)->getDataDosen();
+        // Get list of dosen pembimbing        
+        $getDosen = DB::table('ms_dosen')->get();
 
         // Filter dosen pembimbing by current user's program study
         $allDosenPembimbing = [];
@@ -32,8 +32,8 @@ class ProposalController extends Controller
         $dataProposal = DB::table('tr_pendaftaran as p')
             ->where('no_induk', $no_induk)->first();
 
-        // Retrieve data of the current user's program study
-        $prodi = (new GetDataAPISiakad)->getDataProdi(auth()->user()->prodi_kode);
+        // Retrieve data of the current user's program study        
+        $prodi = DB::table('ms_prodi')->where('kode_prodi', auth()->user()->prodi_kode)->first();
 
         // Prepare data to be passed to the view        
         $data = [
@@ -98,8 +98,8 @@ class ProposalController extends Controller
         try {
             // Get the user's student number and the data of the selected professor
             $no_induk = auth()->user()->no_induk;
-            $pendaftaran_id = $request->pendaftaran_id;
-            $dataDosen = (new GetDataAPISiakad)->getDataDosen($request->dosen_pembimbing);
+            $pendaftaran_id = $request->pendaftaran_id;            
+            $dataDosen = DB::table('ms_dosen')->where('no_identitas', $request->dosen_pembimbing)->first();
 
             // Check if the user already has a proposal
             $isExist = DB::table('tr_pendaftaran as p')

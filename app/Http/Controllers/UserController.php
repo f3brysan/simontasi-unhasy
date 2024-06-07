@@ -32,7 +32,8 @@ class UserController extends Controller
                 // User's student number
                 'no_induk' => $user->no_induk ?? '',
                 // User's program of study
-                'prodi' => $user->prodi_kode ? [(new GetDataAPISiakad)->getDataProdi($user->prodi_kode)->prodi ?? ''] : [],
+                // 'prodi' => $user->prodi_kode ? [(new GetDataAPISiakad)->getDataProdi($user->prodi_kode)->prodi ?? ''] : [],
+                'prodi' => $user->prodi_kode ? [DB::table('ms_prodi')->where('kode_prodi', $user->prodi_kode)->first('prodi') ?? ''] : [],
                 // User's roles
                 'roles' => $user->roles->pluck('name')->toArray(),
             ];
@@ -42,16 +43,16 @@ class UserController extends Controller
         $prodiPengelola = DB::table('tr_user_prodi')->get();
         // Loop through each prodi_kode and user_id
         foreach ($prodiPengelola as $item) {
-            // Get the program of study name
-            $prodi = (new GetDataAPISiakad)->getDataProdi($item->kode_prodi)->prodi ?? '';
+            // Get the program of study name            
+            $prodi = DB::table('ms_prodi')->where('kode_prodi', $item->kode_prodi)->first()->prodi ?? '';
             // Get the user's index based on the user's ID
             $prodiIndex = array_search($item->user_id, array_column($usersData, 'id'));
             // Add the program of study to the user's data
             $usersData[$prodiIndex]['prodi'][] = $prodi;
         }
 
-        // Get all programs of study
-        $prodiList = (new GetDataAPISiakad)->getDataProdi() ?? [];
+        // Get all programs of study        
+        $prodiList = DB::table('ms_prodi')->get() ?? [];
 
         if ($request->ajax()) {
             // Use Datatables to display the data
