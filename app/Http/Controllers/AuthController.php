@@ -72,7 +72,8 @@ class AuthController extends Controller
                         'nama' => $dataUser->name,
                         'no_induk' => $dataUser->no_identitas,
                         'email' => $dataUser->email,
-                        'password' => bcrypt($request->password)
+                        'password' => bcrypt($request->password),
+                        'prodi_kode' => $dataUser->prodi_kode ?? NULL,
                     ]);
 
                     // Assign role based on user type
