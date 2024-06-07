@@ -3,63 +3,57 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class GetDataAPISiakad extends Controller
+class SyncDataController extends Controller
 {
-    /**
-     * Retrieves data for a specific dosen from the API.
-     *
-     * @param string|null $nip The NIP of the dosen to retrieve. If null, retrieves all dosen.
-     * @return mixed|null The data for the dosen with the specified NIP, or all dosen if $nip is null. Returns null if the API request fails.
-     */
-    public function getDataDosen($nip = null)
+    public function syncDataDosen()
     {
         try {
             $getDosen = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
                 'type' => 'dosen'
             ]);
-    
-            $result = $getDosen->data;
-            if ($nip != null) {
-                foreach ($getDosen->data as $item) {
-                    if ($item->no_identitas == $nip) {
-                        $result = (object) [
-                            'email' => $item->email,
-                            'nama' => $item->nama,
-                            'no_identitas' => $item->no_identitas,
-                            'prodi_kode' => $item->prodi_kode
-                        ];
-                    }
+
+            $newData = 0;
+            foreach ($getDosen->data as $item) {
+                $checkExist = DB::table('ms_dosen')->where('no_identitas', $item->no_identitas)->exists();
+                if (!$checkExist) {
+                    DB::table('ms_dosen')->insert([
+                        'email' => $item->email,
+                        'nama' => $item->nama,
+                        'no_identitas' => $item->no_identitas,
+                        'prodi_kode' => $item->prodi_kode
+                    ]);
+                    $newData++;
                 }
             }
-            return $result;
+            return $newData;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
 
-    public function getDataProdi($kode = null)
+    public function syncDataProdi()
     {
         try {
             $getProdi = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
                 'type' => 'prodi'
             ]);
-    
-            $result = $getProdi->data;    
-    
-            if ($kode != null) {
-                foreach ($getProdi->data as $item) {
-                    if ($item->kode_prodi == $kode) {
-                        $result = (object) [
-                            'kode_fakultas' => $item->kode_fakultas,
-                            'fakultas' => $item->fakultas,
-                            'kode_prodi' => $item->kode_prodi,
-                            'prodi' => $item->prodi
-                        ];
-                    }
+
+            $newData = 0;
+            foreach ($getProdi->data as $item) {
+                $checkExist = DB::table('ms_prodi')->where('kode_prodi', $item->kode_prodi)->exists();
+                if (!$checkExist) {
+                    DB::table('ms_prodi')->insert([
+                        'kode_fakultas' => $item->kode_fakultas,
+                        'fakultas' => $item->fakultas,
+                        'kode_prodi' => $item->kode_prodi,
+                        'prodi' => $item->prodi
+                    ]);
+                    $newData++;
                 }
             }
-            return $result;
+            return $newData;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -70,8 +64,8 @@ class GetDataAPISiakad extends Controller
         try {
             $getFakultas = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
                 'type' => 'prodi'
-            ]);            
-    
+            ]);
+
             if ($kode != null) {
                 foreach ($getFakultas->data as $item) {
                     if ($item->kode_fakultas == $kode) {

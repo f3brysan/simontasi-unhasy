@@ -4,8 +4,10 @@ use App\Http\Controllers\AdminProposalController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GetDataAPISiakad;
 use App\Http\Controllers\LogBookController;
 use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\SyncDataController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -60,3 +62,6 @@ Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen'])->group(functi
 
     Route::get('dosen/proposal/approval-dosen/{id}', [ProposalController::class, 'approvalProposalDosen']);
 });
+
+Route::get('sync/prodi', [SyncDataController::class, 'syncDataProdi']);
+Route::get('sync/dosen', [SyncDataController::class, 'syncDataDosen']);
