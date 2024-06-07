@@ -46,11 +46,11 @@ class UserController extends Controller
             // Get the program of study name            
             $prodi = DB::table('ms_prodi')->where('kode_prodi', $item->kode_prodi)->first()->prodi ?? '';
             // Get the user's index based on the user's ID
-            $prodiIndex = array_search($item->user_id, array_column($usersData, 'id'));
+            $prodiIndex = array_search($item->user_id, array_column($usersData, 'id'));            
             // Add the program of study to the user's data
             $usersData[$prodiIndex]['prodi'][] = $prodi;
         }
-        
+
         // Get all programs of study        
         $prodiList = DB::table('ms_prodi')->get() ?? [];
 
@@ -85,13 +85,13 @@ class UserController extends Controller
                             case 'mahasiswa':
                                 $type = 'bg-warning';
                                 break;
-                            
+
                             default:
                                 $type = 'bg-success';
                                 break;
                         }
                         // Add a badge for the role
-                        $result .= '<span class="badge '.$type.' m-1">' . $role . '</span>';
+                        $result .= '<span class="badge ' . $type . ' m-1">' . $role . '</span>';
                     }
                     return $result;
                 })
@@ -116,42 +116,39 @@ class UserController extends Controller
         // Return the index view with the data
         return view('user.index', compact('prodiList', 'roles'));
     }
-   
-    /**
-     * Create a new user
-     *
-     * @param stdClass $parr object containing user data
-     *
-     * @return bool true if the user is created successfully, false otherwise
-     */
+
     public function create($parr)
     {
-        // Start a new transaction
-        DB::beginTransaction();
 
         try {
-            // Create a new user
-            $user = User::create([
-                'name' => $parr->nama,
-                'no_induk' => $parr->no_induk,
-                'email' => $parr->no_induk . '@unhasy.ac.id',
-                'password' => bcrypt($parr->password)
-            ]);
+            // Start a new transaction
+            DB::beginTransaction();
 
+            // Create a new user            
+            $user = User::create([
+                'nama' => $parr['name'],
+                'no_induk' => $parr['no_induk'],
+                'email' => $parr['no_induk'] . '@unhasy.ac.id',
+                'password' => bcrypt($parr['password'])
+            ]);
+            
             // Assign roles to the user
-            foreach ($parr->roles as $role) {
+            foreach ($parr['roles'] as $role) {
                 $user->assignRole($role);
             }
 
-            // Add the user's program of study
-            foreach ($parr->prodi as $program) {
-                DB::table('tr_user_prodi')->insert([
-                    'id' => Str::uuid(),
-                    'user_id' => $user->id,
-                    'kode_prodi' => $program,
-                    'created_at' => now()
-                ]);
+            if (isset($parr['prodi'])) {
+                // Add the user's program of study
+                foreach ($parr['prodi'] as $program) {
+                    DB::table('tr_user_prodi')->insert([
+                        'id' => Str::uuid(),
+                        'user_id' => $user->id,
+                        'kode_prodi' => $program,
+                        'created_at' => now()
+                    ]);
+                }
             }
+
 
             // Commit the transaction
             DB::commit();
@@ -163,7 +160,7 @@ class UserController extends Controller
             DB::rollBack();
 
             // Return the exception message
-            return false;
+            return $exception->getMessage();
         }
     }
 
@@ -229,7 +226,8 @@ class UserController extends Controller
                 $store = $this->update($parr);
             } else { // Otherwise create a new user
                 // If creating a new user, create the user
-                $store = $this->create($parr);
+                
+                $store = $this->create($parr);                
             }
 
             // If the store operation is successful
