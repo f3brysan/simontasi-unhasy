@@ -65,8 +65,7 @@ class AuthController extends Controller
                 }
                 if ($cekAuthSiakad->message == "Login succeed.") {
                     // Extract user data from the response
-                    $dataUser = $cekAuthSiakad->data;
-
+                    $dataUser = $cekAuthSiakad->data;                    
                     // Create a new user in the local system
                     $register = User::create([
                         'nama' => $dataUser->name,
