@@ -78,10 +78,9 @@
                                             @foreach ($penguji as $item)
                                                 <div class="col-md-9">
                                                     <u>{{ $item->nama }}</u>
-                                                    <hr>NIP: {{ $item->nip }}
-                                                </div>
-                                                <div class="col-md-3"><span class="badge text-bg-warning"> Menunggu
-                                                        Approval</span></div>
+                                                    <br>NIP: {{ $item->nip }}
+                                                    <br>
+                                                </div>                                              
                                             @endforeach
                                         </div>
                                     </td>

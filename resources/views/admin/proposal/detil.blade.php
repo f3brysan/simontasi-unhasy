@@ -66,27 +66,25 @@
                                     <td><strong>Dosen Penguji</strong></td>
                                     <td>
                                         <div class="row">
-                                            @if (count($penguji) == 0)
+
+                                            @foreach ($penguji as $item)
                                                 <div class="col-md-9">
-                                                   @if (count($logbookDone) < 3)
-                                                   <span class="badge text-bg-warning text-light"> Minimal 4x bimbingan</span>
-                                                   @endif
+                                                    <u>{{ $item->nama }}</u><br>NIP: {{ $item->nip }}
+                                                    
+                                                    <br>
                                                 </div>
+                                                <div class="col-md-3">
+                                                    <a href="javascript:void(0)" class="ml-4 btn btn-sm btn-warning text-dark"><i
+                                                        class="fas fa-trash"></i> Hapus</a>
+                                                </div>
+                                            @endforeach
+                                            @if (count($penguji) < 2)
                                                 <div class="col-md-3">
                                                     <a href="javascript:void(0)"
                                                         onclick="tambahPenguji('{{ $dataProposal->id }}', '{{ $biodata->no_induk }}')"
                                                         class="btn btn-sm btn-primary float-end  {{ count($logbookDone) < 3 ? 'disabled' : '' }}"><i
                                                             class="fa-solid fa-user-plus"></i> Tambah Penguji</a>
                                                 </div>
-                                            @else
-                                                @foreach ($penguji as $item)
-                                                    <div class="col-md-9">
-                                                        <u>{{ $item->nama }}</u>
-                                                        <hr>NIP: {{ $item->nip }}
-                                                    </div>
-                                                    <div class="col-md-3"><span class="badge text-bg-warning"> Menunggu
-                                                            Approval</span></div>
-                                                @endforeach
                                             @endif
                                         </div>
                                     </td>
@@ -134,24 +132,25 @@
                 <div class="modal-body">
                     <form action="{{ URL::to('admin/data/proposal/store-penguji') }}" method="POST">
                         @csrf
-                        <input type="hidden" name="id_pendaftaran" id="id_pendaftaran" value="{{ Crypt::encrypt($dataProposal->id) }}">
-                    <div class="mb-3">
-                        <label for="exampleFormControlTextarea1" class="form-label">Dosen Pembimbing</label>
-                        <select class="form-select form-select-lg mb-3" id="allDosenPembimbing" name="dosen_penguji"
-                            style="width: 100%">
-                            <option value="">--- Pilih Dosen ---</option>
-                            @foreach ($allDosenPenguji as $item)
-                                <option value="{{ $item['nip'] }}">{{ $item['nip'] }} - {{ $item['nama'] }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                        <input type="hidden" name="id_pendaftaran" id="id_pendaftaran"
+                            value="{{ Crypt::encrypt($dataProposal->id) }}">
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Dosen Pembimbing</label>
+                            <select class="form-select form-select-lg mb-3" id="allDosenPembimbing" name="dosen_penguji"
+                                style="width: 100%">
+                                <option value="">--- Pilih Dosen ---</option>
+                                @foreach ($allDosenPenguji as $item)
+                                    <option value="{{ $item['nip'] }}">{{ $item['nip'] }} - {{ $item['nama'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
-            </form>
+                </form>
             </div>
         </div>
     </div>

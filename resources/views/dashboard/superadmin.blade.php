@@ -28,7 +28,7 @@
                                 <th>Jumlah TA/Skripsi/Tesis</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody>@if (count($prodi) > 0)                            
                             @foreach ($prodi as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -37,6 +37,7 @@
                                 <td>0</td>
                             </tr>                                
                             @endforeach
+                        @endif
                         </tbody>
                        </table>
                     </div>
