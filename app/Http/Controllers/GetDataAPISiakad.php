@@ -15,7 +15,7 @@ class GetDataAPISiakad extends Controller
     public function getDataDosen($nip = null)
     {
         try {
-            $getDosen = $cekAuthSiakad = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
+            $getDosen = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
                 'type' => 'dosen'
             ]);
     
@@ -41,7 +41,7 @@ class GetDataAPISiakad extends Controller
     public function getDataProdi($kode = null)
     {
         try {
-            $getProdi = $cekAuthSiakad = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
+            $getProdi = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
                 'type' => 'prodi'
             ]);
     
@@ -69,7 +69,7 @@ class GetDataAPISiakad extends Controller
     public function getDataFakultas($kode = null)
     {
         try {
-            $getFakultas = $cekAuthSiakad = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
+            $getFakultas = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
                 'type' => 'prodi'
             ]);            
     
