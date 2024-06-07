@@ -70,12 +70,13 @@
                                             @foreach ($penguji as $item)
                                                 <div class="col-md-9">
                                                     <u>{{ $item->nama }}</u><br>NIP: {{ $item->nip }}
-                                                    
+
                                                     <br>
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <a href="javascript:void(0)" class="ml-4 btn btn-sm btn-warning text-dark"><i
-                                                        class="fas fa-trash"></i> Hapus</a>
+                                                    <a href="javascript:void(0)"
+                                                        class="ml-4 btn btn-sm btn-warning text-dark"><i
+                                                            class="fas fa-trash"></i> Hapus</a>
                                                 </div>
                                             @endforeach
                                             @if (count($penguji) < 2)
@@ -95,6 +96,48 @@
                 </div>
             </div>
             {{-- END DAFTAR PROPOSAL --}}
+
+            {{-- START JADWAL PROPOSAL --}}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Pendaftaran Proposal</h5></span>
+                </div>
+                <div class="card-body">
+                    @if (!empty($dataProposal))
+                        <div class="table container-fluid">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Jadwal</th>
+                                        <th class="text-center">Lokasi</th>
+                                        <th class="text-center" style="width: 10%">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (empty($jadwal))
+                                        <tr>
+                                            <td class="text-center" colspan="2"><span class="badge bg-warning">Jadwal
+                                                    belum diset !</span></td>
+                                            <td class="text-center" style="width: 30%"><a href="javascript:void(0)"
+                                                    class="btn btn-sm btn-primary"
+                                                    onclick="setJadwal('{{ Crypt::encrypt($dataProposal->id) }}')">Set
+                                                    Jadwal</a></td>
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            <td class="text-center">{{ $jadwal->awal }}</td>
+                                            <td class="text-center">Di {{ $jadwal->lokasi }}</td>
+                                            <td class="text-center"><a href="javascript:void(0)"
+                                                    class="btn btn-sm btn-primary">Edit</a></td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            {{-- END JADWAL PROPOSAL --}}
 
             {{-- START LOGBOOK --}}
             <div class="card mb-4">
@@ -155,6 +198,39 @@
         </div>
     </div>
     {{-- End Modal --}}
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalSetJadwal" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Set Jadwal Sidang</h5>
+                    <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ URL::to('admin/data/proposal/store/jadwal-sidang') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="id_pendaftaran" id="id_pendaftaran"
+                            value="{{ Crypt::encrypt($dataProposal->id) }}">
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Jadwal Sidang</label>
+                            <input type="datetime-local" class="form-control" name="jadwalsidang" id="jadwalsidang">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Lokasi Sidang</label>
+                            <input type="text" class="form-control" name="lokasi" id="lokasi">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{-- End Modal --}}
 @endsection
 @push('js')
     {{-- Summernote --}}
@@ -176,7 +252,7 @@
     <link rel="stylesheet" href="//cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
     <script src="//cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
     {{-- SWAL --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>   
 
     <script>
         $(document).ready(function() {
@@ -196,8 +272,8 @@
                 placeholder: 'Detil catatan bimbingan',
                 tabsize: 2,
                 height: 100
-            });
-        });
+            });           
+        });        
     </script>
     <script>
         function tambahPenguji(id, nim) {
@@ -237,6 +313,11 @@
                     });
                 }
             });
+        }
+
+        function setJadwal(id) {
+            console.log(id);
+            $("#modalSetJadwal").modal('show');
         }
     </script>
     <script>

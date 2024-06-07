@@ -41,6 +41,8 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::get('admin/data/proposal', [AdminProposalController::class, 'index']);
     Route::get('admin/data/proposal/detil/{id}', [AdminProposalController::class, 'detil']);
     Route::post('admin/data/proposal/store-penguji', [AdminProposalController::class, 'storePenguji']);
+    
+    Route::post('admin/data/proposal/store/jadwal-sidang', [AdminProposalController::class, 'storeJadwalSidang']);
 });
 
 Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {

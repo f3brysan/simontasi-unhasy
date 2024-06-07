@@ -137,6 +137,8 @@ class AdminProposalController extends Controller
             // Retrieve the data of the current user's program study            
             $prodi = DB::table('ms_prodi')->where('kode_prodi', $mhs->prodi_kode)->first();
 
+            $jadwal = DB::table('tr_pendaftaran_jadwal')->where('id', $dataProposal->id)->first();
+
             // Prepare the data to be passed to the view
             $data = [
                 'dataProposal' => $dataProposal,
@@ -145,6 +147,7 @@ class AdminProposalController extends Controller
                 'pembimbing' => null,
                 'penguji' => null,
                 'prodi' => $prodi->prodi,
+                'jadwal' => $jadwal
             ];
 
             // Retrieve the proposal berkas, pembimbing, and penguji
@@ -185,7 +188,7 @@ class AdminProposalController extends Controller
             $data['allDosenPenguji'] = $allDosenPenguji;
 
             $data['logbookDone'] = DB::table('tr_logbook')->where('pendaftaran_id', $dataProposal->id)->where('is_approve', 1)->get();
-
+            
             // Return the view with the data
             return view('admin.proposal.detil', $data);
     }
@@ -212,5 +215,39 @@ class AdminProposalController extends Controller
             return Redirect::back()->with('error', 'Dosen penguji gagal disimpan.');
         }
         
+    }
+
+    public function storeJadwalSidang(Request $request)
+    {
+        
+        $pendaftaran_id = Crypt::decrypt($request->id_pendaftaran);
+        $checkExist = DB::table('tr_pendaftaran_jadwal')->where('id', $pendaftaran_id)->exists();        
+        $awal = date("Y/m/d H:i:s", strtotime($request->jadwalsidang));
+        $akhir = date("Y/m/d H:i:s", strtotime($request->jadwalsidang) + 60*60);
+
+        if ($checkExist) {
+            $store = DB::table('tr_pendaftaran_jadwal')->where('id', $pendaftaran_id)->update([
+                'awal' => $awal,
+                'akhir' => $akhir,
+                'lokasi' => $request->lokasi,
+                'created_at' => date('Y-m-d H:i:s'),
+                'created_by' => auth()->user()->nama,
+            ]);
+        } else {
+            $store = DB::table('tr_pendaftaran_jadwal')->insert([
+                'id' => $pendaftaran_id,
+                'awal' => $awal,
+                'akhir' => $akhir,
+                'lokasi' => $request->lokasi,
+                'created_at' => date('Y-m-d H:i:s'),
+                'created_by' => auth()->user()->nama,
+            ]);
+        }
+        
+        if ($store) {
+            return Redirect::back()->with('success', 'Jadwal sidang berhasil disimpan.');
+        } else {
+            return Redirect::back()->with('error', 'Jadwal sidang gagal disimpan.');
+        }
     }
 }
