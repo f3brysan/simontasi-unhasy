@@ -50,16 +50,19 @@
                                                 </div>
                                                 <div class="col-md-3">
                                                     @if ($item->is_ok == 1)
-                                                    Disetujui Pada : {{ $item->is_ok_at }}                                                    
+                                                        Disetujui Pada : {{ $item->is_ok_at }}
                                                         <a href="javascript:void(0)"
-                                                            class="btn btn-sm btn-danger text-light float-end" onclick="unapprovePembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                                            class="btn btn-sm btn-danger text-light float-end"
+                                                            onclick="unapprovePembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
                                                                 class="fas fa-refresh"></i> Batal Setujui</a>
-                                                    @else                                                    
+                                                    @else
                                                         <a href="javascript:void(0)"
-                                                            class="btn btn-sm btn-success float-end m-1" onclick="approvePembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                                            class="btn btn-sm btn-success float-end m-1"
+                                                            onclick="approvePembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
                                                                 class="fas fa-check"></i> Setujui</a>
-                                                                <a href="javascript:void(0)"
-                                                            class="btn btn-sm btn-primary float-end m-1" onclick="ubahPembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                                        <a href="javascript:void(0)"
+                                                            class="btn btn-sm btn-primary float-end m-1"
+                                                            onclick="ubahPembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
                                                                 class="fas fa-pencil"></i> Ubah</a>
                                                     @endif
                                                 </div>
@@ -173,8 +176,44 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="tambah-penguji" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="editPembimbing" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Tambah Penguji</h5>
+                    <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ URL::to('admin/data/proposal/store-pembimbing') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="id_pendaftaran" id="id_pendaftaran"
+                            value="{{ Crypt::encrypt($dataProposal->id) }}">
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Dosen Pembimbing</label>
+                            <select class="form-select form-select-lg mb-3" id="allDosenPembimbing" name="dosen_pembimbing"
+                                style="width: 100%">
+                                <option value="">--- Pilih Dosen ---</option>
+                                @foreach ($allDosenPembimbing as $item)
+                                    <option value="{{ $item['nip'] }}">{{ $item['nip'] }} - {{ $item['nama'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{-- End Modal --}}
+
+    <!-- Modal -->
+    <div class="modal fade" id="tambah-penguji" data-coreui-backdrop="static" data-coreui-keyboard="false"
+        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -187,8 +226,8 @@
                         <input type="hidden" name="id_pendaftaran" id="id_pendaftaran"
                             value="{{ Crypt::encrypt($dataProposal->id) }}">
                         <div class="mb-3">
-                            <label for="exampleFormControlTextarea1" class="form-label">Dosen Pembimbing</label>
-                            <select class="form-select form-select-lg mb-3" id="allDosenPembimbing" name="dosen_penguji"
+                            <label for="exampleFormControlTextarea1" class="form-label">Dosen Penguji</label>
+                            <select class="form-select form-select-lg mb-3" id="allDosenPenguji" name="dosen_penguji"
                                 style="width: 100%">
                                 <option value="">--- Pilih Dosen ---</option>
                                 @foreach ($allDosenPenguji as $item)
@@ -288,71 +327,80 @@
         function approvePembimbing(id) {
             console.log(id);
             Swal.fire({
-                    title: "Perhatian",
-                    text:  "Kunci Dosen Pembimbing?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.get("{{ URL::to('proposal/approve/') }}/" + id,
-                            function(data) {
-                                if (data == '1') {
-                                    var msg = 'disetujui';
-                                } else {
-                                    var msg = 'ditolak';
-                                }
-                                table.ajax.reload(null, false);
-                                iziToast.success({
-                                    title: 'Berhasil',
-                                    message: 'Data berhasil diperbarui.',
-                                    position: 'topRight'
-                                });
-                                location.reload();
+                title: "Perhatian",
+                text: "Kunci Dosen Pembimbing?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.get("{{ URL::to('proposal/approve/') }}/" + id,
+                        function(data) {
+                            if (data == '1') {
+                                var msg = 'disetujui';
+                            } else {
+                                var msg = 'ditolak';
+                            }
+                            table.ajax.reload(null, false);
+                            iziToast.success({
+                                title: 'Berhasil',
+                                message: 'Data berhasil diperbarui.',
+                                position: 'topRight'
                             });
-                    }
-                });
+                            location.reload();
+                        });
+                }
+            });
         }
 
         function unapprovePembimbing(id) {
             console.log(id);
             Swal.fire({
-                    title: "Perhatian",
-                    text:  "Buka kunci Dosen Pembimbing?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.get("{{ URL::to('proposal/approve/') }}/" + id,
-                            function(data) {
-                                if (data == '1') {
-                                    var msg = 'disetujui';
-                                } else {
-                                    var msg = 'ditolak';
-                                }
-                                table.ajax.reload(null, false);
-                                iziToast.success({
-                                    title: 'Berhasil',
-                                    message: 'Data berhasil diperbarui.',
-                                    position: 'topRight'
-                                });
-                                location.reload();
+                title: "Perhatian",
+                text: "Buka kunci Dosen Pembimbing?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.get("{{ URL::to('proposal/approve/') }}/" + id,
+                        function(data) {
+                            if (data == '1') {
+                                var msg = 'disetujui';
+                            } else {
+                                var msg = 'ditolak';
+                            }
+                            table.ajax.reload(null, false);
+                            iziToast.success({
+                                title: 'Berhasil',
+                                message: 'Data berhasil diperbarui.',
+                                position: 'topRight'
                             });
-                    }
-                });
+                            location.reload();
+                        });
+                }
+            });
         }
 
         function ubahPembimbing(id) {
-            console.log(id);
+            $.get("{{ URL::to('admin/data/proposal/get/dosen-pembimbing') }}/" + id,
+                function(data) {
+                    console.log(data.nip);
+                    $('#allDosenPembimbing').select2({
+                        dropdownParent: $('#editPembimbing')
+                    });
+                    $("#allDosenPembimbing").val(data.nip);
+                    $("#allDosenPembimbing").trigger('change');
+                    $("#editPembimbing").modal('show');
+                });
         }
 
         function tambahPenguji(id, nim) {
-            $('#allDosenPembimbing').select2({
+            $('#allDosenPenguji').select2({
                 dropdownParent: $('#tambah-penguji')
             });
             $("#tambah-penguji").modal('show');

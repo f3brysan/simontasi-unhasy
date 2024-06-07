@@ -31,7 +31,7 @@ Route::middleware(['auth:web'])->group(function () {
 
 Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () {
     Route::get('proposal/approve/{id}', [ProposalController::class, 'approveDosenProposal']);
-    
+
     Route::get('setting/users', [UserController::class, 'index']);
     Route::get('setting/users/{id}', [UserController::class, 'show']);
     Route::post('setting/users/store', [UserController::class, 'store']);
@@ -39,7 +39,9 @@ Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () 
     Route::get('admin/data/proposal', [AdminProposalController::class, 'index']);
     Route::get('admin/data/proposal/detil/{id}', [AdminProposalController::class, 'detil']);
     Route::post('admin/data/proposal/store-penguji', [AdminProposalController::class, 'storePenguji']);
+    Route::post('admin/data/proposal/store-pembimbing', [AdminProposalController::class, 'storePembimbing']);
     
+    Route::get('admin/data/proposal/get/dosen-pembimbing/{id}', [AdminProposalController::class, 'getDosenPembimbing']);
     Route::get('admin/data/proposal/get/jadwal-sidang/{id}', [AdminProposalController::class, 'getJadwalSidang']);
     Route::post('admin/data/proposal/store/jadwal-sidang', [AdminProposalController::class, 'storeJadwalSidang']);
 });
