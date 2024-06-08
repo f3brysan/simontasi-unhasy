@@ -327,4 +327,15 @@ class AdminProposalController extends Controller
             return Redirect::back()->with('error', 'Jadwal sidang gagal disimpan.');
         }
     }
+
+    public function getJadwalSidang($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $data = DB::table('tr_pendaftaran_jadwal')->where('id', $id)->first();
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
+    }
 }

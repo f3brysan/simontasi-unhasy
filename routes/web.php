@@ -45,6 +45,7 @@ Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () 
     Route::get('admin/data/proposal/get/dosen-pembimbing/{id}', [AdminProposalController::class, 'getDosenPembimbing']);
     Route::get('admin/data/proposal/get/jadwal-sidang/{id}', [AdminProposalController::class, 'getJadwalSidang']);
     Route::post('admin/data/proposal/store/jadwal-sidang', [AdminProposalController::class, 'storeJadwalSidang']);
+    Route::get('admin/data/proposal/get/jadwal-sidang/{id}', [AdminProposalController::class, 'getJadwalSidang']);
 });
 
 

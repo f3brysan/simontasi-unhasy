@@ -45,14 +45,17 @@
                                             </div>
                                             <div class="col-md-2">
                                                 @if ($dataProposal->is_ok == null)
-                                                    <a href="javascript:void(0)" onclick="kunciJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                    <a href="javascript:void(0)"
+                                                        onclick="kunciJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
                                                         class="m-1 btn btn-sm btn-info text-light float-end"><i
                                                             class="fas fa-lock"></i> Kunci</a>
-                                                    <a href="javascript:void(0)" onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                    <a href="javascript:void(0)"
+                                                        onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
                                                         class="m-1 btn btn-sm btn-primary float-end"><i
                                                             class="fas fa-pencil"></i> Ubah</a>
                                                 @else
-                                                    <a href="javascript:void(0)" onclick="bukaJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                    <a href="javascript:void(0)"
+                                                        onclick="bukaJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
                                                         class="m-1 btn btn-sm btn-warning float-end"><i
                                                             class="fas fa-unlock"></i> Buka Kunci</a>
                                                 @endif
@@ -126,34 +129,6 @@
             </div>
             {{-- END DAFTAR PROPOSAL --}}
 
-            {{-- MODAL PROPOSAL --}}
-            <div class="modal fade" id="modalEditProposal" data-coreui-backdrop="static" data-coreui-keyboard="false"
-                tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Proposal</h5>
-                            <button type="button" class="btn-close" data-coreui-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <form id="editProposal">
-                            <input type="hidden" id="pendaftaran_id" name="pendaftaran_id">
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="exampleFormControlTextarea1" class="form-label">Judul Skripsi</label>
-                                    <textarea class="form-control summernote" id="judul_skripsi" rows="3" name="judul"></textarea>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary" id="saveBtnDaftarProposal">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            {{-- END MODAL PROPOSAL --}}
-
             {{-- START JADWAL PROPOSAL --}}
             <div class="card mb-4">
                 <div class="card-header">
@@ -223,6 +198,33 @@
             {{-- END LOGBOOK --}}
         </div>
     </div>
+
+    {{-- MODAL PROPOSAL --}}
+    <div class="modal fade" id="modalEditProposal" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Proposal</h5>
+                    <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editProposal">
+                    <input type="hidden" id="pendaftaran_id" name="pendaftaran_id">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Judul Skripsi</label>
+                            <textarea class="form-control summernote" id="judul_skripsi" rows="3" name="judul"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtnDaftarProposal">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL PROPOSAL --}}
 
     <!-- Modal -->
     <div class="modal fade" id="editPembimbing" data-coreui-backdrop="static" data-coreui-keyboard="false"
@@ -383,36 +385,37 @@
         });
     </script>
     <script>
-        function gantiJudul(id) {            
+        function gantiJudul(id) {
             $.get("{{ URL::to('daftar/proposal/get-judul') }}/" + id,
                 function(data) {
                     $("#pendaftaran_id").val(data.id);
-                    $('#judul_skripsi').summernote('code', data.title);                    
+                    $('#judul_skripsi').summernote('code', data.title);
                     $("#modalEditProposal").modal('show');
                 });
         }
 
         function kunciJudul(id) {
             $.get("{{ URL::to('dosen/proposal/approval-dosen/') }}/" + id,
-                function (data) {
+                function(data) {
                     iziToast.success({
-                                    title: 'Berhasil',
-                                    message: 'Data tersimpan.',
-                                    position: 'topRight'
-                                });
-                                location.reload();
+                        title: 'Berhasil',
+                        message: 'Data tersimpan.',
+                        position: 'topRight'
+                    });
+                    location.reload();
                 });
         }
+
         function bukaJudul(id) {
             $.get("{{ URL::to('dosen/proposal/approval-dosen/') }}/" + id,
-                function (data) {
+                function(data) {
                     iziToast.success({
-                                    title: 'Berhasil',
-                                    message: 'Data tersimpan.',
-                                    position: 'topRight'
-                                });
-                                location.reload();
-                }); 
+                        title: 'Berhasil',
+                        message: 'Data tersimpan.',
+                        position: 'topRight'
+                    });
+                    location.reload();
+                });
         }
 
         if ($("#editProposal").length > 0) {
@@ -589,6 +592,18 @@
 
         function setJadwal(id) {
             $("#modalSetJadwal").modal('show');
+        }
+
+        function editJadwal(id) {
+            console.log(id);
+
+            $.get("{{ URL::to('admin/data/proposal/get/jadwal-sidang') }}/" + id,
+                function(data) {
+                    $("#modalSetJadwal").modal('show');
+                    $("#jadwalsidang").val(data.awal);
+                    $("#lokasi").val(data.lokasi);
+                    console.log(data);
+                });
         }
     </script>
     <script>
