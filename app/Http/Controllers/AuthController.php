@@ -51,7 +51,7 @@ class AuthController extends Controller
             );
 
             // Make a request to an external system (SIAKAD) to authenticate
-            $cekAuthSiakad = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', $parr);
+            $cekAuthSiakad = $this->requestData('http://siakad.unhasy.ac.id/api/all.php', 'POST', $parr);
 
             // If authentication against external system fails
             if (empty($cekAuthSiakad)) {
