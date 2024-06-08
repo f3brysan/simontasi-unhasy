@@ -71,6 +71,8 @@ class ProposalController extends Controller
                 ->get();
         }
 
+        $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataProposal->id)->first();
+
         return view('proposal.index', $data);
     }
 

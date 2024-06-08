@@ -13,6 +13,17 @@
 @section('content')
     <div class="body flex-grow-1">
         <div class="container-lg">
+            {{-- INFO VA --}}
+            @if (empty($statusBayar))
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="alert alert-warning" role="alert">
+                            <strong>Maaf, Anda belum lolos syarat pembayaran administrasi.</strong>
+                        </div>
+                    </div>
+                </div>
+            @endif
+            {{-- END INFO VA --}}
             {{-- START DAFTAR PROPOSAL --}}
             <div class="card mb-4">
                 <div class="card-header">
@@ -142,23 +153,28 @@
                     <h5>Log Book Bimbingan</h5>
                 </div>
                 <div class="card-body">
+                    @php
+                        $val = 3;
+                    @endphp
                     @if ($dataProposal)
-                    <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4"
-                    onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataProposal->id) }}', '{{ auth()->user()->no_induk }}')"><i
-                        class="fa-solid fa-file-circle-plus"></i></i> Tambah</a>
-                <div class="col-lg-12 table table-responsive">
-                    <table class="table table-sm table-bordered table-striped" id="myTable">
-                        <thead>
-                            <tr>
-                                <th class="text-center">Aksi</th>
-                                <th class="text-center">Tanggal Bimbingan</th>
-                                <th class="text-center" style="width: 50%">Catatan</th>
-                                <th class="text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+                        @if (11 < $val)
+                            <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4"
+                                onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataProposal->id) }}', '{{ auth()->user()->no_induk }}')"><i
+                                    class="fa-solid fa-file-circle-plus"></i></i> Tambah</a>
+                        @endif
+                        <div class="col-lg-12 table table-responsive">
+                            <table class="table table-sm table-bordered table-striped" id="myTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Aksi</th>
+                                        <th class="text-center">Tanggal Bimbingan</th>
+                                        <th class="text-center" style="width: 50%">Catatan</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -390,7 +406,7 @@
         function gantiJudul(id) {
             console.log(id);
             $.get("{{ URL::to('daftar/proposal/get-judul') }}/" + id,
-                function (data) {
+                function(data) {
                     $("#pendaftaran_id").val(data.id);
                     $('#judul_skripsi').summernote('code', data.title);
                     $("#modalEditProposal").modal('show');
