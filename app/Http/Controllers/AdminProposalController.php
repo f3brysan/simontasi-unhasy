@@ -76,16 +76,16 @@ class AdminProposalController extends Controller
         }
         if (auth()->user()->hasRole('superadmin')) {
             $getData = DB::table("tr_pendaftaran as p")
-            ->join("users as u", function ($join) {
-                $join->on("u.no_induk", "=", "p.no_induk");
-            })
-            ->join("tr_pendaftaran_dosen as pd", function ($join) {
-                $join->on("pd.pendaftaran_id", "=", "p.id");
-            })
-            ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok")
-            ->get();
+                ->join("users as u", function ($join) {
+                    $join->on("u.no_induk", "=", "p.no_induk");
+                })
+                ->join("tr_pendaftaran_dosen as pd", function ($join) {
+                    $join->on("pd.pendaftaran_id", "=", "p.id");
+                })
+                ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok")
+                ->get();
         }
-        
+
         $getDataProposals = $getData->where('type', 'P');
         $getProdi = DB::table('ms_prodi')->get();
         $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')->where('tipe', 'B')->get();
@@ -256,7 +256,6 @@ class AdminProposalController extends Controller
         } else {
             return Redirect::back()->with('error', 'Dosen pembimbing gagal disimpan.');
         }
-
     }
 
     public function storePenguji(Request $request)
@@ -281,6 +280,18 @@ class AdminProposalController extends Controller
             return Redirect::back()->with('error', 'Dosen penguji gagal disimpan.');
         }
 
+    }
+
+    public function deletePenguji(Request $request)
+    {        
+        try {
+            $id = Crypt::decrypt($request->id);
+            $delete = DB::table('tr_pendaftaran_dosen')->where('id', $id)->delete();
+            
+            return response()->json($delete);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
     }
 
     public function storeJadwalSidang(Request $request)

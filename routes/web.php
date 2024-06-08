@@ -39,6 +39,7 @@ Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () 
     Route::get('admin/data/proposal', [AdminProposalController::class, 'index']);
     Route::get('admin/data/proposal/detil/{id}', [AdminProposalController::class, 'detil']);
     Route::post('admin/data/proposal/store-penguji', [AdminProposalController::class, 'storePenguji']);
+    Route::post('admin/data/proposal/delete-penguji', [AdminProposalController::class, 'deletePenguji']);
     Route::post('admin/data/proposal/store-pembimbing', [AdminProposalController::class, 'storePembimbing']);
     
     Route::get('admin/data/proposal/get/dosen-pembimbing/{id}', [AdminProposalController::class, 'getDosenPembimbing']);

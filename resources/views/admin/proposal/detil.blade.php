@@ -82,7 +82,7 @@
                                                     <br>
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <a href="javascript:void(0)"
+                                                    <a href="javascript:void(0)" onclick="hapusPenguji('{{ Crypt::encrypt($item->id) }}')"
                                                         class="ml-4 btn btn-sm btn-warning text-dark"><i
                                                             class="fas fa-trash"></i> Hapus</a>
                                                 </div>
@@ -368,13 +368,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.get("{{ URL::to('proposal/approve/') }}/" + id,
-                        function(data) {
-                            if (data == '1') {
-                                var msg = 'disetujui';
-                            } else {
-                                var msg = 'ditolak';
-                            }
-                            table.ajax.reload(null, false);
+                        function(data) {                                                        
                             iziToast.success({
                                 title: 'Berhasil',
                                 message: 'Data berhasil diperbarui.',
@@ -404,6 +398,38 @@
                 dropdownParent: $('#tambah-penguji')
             });
             $("#tambah-penguji").modal('show');
+        }
+
+        function hapusPenguji(id){
+            console.log(id);
+            Swal.fire({
+                title: "Perhatian",
+                text: "Hapus Dosen Penguji?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('admin/data/proposal/delete-penguji') }}",
+                        data: {
+                            id: id
+                        },
+                        dataType: "json",
+                        success: function (ress) {
+                            iziToast.success({
+                                title: 'Berhasil',
+                                message: 'Dosen Penguji berhasil dihapus.',
+                                position: 'topRight'
+                            });
+                            location.reload();
+                        }
+                    });
+                }
+            });
         }
 
         if ($("#storeProposal").length > 0) {
