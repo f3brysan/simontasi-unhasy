@@ -195,7 +195,7 @@
                         $val = 3;
                     @endphp
                     @if ($dataProposal)
-                        @if (11 < $val)
+                        @if ($statusBayar)
                             <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4"
                                 onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataProposal->id) }}', '{{ auth()->user()->no_induk }}')"><i
                                     class="fa-solid fa-file-circle-plus"></i></i> Tambah</a>
