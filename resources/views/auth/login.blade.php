@@ -85,7 +85,7 @@
                         <div class="card col-md-5 text-white bg-primary py-5">
                             <div class="card-body text-center">
                                 <div>
-                                    <h2>SIMOT UNHASY</h2>
+                                    <h2>MONIT UNHASY</h2>
                                     <p>Sistem Monitoring Tugas Akhir/Skripsi/Tesis</p>                                    
                                 </div>
                             </div>
