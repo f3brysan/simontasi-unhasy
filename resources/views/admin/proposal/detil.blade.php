@@ -594,9 +594,7 @@
             $("#modalSetJadwal").modal('show');
         }
 
-        function editJadwal(id) {
-            console.log(id);
-
+        function editJadwal(id) {        
             $.get("{{ URL::to('admin/data/proposal/get/jadwal-sidang') }}/" + id,
                 function(data) {
                     $("#modalSetJadwal").modal('show');
