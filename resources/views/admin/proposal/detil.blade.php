@@ -108,7 +108,7 @@
             {{-- START JADWAL PROPOSAL --}}
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5>Pendaftaran Proposal</h5></span>
+                    <h5>Jadwal Sidang</h5></span>
                 </div>
                 <div class="card-body">
                     @if (!empty($dataProposal))
@@ -116,7 +116,7 @@
                             <table class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="text-center">Jadwal</th>
+                                        <th class="text-center">Tanggal dan Waktu</th>
                                         <th class="text-center">Lokasi</th>
                                         <th class="text-center" style="width: 10%">Aksi</th>
                                     </tr>

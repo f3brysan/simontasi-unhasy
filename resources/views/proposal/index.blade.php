@@ -147,6 +147,44 @@
             </div>
             {{-- END DAFTAR PROPOSAL --}}
 
+            {{-- START JADWAL PROPOSAL --}}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Jadwal Sidang</h5></span>
+                </div>
+                <div class="card-body">
+                    @if (!empty($dataProposal))
+                        <div class="table container-fluid">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Tanggal dan Waktu</th>
+                                        <th class="text-center">Lokasi</th>                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (empty($jadwal))
+                                        <tr>
+                                            <td class="text-center" colspan="2"><span class="badge bg-warning">Jadwal
+                                                    belum diset !</span></td>                                            
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            <td class="text-center">{{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
+                                                {{ date('H:i', strtotime($jadwal->awal)) }} -
+                                                {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
+                                            </td>
+                                            <td class="text-center">Di {{ $jadwal->lokasi }}</td>                                            
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            {{-- END JADWAL PROPOSAL --}}
+
             {{-- START LOGBOOK --}}
             <div class="card mb-4">
                 <div class="card-header">
