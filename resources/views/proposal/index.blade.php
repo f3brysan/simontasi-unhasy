@@ -159,14 +159,14 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">Tanggal dan Waktu</th>
-                                        <th class="text-center">Lokasi</th>                                        
+                                        <th class="text-center">Lokasi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if (empty($jadwal))
                                         <tr>
                                             <td class="text-center" colspan="2"><span class="badge bg-warning">Jadwal
-                                                    belum diset !</span></td>                                            
+                                                    belum diset !</span></td>
                                         </tr>
                                     @else
                                         <tr>
@@ -174,7 +174,7 @@
                                                 {{ date('H:i', strtotime($jadwal->awal)) }} -
                                                 {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
                                             </td>
-                                            <td class="text-center">Di {{ $jadwal->lokasi }}</td>                                            
+                                            <td class="text-center">Di {{ $jadwal->lokasi }}</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -237,8 +237,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlTextarea1" class="form-label">Dosen Pembimbing</label>
-                            <select class="form-select form-select-lg mb-3" id="allDosenPembimbing" name="dosen_pembimbing"
-                                style="width: 100%">
+                            <select class="form-select form-select-lg mb-3" id="allDosenPembimbing"
+                                name="dosen_pembimbing" style="width: 100%">
                                 <option value="">--- Pilih Dosen ---</option>
                                 @foreach ($allDosenPembimbing as $item)
                                     <option value="{{ $item['nip'] }}">{{ $item['nip'] }} - {{ $item['nama'] }}
@@ -374,6 +374,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
+    <script src="{{ URL::to('/') }}/js/summernote-ext-rtl.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -383,11 +384,21 @@
                 }
             });
 
-            $('.summernote').summernote({
-                placeholder: 'Judul Skripsi Anda',
-                tabsize: 2,
-                height: 100
-            });
+            var options = {
+                height: 300,
+                placeholder: 'Start typing your text...',
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['ltr', 'rtl']],
+                    ['insert', ['link', 'picture', 'video', 'hr']],
+                    ['view', ['fullscreen', 'codeview']]
+                ]
+            };
+
+            $('.summernote').summernote(options);
 
             $('#catatanLogBook').summernote({
                 placeholder: 'Detil catatan bimbingan',
@@ -446,7 +457,7 @@
             $.get("{{ URL::to('daftar/proposal/get-judul') }}/" + id,
                 function(data) {
                     $("#pendaftaran_id").val(data.id);
-                    $('#judul_skripsi').summernote('code', data.title);
+                    $('#judul_skripsi').summernote('code', data.title);                    
                     $("#modalEditProposal").modal('show');
                 });
         }
