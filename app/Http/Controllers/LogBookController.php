@@ -183,7 +183,7 @@ class LogBookController extends Controller
                     return $data['title'];
                 })
                 ->addColumn('type', function ($data) {
-                    return $data['type'] == 'P' ? 'Proposal' : 'TA/SKRIPSI/TESIS';
+                    return $data['type'] == 'P' ? 'Proposal' : 'TA/Skripsi/Tesis';
                 })
                 ->addColumn('total_logbook', function ($data) {
                     $status = '<span class="badge bg-warning text-dark">' . $data['wait_logbook'] . ' Menunggu Approval</span>';

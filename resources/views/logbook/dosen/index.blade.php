@@ -19,6 +19,16 @@
                     <h5>Data Mahasiswa Bimbingan</h5>
                 </div>
                 <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label for="">Jenis Seminar</label>
+                            <select class="form-control" id="jenisSeminar">
+                                <option value="">Semua Seminar</option>                            
+                                <option value="Proposal">Proposal</option>                            
+                                <option value="TA/Skripsi/Tesis">TA/Skripsi/Tesis</option>                            
+                            </select>
+                        </div>
+                    </div>                
                     <div class="col-lg-12 table table-responsive">
                         <table class="table table-sm table-bordered table-striped" id="myTable">
                             <thead>
@@ -153,6 +163,15 @@
                 className: 'text-center',
                 targets: [0, 1, 3, 5, 6]
             }, ],
+        });
+
+        $("#jenisSeminar").change(function () {     
+            var id = $(this).val();
+                // console.log(id);
+                table.column(5)
+                    .search($(this).val())
+                    .draw()
+
         });
 
         function addKegiatanLogBook(id, nim) {
