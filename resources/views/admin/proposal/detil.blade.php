@@ -38,7 +38,27 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Judul</strong></td>
-                                    <td>{!! $dataProposal->title !!}</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                {!! $dataProposal->title !!}
+                                            </div>
+                                            <div class="col-md-2">
+                                                @if ($dataProposal->is_ok == null)
+                                                    <a href="javascript:void(0)"
+                                                        class="m-1 btn btn-sm btn-info text-light float-end"><i
+                                                            class="fas fa-lock"></i> Kunci</a>
+                                                    <a href="javascript:void(0)" onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                        class="m-1 btn btn-sm btn-primary float-end"><i
+                                                            class="fas fa-pencil"></i> Ubah</a>
+                                                @else
+                                                    <a href="javascript:void(0)"
+                                                        class="m-1 btn btn-sm btn-warning float-end"><i
+                                                            class="fas fa-unlock"></i> Buka Kunci</a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><strong>Dosen Pembimbing</strong></td>
@@ -82,7 +102,8 @@
                                                     <br>
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <a href="javascript:void(0)" onclick="hapusPenguji('{{ Crypt::encrypt($item->id) }}')"
+                                                    <a href="javascript:void(0)"
+                                                        onclick="hapusPenguji('{{ Crypt::encrypt($item->id) }}')"
                                                         class="ml-4 btn btn-sm btn-warning text-dark"><i
                                                             class="fas fa-trash"></i> Hapus</a>
                                                 </div>
@@ -104,6 +125,34 @@
                 </div>
             </div>
             {{-- END DAFTAR PROPOSAL --}}
+
+            {{-- MODAL PROPOSAL --}}
+            <div class="modal fade" id="modalEditProposal" data-coreui-backdrop="static" data-coreui-keyboard="false"
+                tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Proposal</h5>
+                            <button type="button" class="btn-close" data-coreui-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <form id="editProposal">
+                            <input type="hidden" id="pendaftaran_id" name="pendaftaran_id">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="exampleFormControlTextarea1" class="form-label">Judul Skripsi</label>
+                                    <textarea class="form-control summernote" id="judul_skripsi" rows="3" name="judul"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-primary" id="saveBtnDaftarProposal">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {{-- END MODAL PROPOSAL --}}
 
             {{-- START JADWAL PROPOSAL --}}
             <div class="card mb-4">
@@ -176,8 +225,8 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="editPembimbing" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="editPembimbing" data-coreui-backdrop="static" data-coreui-keyboard="false"
+        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -191,8 +240,8 @@
                             value="{{ Crypt::encrypt($dataProposal->id) }}">
                         <div class="mb-3">
                             <label for="exampleFormControlTextarea1" class="form-label">Dosen Pembimbing</label>
-                            <select class="form-select form-select-lg mb-3" id="allDosenPembimbing" name="dosen_pembimbing"
-                                style="width: 100%">
+                            <select class="form-select form-select-lg mb-3" id="allDosenPembimbing"
+                                name="dosen_pembimbing" style="width: 100%">
                                 <option value="">--- Pilih Dosen ---</option>
                                 @foreach ($allDosenPembimbing as $item)
                                     <option value="{{ $item['nip'] }}">{{ $item['nip'] }} - {{ $item['nama'] }}
@@ -310,11 +359,21 @@
                 }
             });
 
-            $('.summernote').summernote({
-                placeholder: 'Judul Skripsi Anda',
-                tabsize: 2,
-                height: 100
-            });
+            var options = {
+                height: 300,
+                placeholder: 'Judul roposal Anda',
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['ltr', 'rtl']],
+                    ['insert', ['link', 'picture', 'video', 'hr']],
+                    ['view', ['fullscreen', 'codeview']]
+                ]
+            };
+
+            $('.summernote').summernote(options);
 
             $('#catatanLogBook').summernote({
                 placeholder: 'Detil catatan bimbingan',
@@ -324,6 +383,48 @@
         });
     </script>
     <script>
+        function gantiJudul(id) {
+            console.log(id);
+            $.get("{{ URL::to('daftar/proposal/get-judul') }}/" + id,
+                function(data) {
+                    $("#pendaftaran_id").val(data.id);
+                    $('#judul_skripsi').summernote('code', data.title);                    
+                    $("#modalEditProposal").modal('show');
+                });
+        }
+
+        if ($("#editProposal").length > 0) {
+            $("#editProposal").validate({
+                submitHandler: function(form) {
+                    $('#saveBtnDaftarProposal').html('Menyimpan . .');
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('daftar/proposal/store') }}",
+                        data: $('#editProposal').serializeArray(),
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data == true) {
+                                $('#editProposal').trigger("reset");
+                                $('#modalEditProposal').modal("hide");
+                                $('#saveBtnDaftarProposal').html('Simpan');
+                                iziToast.success({
+                                    title: 'Berhasil',
+                                    message: 'Proposal tersimpan.',
+                                    position: 'topRight'
+                                });
+                                location.reload();
+                            }
+                        },
+                        error: function(data) {
+                            console.log('Error', data);
+                            $('#tombol-simpan').html('Simpan');
+                        }
+                    });
+                }
+            });
+        }
+
         function approvePembimbing(id) {
             console.log(id);
             Swal.fire({
@@ -368,7 +469,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.get("{{ URL::to('proposal/approve/') }}/" + id,
-                        function(data) {                                                        
+                        function(data) {
                             iziToast.success({
                                 title: 'Berhasil',
                                 message: 'Data berhasil diperbarui.',
@@ -400,7 +501,7 @@
             $("#tambah-penguji").modal('show');
         }
 
-        function hapusPenguji(id){
+        function hapusPenguji(id) {
             console.log(id);
             Swal.fire({
                 title: "Perhatian",
@@ -419,7 +520,7 @@
                             id: id
                         },
                         dataType: "json",
-                        success: function (ress) {
+                        success: function(ress) {
                             iziToast.success({
                                 title: 'Berhasil',
                                 message: 'Dosen Penguji berhasil dihapus.',

@@ -26,7 +26,7 @@ Route::post('login', [AuthController::class, 'auth']);
 Route::post('logout', [AuthController::class, 'logout']);
 
 Route::middleware(['auth:web'])->group(function () {
-    Route::get('/', [DashboardController::class, 'index']);
+    Route::get('/', [DashboardController::class, 'index']);    
 });
 
 Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () {
@@ -48,10 +48,10 @@ Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () 
 });
 
 
-Route::middleware(['auth:web', 'role:mahasiswa'])->group(function () {
-    Route::get('daftar/proposal', [ProposalController::class, 'index']);
-    Route::get('daftar/proposal/get-judul/{id}', [ProposalController::class, 'getJudul']);
+Route::middleware(['auth:web', 'role:mahasiswa|superadmin|pengelola'])->group(function () {
+    Route::get('daftar/proposal', [ProposalController::class, 'index']);    
     Route::post('daftar/proposal/store', [ProposalController::class, 'storeProposal']);
+    Route::get('daftar/proposal/get-judul/{id}', [ProposalController::class, 'getJudul']);
     Route::post('daftar/proposal/berkas/store', [ProposalController::class, 'storeBerkasProposal']);
 });
 

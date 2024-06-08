@@ -386,7 +386,7 @@
 
             var options = {
                 height: 300,
-                placeholder: 'Start typing your text...',
+                placeholder: 'Judul roposal Anda',
                 toolbar: [
                     ['style', ['bold', 'italic', 'underline', 'clear']],
                     ['fontsize', ['fontsize']],
