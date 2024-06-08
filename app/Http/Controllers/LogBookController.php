@@ -222,12 +222,15 @@ class LogBookController extends Controller
         // Retrieve the program study data for the given user data        
         $prodi = DB::table('ms_prodi')->where('kode_prodi', $dataMHS->prodi_kode)->first();
 
+        $jadwal = DB::table('tr_pendaftaran_jadwal')->where('id', $dataProposal->id)->first();
+
         // Prepare the data for the view
         $data = [
             'dataProposal' => $dataProposal,
             'dataMHS' => $dataMHS,
             'logBooks' => $logBooks,
-            'prodi' => $prodi
+            'prodi' => $prodi,
+            'jadwal' => $jadwal
         ];
 
         if (!empty($dataProposal)) {
