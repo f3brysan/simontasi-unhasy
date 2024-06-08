@@ -60,10 +60,12 @@
                                     <td>
                                         <div class="row">
                                             <div class="col-md-10">{!! $dataProposal->title !!}</div>
+                                            @if ($dataProposal->is_ok == NULL)
                                             <div class="col-md-2"><a href="javascript:void(0)"
-                                                    onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                    class="btn btn-sm btn-primary float-end"><i class="fas fa-pencil"></i>
-                                                    Ubah</a></div>
+                                                onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                class="btn btn-sm btn-primary float-end"><i class="fas fa-pencil"></i>
+                                                Ubah</a></div>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

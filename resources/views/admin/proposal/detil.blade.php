@@ -45,14 +45,14 @@
                                             </div>
                                             <div class="col-md-2">
                                                 @if ($dataProposal->is_ok == null)
-                                                    <a href="javascript:void(0)"
+                                                    <a href="javascript:void(0)" onclick="kunciJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
                                                         class="m-1 btn btn-sm btn-info text-light float-end"><i
                                                             class="fas fa-lock"></i> Kunci</a>
                                                     <a href="javascript:void(0)" onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
                                                         class="m-1 btn btn-sm btn-primary float-end"><i
                                                             class="fas fa-pencil"></i> Ubah</a>
                                                 @else
-                                                    <a href="javascript:void(0)"
+                                                    <a href="javascript:void(0)" onclick="bukaJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
                                                         class="m-1 btn btn-sm btn-warning float-end"><i
                                                             class="fas fa-unlock"></i> Buka Kunci</a>
                                                 @endif
@@ -383,14 +383,36 @@
         });
     </script>
     <script>
-        function gantiJudul(id) {
-            console.log(id);
+        function gantiJudul(id) {            
             $.get("{{ URL::to('daftar/proposal/get-judul') }}/" + id,
                 function(data) {
                     $("#pendaftaran_id").val(data.id);
                     $('#judul_skripsi').summernote('code', data.title);                    
                     $("#modalEditProposal").modal('show');
                 });
+        }
+
+        function kunciJudul(id) {
+            $.get("{{ URL::to('dosen/proposal/approval-dosen/') }}/" + id,
+                function (data) {
+                    iziToast.success({
+                                    title: 'Berhasil',
+                                    message: 'Data tersimpan.',
+                                    position: 'topRight'
+                                });
+                                location.reload();
+                });
+        }
+        function bukaJudul(id) {
+            $.get("{{ URL::to('dosen/proposal/approval-dosen/') }}/" + id,
+                function (data) {
+                    iziToast.success({
+                                    title: 'Berhasil',
+                                    message: 'Data tersimpan.',
+                                    position: 'topRight'
+                                });
+                                location.reload();
+                }); 
         }
 
         if ($("#editProposal").length > 0) {
