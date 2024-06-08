@@ -28,6 +28,7 @@
                                     <th class="text-center">Nama</th>
                                     <th class="text-center">Prodi</th>
                                     <th class="text-center" style="width: 30%">Judul</th>
+                                    <th class="text-center">Jenis Seminar</th>
                                     <th class="text-center">Total<br>LogBook</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
@@ -131,6 +132,10 @@
                     name: 'title'
                 },
                 {
+                    data: 'type',
+                    name: 'type'
+                },
+                {
                     data: 'total_logbook',
                     name: 'total_logbook'
                 },
@@ -187,15 +192,6 @@
                     });
                 }
             });
-        }
-        $.ajax({
-            type: "method",
-            url: "url",
-            data: "data",
-            dataType: "dataType",
-            success: function (response) {
-                
-            }
-        });
+        }        
     </script>
 @endpush

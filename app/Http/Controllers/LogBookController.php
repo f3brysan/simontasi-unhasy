@@ -148,7 +148,7 @@ class LogBookController extends Controller
             ->select("p.*", "u.nama", "u.prodi_kode")
             ->where("pd.nip", $nip)
             ->get();
-
+            
         $countLogBooks = DB::table("tr_logbook")
             ->where("nip", $nip)
             ->get();
@@ -160,6 +160,7 @@ class LogBookController extends Controller
                 'no_induk' => $logBook->no_induk,
                 'nama' => $logBook->nama,
                 'title' => $logBook->title,
+                'type' => $logBook->type,
                 'prodi' => $prodi->prodi,
                 'wait_logbook' => 0,
                 'total_logbook' => 0
@@ -181,6 +182,9 @@ class LogBookController extends Controller
                 ->addColumn('title', function ($data) {
                     return $data['title'];
                 })
+                ->addColumn('type', function ($data) {
+                    return $data['type'] == 'P' ? 'Proposal' : 'TA/SKRIPSI/TESIS';
+                })
                 ->addColumn('total_logbook', function ($data) {
                     $status = '<span class="badge bg-warning text-dark">' . $data['wait_logbook'] . ' Menunggu Approval</span>';
                     $status .= '/';
@@ -188,7 +192,7 @@ class LogBookController extends Controller
                     return $status;
                 })
                 // Make the columns raw so that HTML can be rendered
-                ->rawColumns(['action', 'title', 'total_logbook'])
+                ->rawColumns(['action', 'title', 'total_logbook', 'type'])
                 // Add an index column
                 ->addIndexColumn()
                 // Return the Datatables object
