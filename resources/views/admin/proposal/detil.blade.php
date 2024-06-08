@@ -601,8 +601,7 @@
                 function(data) {
                     $("#modalSetJadwal").modal('show');
                     $("#jadwalsidang").val(data.awal);
-                    $("#lokasi").val(data.lokasi);
-                    console.log(data);
+                    $("#lokasi").val(data.lokasi);                    
                 });
         }
     </script>
