@@ -16,7 +16,7 @@ class AdminProposalController extends Controller
     public function index(Request $request)
     {
         // Get data for the datatable of the proposal data
-        $data = $this->indexSuperAdmin();
+        $data = $this->getAllDataProposal();
         $proposalData = $data['getDataProposals'];
 
         // If the request is an AJAX request, return a datatable of the proposal data
@@ -58,7 +58,7 @@ class AdminProposalController extends Controller
         return view('admin.proposal.index', $data);
     }
 
-    public function indexSuperAdmin()
+    public function getAllDataProposal()
     {
         $getUserProdi = DB::table('tr_user_prodi')->where('user_id', auth()->user()->id)->get()->pluck('kode_prodi');
         // Get the data for proposals
