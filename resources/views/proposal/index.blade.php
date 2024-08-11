@@ -60,11 +60,12 @@
                                     <td>
                                         <div class="row">
                                             <div class="col-md-10">{!! $dataProposal->title !!}</div>
-                                            @if ($dataProposal->is_ok == NULL)
-                                            <div class="col-md-2"><a href="javascript:void(0)"
-                                                onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                class="btn btn-sm btn-primary float-end"><i class="fas fa-pencil"></i>
-                                                Ubah</a></div>
+                                            @if ($dataProposal->is_ok == null)
+                                                <div class="col-md-2"><a href="javascript:void(0)"
+                                                        onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                        class="btn btn-sm btn-primary float-end"><i
+                                                            class="fas fa-pencil"></i>
+                                                        Ubah</a></div>
                                             @endif
                                         </div>
                                     </td>
@@ -182,6 +183,18 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="table container-fluid">
+                            <table class="table table-bordered table-hover">
+                                <tr>
+                                    <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
+                                    <td class="text-center">
+                                        @if (empty($statusProposal))
+                                            <span class="badge bg-warning text-dark">Hasil belum diinput.</span>
+                                        @endif                                                                                
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -269,7 +282,7 @@
                     <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="editProposal">
-                    <input type="hidden" id="pendaftaran_id" name="pendaftaran_id">
+                    <input type="hidden" id="pendaftaran_id_edit" name="pendaftaran_id_edit">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="exampleFormControlTextarea1" class="form-label">Judul Skripsi</label>
@@ -458,8 +471,8 @@
             console.log(id);
             $.get("{{ URL::to('daftar/proposal/get-judul') }}/" + id,
                 function(data) {
-                    $("#pendaftaran_id").val(data.id);
-                    $('#judul_skripsi').summernote('code', data.title);                    
+                    $("#pendaftaran_id_edit").val(data.id);
+                    $('#judul_skripsi').summernote('code', data.title);
                     $("#modalEditProposal").modal('show');
                 });
         }
@@ -497,6 +510,8 @@
         }
 
         function unggahBerkas(idjenis, nama, id) {
+            console.log(id);
+
             $("#pendaftaran_id").val(id);
             $("#berkas_id").val(idjenis);
             $("#judulUnggah").html(nama);
