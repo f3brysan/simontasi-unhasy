@@ -57,39 +57,51 @@ class AdminProposalController extends Controller
 
         return view('admin.proposal.index', $data);
     }
-
+    
     public function getAllDataProposal()
     {
+        // Get the program code for the user
         $getUserProdi = DB::table('tr_user_prodi')->where('user_id', auth()->user()->id)->get()->pluck('kode_prodi');
-        // Get the data for proposals
+
+        // Get the data for proposals based on the user's role
         if (auth()->user()->hasRole('pengelola')) {
+            // Get the data for proposals with the role of 'pengelola'
             $getData = DB::table("tr_pendaftaran as p")
                 ->join("users as u", function ($join) use ($getUserProdi) {
+                    // Join the 'users' table with the 'tr_pendaftaran' table
                     $join->on("u.no_induk", "=", "p.no_induk")
                         ->whereIn("u.prodi_kode", $getUserProdi);
                 })
-                ->join("tr_pendaftaran_dosen as pd", function ($join) {
-                    $join->on("pd.pendaftaran_id", "=", "p.id");
+                ->leftjoin("tr_pendaftaran_dosen as pd", function ($join) {
+                    // Join the 'tr_pendaftaran_dosen' table with the 'tr_pendaftaran' table
+                    $join->on("pd.pendaftaran_id", "=", "p.id")
+                    ->where("pd.tipe", "B");
                 })
-                ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok")
+                ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok as dosen_ok")
                 ->get();
         }
         if (auth()->user()->hasRole('superadmin')) {
+            // Get the data for proposals with the role of 'superadmin'
             $getData = DB::table("tr_pendaftaran as p")
                 ->join("users as u", function ($join) {
+                    // Join the 'users' table with the 'tr_pendaftaran' table
                     $join->on("u.no_induk", "=", "p.no_induk");
                 })
-                ->join("tr_pendaftaran_dosen as pd", function ($join) {
-                    $join->on("pd.pendaftaran_id", "=", "p.id");
+                ->leftjoin("tr_pendaftaran_dosen as pd", function ($join) {
+                    // Join the 'tr_pendaftaran_dosen' table with the 'tr_pendaftaran' table
+                    $join->on("pd.pendaftaran_id", "=", "p.id")
+                    ->where("pd.tipe", "B");
                 })
-                ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok")
+                ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok as dosen_ok")
                 ->get();
         }
 
+        // Filter the data for proposals
         $getDataProposals = $getData->where('type', 'P');
+
+        // Get the program data and supervisor data
         $getProdi = DB::table('ms_prodi')->get();
         $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')->where('tipe', 'B')->get();
-        $getDosenPenguji = DB::table('tr_pendaftaran_dosen')->where('tipe', 'U')->get();
 
         // Prepare the data for proposals
         $resultDataProposals = [];
@@ -283,11 +295,11 @@ class AdminProposalController extends Controller
     }
 
     public function deletePenguji(Request $request)
-    {        
+    {
         try {
             $id = Crypt::decrypt($request->id);
             $delete = DB::table('tr_pendaftaran_dosen')->where('id', $id)->delete();
-            
+
             return response()->json($delete);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
