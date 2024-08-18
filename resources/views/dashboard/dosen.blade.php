@@ -25,6 +25,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-12">
+                                    <h6>Kalender Kegiatan</h6>
                                     <div id='calendar'></div>
                                 </div>
 
