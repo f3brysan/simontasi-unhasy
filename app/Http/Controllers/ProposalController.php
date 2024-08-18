@@ -29,8 +29,12 @@ class ProposalController extends Controller
 
         // Get proposal data
         $no_induk = auth()->user()->no_induk;
-        $dataProposal = DB::table('tr_pendaftaran as p')
-            ->where('no_induk', $no_induk)->first();
+        $dataProposal = DB::table('tr_pendaftaran as tp')
+            ->select('tp.*')
+            ->leftJoin('tr_pendaftaran_status as tps', 'tps.pendaftaran_id', '=', 'tp.id')
+            ->where('tp.no_induk', $no_induk)
+            ->where('tps.status', '!=', '0')
+            ->first();
 
         // Retrieve data of the current user's program study        
         $prodi = DB::table('ms_prodi')->where('kode_prodi', auth()->user()->prodi_kode)->first();
@@ -83,12 +87,11 @@ class ProposalController extends Controller
                 ->where('b.type', 'PH')
                 // Get the results
                 ->get();
+                
+            $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataProposal->id)->first();
+            $data['jadwal'] = DB::table('tr_pendaftaran_jadwal')->where('id', $dataProposal->id)->first();
+            $data['statusProposal'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataProposal->id)->first();
         }
-
-        $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataProposal->id)->first();
-        $data['jadwal'] = DB::table('tr_pendaftaran_jadwal')->where('id', $dataProposal->id)->first();
-
-        $data['statusProposal'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataProposal->id)->first();        
 
         return view('proposal.index', $data);
     }
@@ -187,7 +190,7 @@ class ProposalController extends Controller
         try {
             // Decrypt the encrypted ID.
             $id = Crypt::decrypt($id);
-            
+
             // Get the proposal_head with the specified ID.
             $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')
                 ->where('tipe', 'B')

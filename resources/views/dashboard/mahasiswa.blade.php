@@ -23,17 +23,18 @@
                             </div>
                             <div>
                                 <div class="fs-6 fw-semibold text-primary">Sidang Proposal</div>
-                                @if ($getProposal)
-                                <p class="text-info">Anda telah mendaftar Sidang Proposal</p>
-                                <p class="text-primary">{!! $getProposal->title !!}</p>
-                                @else                                    
-                                <p class="text-info">Anda Belum mendaftar Sidang Proposal</p>
+                                @if (isset($getProposal))
+                                    <p class="text-info">Anda telah mendaftar Sidang Proposal</p>
+                                    <p class="text-primary">{!! $getProposal->title !!}</p>
+                                @else
+                                    <p class="text-info">Anda Belum mendaftar Sidang Proposal</p>
                                 @endif
                             </div>
                         </div>
                         <div class="card-footer px-3 py-2"><a
                                 class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
-                                href="{{ URL::to('daftar/proposal') }}"><span class="small fw-semibold text-info">{{ $getProposal ? 'Lihat Disini' : 'Daftar Disini' }}</span>
+                                href="{{ URL::to('daftar/proposal') }}"><span
+                                    class="small fw-semibold text-info">{{ isset($getProposal) ? 'Lihat Disini' : 'Daftar Disini' }}</span>
                                 <span class="fa fa-chevron-right"></span></a></div>
                     </div>
                 </div>

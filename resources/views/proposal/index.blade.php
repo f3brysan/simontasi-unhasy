@@ -151,6 +151,7 @@
             {{-- END DAFTAR PROPOSAL --}}
 
             {{-- START JADWAL PROPOSAL --}}
+            @if ($dataProposal)
             <div class="card mb-4">
                 <div class="card-header">
                     <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
@@ -195,6 +196,7 @@
                     @endif
                 </div>
             </div>
+            @endif
             {{-- END JADWAL PROPOSAL --}}
 
             {{-- START HASIL PROPOSAL --}}
@@ -265,6 +267,7 @@
             {{-- END HASIL PROPOSAL --}}
 
             {{-- START LOGBOOK --}}
+            @if ($dataProposal)
             <div class="card mb-4">
                 <div class="card-header">
                     <h5>Log Book Bimbingan</h5>
@@ -272,8 +275,7 @@
                 <div class="card-body">
                     @php
                         $val = 3;
-                    @endphp
-                    @if ($dataProposal)
+                    @endphp                    
                         @if ($statusBayar)
                             <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4"
                                 onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataProposal->id) }}', '{{ auth()->user()->no_induk }}')"><i
@@ -291,10 +293,10 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
-                        </div>
-                    @endif
+                        </div>                    
                 </div>
             </div>
+            @endif
             {{-- END LOGBOOK --}}
         </div>
     </div>
