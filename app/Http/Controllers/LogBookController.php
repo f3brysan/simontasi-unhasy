@@ -148,13 +148,13 @@ class LogBookController extends Controller
             ->select("p.*", "u.nama", "u.prodi_kode")
             ->where("pd.nip", $nip)
             ->get();
-            
+
         $countLogBooks = DB::table("tr_logbook")
             ->where("nip", $nip)
             ->get();
 
         $mahasiswaLogBooks = [];
-        foreach ($getMahasiswaLogBooks as $logBook) {            
+        foreach ($getMahasiswaLogBooks as $logBook) {
             $prodi = DB::table('ms_prodi')->where('kode_prodi', $logBook->prodi_kode)->first();
             $mahasiswaLogBooks[$logBook->id] = [
                 'id' => $logBook->id,
@@ -167,7 +167,7 @@ class LogBookController extends Controller
                 'total_logbook' => 0
             ];
         }
-        
+
         foreach ($countLogBooks as $count) {
             if ($count->is_approve == 0) {
                 $mahasiswaLogBooks[$count->pendaftaran_id]['wait_logbook']++;
@@ -216,7 +216,13 @@ class LogBookController extends Controller
 
         // Retrieve the proposal data for the given pendaftaran ID
         $dataProposal = DB::table('tr_pendaftaran as p')
-            ->where('id', $id)->first();
+            ->leftJoin('users as u', function ($join) {
+                // Use the on and where methods to specify the join condition
+                $join->on('u.no_induk', '=', 'p.no_induk');
+            })
+            ->where('p.id', $id)
+            ->select("p.*", "u.nama")
+            ->first();
 
         // Retrieve the user data (mahasiswa) for the given proposal data
         $dataMHS = User::where('no_induk', $dataProposal->no_induk)->first();
@@ -251,7 +257,7 @@ class LogBookController extends Controller
             // Select the necessary fields
             ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
             // Join the tr_pendaftaran_berkas table to retrieve the associated file
-            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use($dataProposal) {
+            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use ($dataProposal) {
                 // Use the on and where methods to specify the join condition
                 $join->on('pb.berkas_id', '=', 'b.id')
                     ->where('pb.pendaftaran_id', '=', $dataProposal->id);

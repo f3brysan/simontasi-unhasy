@@ -34,11 +34,11 @@
                             <table class="table table-bordered table-hover">
                                 <tr>
                                     <td style="width: 20%"><strong>NIM</strong></td>
-                                    <td>{{ auth()->user()->no_induk }}</td>
+                                    <td>{{ $dataProposal->no_induk }}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>NAMA</strong></td>
-                                    <td>{{ auth()->user()->nama }}</td>
+                                    <td>{{ $dataProposal->nama }}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Program Studi</strong></td>
@@ -49,17 +49,27 @@
                                     <td>
                                         <div class="row">
                                             <div class="col-md-10">{!! $dataProposal->title !!}</div>
-                                            @if ($dataProposal->is_ok == NULL)
-                                            <div class="col-md-2"><a href="javascript:void(0)"
-                                                onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                class="btn btn-sm btn-primary float-end"><i class="fas fa-check"></i>
-                                                Setujui</a></div>
+                                            @if ($dataProposal->is_ok == null)
+                                                <div class="col-md-2"><a href="javascript:void(0)"
+                                                        onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                        class="btn btn-sm btn-primary float-end"><i
+                                                            class="fas fa-check"></i>
+                                                        Setujui</a></div>
                                             @else
-                                            <div class="col-md-2"><a href="javascript:void(0)"
-                                                onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                class="btn btn-sm btn-warning float-end"><i class="fas fa-refresh"></i>
-                                                Batal Setujui</a></div>
-                                            @endif                                            
+                                                @if (empty($jadwal))
+                                                    <div class="col-md-2"><a href="javascript:void(0)"
+                                                            onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                            class="btn btn-sm btn-warning float-end"><i
+                                                                class="fas fa-refresh"></i>
+                                                            Batal Setujui</a></div>
+                                                @else
+                                                    <div class="col-md-2">
+                                                        <span class="text-center badge text-bg-success text-light"><i
+                                                                class="fa-solid fa-check"></i> Disetujui</span>
+                                                                <p class="text-muted">{{ $dataProposal->is_ok_at }}</p>
+                                                    </div>
+                                                @endif
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -76,7 +86,7 @@
                                                         <span class="text-center badge text-bg-success text-light"><i
                                                                 class="fa-solid fa-check"></i> Disetujui</span>
 
-                                                        <p class="text-muted">{{ $item->is_ok_at }}</p>                                                   
+                                                        <p class="text-muted">{{ $item->is_ok_at }}</p>
                                                     @endif
                                                 </div>
                                             @endforeach
@@ -108,7 +118,7 @@
                                                             class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
                                                     @else
                                                     @endif
-                                                </div>                                                
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -120,8 +130,8 @@
             </div>
             {{-- END DAFTAR PROPOSAL --}}
 
-             {{-- START JADWAL PROPOSAL --}}
-             <div class="card mb-4">
+            {{-- START JADWAL PROPOSAL --}}
+            <div class="card mb-4">
                 <div class="card-header">
                     <h5>Jadwal Sidang</h5></span>
                 </div>
@@ -132,14 +142,14 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">Tanggal dan Waktu</th>
-                                        <th class="text-center">Lokasi</th>                                        
+                                        <th class="text-center">Lokasi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if (empty($jadwal))
                                         <tr>
                                             <td class="text-center" colspan="2"><span class="badge bg-warning">Jadwal
-                                                    belum diset !</span></td>                                            
+                                                    belum diset !</span></td>
                                         </tr>
                                     @else
                                         <tr>
@@ -147,7 +157,7 @@
                                                 {{ date('H:i', strtotime($jadwal->awal)) }} -
                                                 {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
                                             </td>
-                                            <td class="text-center">Di {{ $jadwal->lokasi }}</td>                                            
+                                            <td class="text-center">Di {{ $jadwal->lokasi }}</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -300,29 +310,29 @@
             }
             Swal.fire({
                 title: "Perhatian",
-                text: "Apakah Anda "+msg+" log bimbingan ini?",
+                text: "Apakah Anda " + msg + " log bimbingan ini?",
                 icon: "warning",
-                showDenyButton: true,                
+                showDenyButton: true,
                 confirmButtonText: "Iya",
                 denyButtonText: `Batal`
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
                     $.get("{{ URL::to('dosen/log-bimbingan/approve/') }}/" + id,
-                        function (data) {
+                        function(data) {
                             if (data == '0') {
                                 var msg = 'batal setujui';
                             } else {
                                 var msg = 'disetujui';
                             }
                             iziToast.success({
-                                    title: 'Berhasil',
-                                    message: 'Log Book '+msg+'.',
-                                    position: 'topRight'
-                                });
-                                table.ajax.reload(null, false);                            
+                                title: 'Berhasil',
+                                message: 'Log Book ' + msg + '.',
+                                position: 'topRight'
+                            });
+                            table.ajax.reload(null, false);
                         });
-                    
+
                 } else if (result.isDenied) {
                     Swal.fire("Changes are not saved", "", "info");
                 }
@@ -330,16 +340,16 @@
         });
 
         function approveJudul(id) {
-            console.log(id); 
+            console.log(id);
             $.get("{{ URL::to('dosen/proposal/approval-dosen/') }}/" + id,
-                function (data) {
+                function(data) {
                     iziToast.success({
-                                    title: 'Berhasil',
-                                    message: 'Data tersimpan.',
-                                    position: 'topRight'
-                                });
-                                location.reload();
-                });           
+                        title: 'Berhasil',
+                        message: 'Data tersimpan.',
+                        position: 'topRight'
+                    });
+                    location.reload();
+                });
         }
     </script>
 @endpush

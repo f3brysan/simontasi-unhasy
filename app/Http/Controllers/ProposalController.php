@@ -273,11 +273,13 @@ class ProposalController extends Controller
 
             if ($getData->is_ok == NULL) {
                 $update = DB::table('tr_pendaftaran')->where('id', $id)->update([
-                    'is_ok' => 1
+                    'is_ok' => 1,
+                    'is_ok_at' => date('Y-m-d H:i:s')
                 ]);
             } else {
                 $update = DB::table('tr_pendaftaran')->where('id', $id)->update([
-                    'is_ok' => NULL
+                    'is_ok' => NULL,
+                    'is_ok_at' => NULL
                 ]);
             }
             return response()->json($update);
