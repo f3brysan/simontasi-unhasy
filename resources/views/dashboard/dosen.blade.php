@@ -1,4 +1,9 @@
 @extends('layouts.main')
+@push('css')
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/core/main.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid/main.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid/main.css" rel="stylesheet" />
+@endpush
 
 @section('breadcrumb')
     <div class="container-fluid">
@@ -15,47 +20,46 @@
         <div class="container-lg">
             <div class="row">
                 {{-- START DAFTAR PROPOSAL --}}
-                <div class="col-6 col-lg-6">
+                <div class="col-12 col-lg-12">
                     <div class="card">
-                        <div class="card-body p-3 d-flex align-items-center">
-                            <div class="bg-primary text-white p-3 me-3">
-                                <span class="fa fa-book"></span>
-                            </div>
-                            <div>
-                                <div class="fs-6 fw-semibold text-primary">Sidang Proposal</div>
-                                <p class="text-info">Anda Belum mendaftar Sidang Proposal</p>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div id='calendar'></div>
+                                </div>
+
                             </div>
                         </div>
-                        <div class="card-footer px-3 py-2"><a
-                                class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
-                                href="{{ URL::to('daftar/proposal') }}"><span class="small fw-semibold text-info">Daftar Disini</span>
-                                <span class="fa fa-chevron-right"></span></a></div>
                     </div>
                 </div>
                 {{-- END DAFTAR PROPOSAL --}}
-
-                {{-- START DAFTAR SIDANG --}}
-                <div class="col-6 col-lg-6">
-                    <div class="card">
-                        <div class="card-body p-3 d-flex align-items-center">
-                            <div class="bg-primary text-white p-3 me-3">
-                                <span class="fa fa-book"></span>
-                            </div>
-                            <div>
-                                <div class="fs-6 fw-semibold text-primary">Sidang Skripsi/TA/Tesis</div>
-                                <p class="text-danger">Anda Belum mendaftar Sidang Proposal</p>
-                            </div>
-                        </div>
-                        <div class="card-footer px-3 py-2"><a
-                                class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
-                                href="{{ URL::to('daftar/sidang') }}"><span class="small fw-semibold">Daftar Disini</span>
-                                <span class="fa fa-arrow"></span></a></div>
-                    </div>
-                </div>
-                {{-- END DAFTAR SIDANG --}}
-
-                {{-- START LOGBOOK --}}
             </div>
         </div>
     </div>
 @endsection
+@push('js')
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.15/index.global.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                height: 480,
+                initialView: 'timeGridDay',
+                locale: 'id',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                eventTimeFormat: { // like '14:30:00'
+                    hour: '2-digit',
+                    minute: '2-digit',                    
+                    hour12: false
+                },
+                events: @json($events),
+
+            });
+            calendar.render();
+        });
+    </script>
+@endpush

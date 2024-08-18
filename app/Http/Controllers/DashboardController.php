@@ -57,8 +57,36 @@ class DashboardController extends Controller
         }
 
         // If the user is a dosen, return the dosen dashboard
-        if (in_array('dosen', $roles)) {
-            return view('dashboard.dosen');
+        if (in_array('dosen', $roles)) {            
+            $getProposal = DB::table("tr_pendaftaran as p")
+            ->join("users as u", function ($join) {
+                $join->on("u.no_induk", "=", "p.no_induk");
+            })
+            ->join("tr_pendaftaran_dosen as pd", function ($join) {
+                $join->on("pd.pendaftaran_id", "=", "p.id");
+            })
+            ->join("tr_pendaftaran_jadwal as pj", function ($join) {
+                $join->on("pj.id", "=", "p.id");
+            })
+            ->join("ms_prodi as mp", function ($join) {
+                $join->on("mp.kode_prodi", "=", "u.prodi_kode");
+            })            
+            ->select("p.*", "u.nama", "u.prodi_kode", "mp.prodi", "pj.lokasi", "pj.awal", "pj.akhir")
+            ->where("pd.nip", auth()->user()->no_induk)
+            ->get();
+
+            $events = [];
+            foreach ($getProposal as $item) {
+                $jenis = $item->type == 'P' ? 'Sidang Proposal' : 'Sidang Skripsi';
+                $jenis = in_array($item->prodi_kode, ['25', '22', '23']) ? 'Sidang Tesis' : $jenis;
+                $events[] = [
+                    'title' => $jenis.' '.$item->nama.' ('.$item->prodi.') bertempat di '.$item->lokasi.'.',
+                    'start' => $item->awal,
+                    'end' => $item->akhir,
+                ];
+            }
+            // dd($events);
+            return view('dashboard.dosen', compact('events'));
         }
     }
 

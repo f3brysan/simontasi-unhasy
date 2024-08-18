@@ -197,7 +197,7 @@
             </div>
             {{-- END JADWAL PROPOSAL --}}
 
-            {{-- START JADWAL PROPOSAL --}}
+            {{-- START HASIL PROPOSAL --}}
             @if (!empty($jadwal))
                 @if ($jadwal->akhir <= date('Y-m-d H:i:s'))
                     <div class="card mb-4">
@@ -262,7 +262,7 @@
                     </div>
                 @endif
             @endif
-            {{-- END JADWAL PROPOSAL --}}
+            {{-- END HASIL PROPOSAL --}}
 
             {{-- START LOGBOOK --}}
             <div class="card mb-4">
