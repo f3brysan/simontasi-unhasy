@@ -166,6 +166,7 @@ class LogBookController extends Controller
                 'total_logbook' => 0
             ];
         }
+        $mahasiswaLogBooks = [];
         foreach ($countLogBooks as $count) {
             if ($count->is_approve == 0) {
                 $mahasiswaLogBooks[$count->pendaftaran_id]['wait_logbook']++;
