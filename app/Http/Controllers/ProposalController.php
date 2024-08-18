@@ -69,6 +69,20 @@ class ProposalController extends Controller
                 ->where('b.type', 'P')
                 // Get the results
                 ->get();
+
+            $data['berkas_hasil'] = DB::table('ms_berkas as b')
+                // Select the necessary fields
+                ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
+                // Join the tr_pendaftaran_berkas table to retrieve the associated file
+                ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use ($dataProposal) {
+                    // Use the on and where methods to specify the join condition
+                    $join->on('pb.berkas_id', '=', 'b.id')
+                        ->where('pb.pendaftaran_id', '=', $dataProposal->id);
+                })
+                // Filter the documents to only include those of type 'P'
+                ->where('b.type', 'PH')
+                // Get the results
+                ->get();
         }
 
         $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataProposal->id)->first();

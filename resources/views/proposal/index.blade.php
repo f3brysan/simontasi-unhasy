@@ -153,11 +153,12 @@
             {{-- START JADWAL PROPOSAL --}}
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5>Jadwal Sidang</h5></span>
+                    <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
                 </div>
                 <div class="card-body">
                     @if (!empty($dataProposal))
                         <div class="table container-fluid">
+                            <h6>Jadwal Sidang</h6>
                             <table class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
@@ -179,25 +180,61 @@
                                             </td>
                                             <td class="text-center">Di {{ $jadwal->lokasi }}</td>
                                         </tr>
-                                    @endif
+                                    @endif                                    
                                 </tbody>
                             </table>
-                        </div>
-                        <div class="table container-fluid">
+                            <h6>Berkas Penunjang Proposal</h6>
                             <table class="table table-bordered table-hover">
                                 <tr>
-                                    <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
-                                    <td class="text-center">
-                                        @if (empty($statusProposal))
-                                            <span class="badge bg-warning text-dark">Hasil belum diinput.</span>
-                                        @endif                                                                                
-                                    </td>
+                                    <td>Template Berita Acara </td>
+                                    <td><a href="javascript:void(0)"> Unduh</a></td>
                                 </tr>
                             </table>
                         </div>
                     @endif
                 </div>
             </div>
+            {{-- END JADWAL PROPOSAL --}}
+
+            {{-- START JADWAL PROPOSAL --}}
+            @if (!empty($jadwal))
+                @if ($jadwal->akhir <= date('Y-m-d H:i:s'))
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Hasil Sidang Proposal</h5></span>
+                        </div>
+                        <div class="card-body">
+                            @if (!empty($dataProposal))
+                                <div class="table container-fluid">
+                                    <table class="table table-bordered table-hover">
+                                        <tr>
+                                            <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
+                                            <td class="text-center">
+                                                @if (empty($statusProposal))
+                                                    <span class="badge bg-warning text-dark">Hasil belum diinput.</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <h6>Monitoring Berkas Hasil Proposal</h6>
+                                    <table class="table table-bordered table-hover">
+                                        @foreach ($berkas_hasil as $item)
+                                            <tr>
+                                                <td style="width: 15%">{{ $item->nama }}</td>
+                                                <td></td>
+                                                <td class="text-center" style="width: 10%"><a href="javascript:void(0)"
+                                                        class="btn btn-sm btn-info text-white"
+                                                        onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')">Unggah</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+            @endif
             {{-- END JADWAL PROPOSAL --}}
 
             {{-- START LOGBOOK --}}

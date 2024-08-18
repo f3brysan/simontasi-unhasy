@@ -27,10 +27,10 @@ class DatabaseSeeder extends Seeder
             // Role::create(['name' => 'kaprodi']);
 
             $user = \App\Models\User::create([
-                'nama' => 'Ginanjar Setyo Permadi, S.Kom., M.Kom',
-                'no_induk' => 'UHA.01.0783',
-                'email' => 'Uha.01.0783@unbhasy.ac.id',
-                'password' => bcrypt('adminakademik')
+                'nama' => 'SuperUser',
+                'no_induk' => 'superuser',
+                'email' => 'superusermonit@unbhasy.ac.id',
+                'password' => bcrypt('sup3rus3r')
             ]);
 
             // $user = \App\Models\User::where('id', '9bd25c1c-4447-4485-b371-fce6603ae94b')->first();

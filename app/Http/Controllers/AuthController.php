@@ -35,8 +35,7 @@ class AuthController extends Controller
             // If authentication is successful, regenerate the session and
             // store the user information in the session
             $request->session()->regenerate();
-            $user = auth()->user();
-
+            $user = auth()->user();            
             // Redirect to the intended page with a success message
             return redirect()->intended('/')->with('success', 'Selamat Datang ' . $user->name ?? $user->email . '.');
         }
