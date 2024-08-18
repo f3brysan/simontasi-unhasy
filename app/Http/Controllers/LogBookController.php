@@ -153,6 +153,7 @@ class LogBookController extends Controller
             ->where("nip", $nip)
             ->get();
 
+        $mahasiswaLogBooks = [];
         foreach ($getMahasiswaLogBooks as $logBook) {            
             $prodi = DB::table('ms_prodi')->where('kode_prodi', $logBook->prodi_kode)->first();
             $mahasiswaLogBooks[$logBook->id] = [
@@ -166,7 +167,7 @@ class LogBookController extends Controller
                 'total_logbook' => 0
             ];
         }
-        $mahasiswaLogBooks = [];
+        
         foreach ($countLogBooks as $count) {
             if ($count->is_approve == 0) {
                 $mahasiswaLogBooks[$count->pendaftaran_id]['wait_logbook']++;
