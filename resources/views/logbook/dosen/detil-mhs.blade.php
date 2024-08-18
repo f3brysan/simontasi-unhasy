@@ -186,13 +186,25 @@
                                             <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
                                             <td class="text-center">
                                                 @if (empty($statusProposal))
-                                                    <select class="form-select form-control" name="hasilsidang"
-                                                        id="hasilsidang">
-                                                        <option value="">Pilih</option>
-                                                        <option value="TERIMA">Diterima</option>
-                                                        <option value="CATATAN">Diterima dengan Catatan</option>
-                                                        <option value="DITOLAK">Ditolak</option>
-                                                    </select>
+                                                    <form action="" method="POST">
+                                                        @csrf
+                                                        <div class="col-md-12 m-2">
+                                                            <select class="form-select form-control" name="hasilsidang"
+                                                                id="hasilsidang" required>
+                                                                <option value="">Pilih</option>
+                                                                <option value="TERIMA">Diterima</option>
+                                                                <option value="CATATAN">Diterima dengan Catatan</option>
+                                                                <option value="DITOLAK">Ditolak</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-12 m-1 mt-4" style="display: none" id="divCatatan">
+                                                            <label class="float-left" for="">Catatan</label>
+                                                            <textarea name="catatanhasil" id="catatanhasil" cols="30" rows="10" style="width: 100%"></textarea>
+                                                        </div>
+                                                        <div class="col-md-12 float-end">
+                                                            <button class="btn btn-primary btn-sm float-end">Simpan</button>
+                                                        </div>
+                                                    </form>
                                                 @endif
                                             </td>
                                         </tr>
@@ -397,6 +409,22 @@
                     Swal.fire("Changes are not saved", "", "info");
                 }
             });
+        });
+
+        $("#hasilsidang").change(function() {
+            var value = $("#hasilsidang").val();
+            if (value == 'TERIMA') {
+                $("#divCatatan").hide();
+            } else {
+                $("#divCatatan").show();
+            }
+
+            if (!$("#hasilsidang").val()) {
+                $("#divCatatan").hide();
+            }
+            console.log(value);
+
+
         });
 
         function approveJudul(id) {
