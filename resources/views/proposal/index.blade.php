@@ -180,14 +180,15 @@
                                             </td>
                                             <td class="text-center">Di {{ $jadwal->lokasi }}</td>
                                         </tr>
-                                    @endif                                    
+                                    @endif
                                 </tbody>
                             </table>
                             <h6>Berkas Penunjang Proposal</h6>
                             <table class="table table-bordered table-hover">
                                 <tr>
                                     <td>Template Berita Acara </td>
-                                    <td><a href="javascript:void(0)"> Unduh</a></td>
+                                    <td class="text-center"><a href="javascript:void(0)"
+                                            class="btn btn-sm btn-info text-white"> Unduh</a></td>
                                 </tr>
                             </table>
                         </div>
@@ -221,7 +222,12 @@
                                         @foreach ($berkas_hasil as $item)
                                             <tr>
                                                 <td style="width: 15%">{{ $item->nama }}</td>
-                                                <td></td>
+                                                <td>
+                                                    @if ($item->file)
+                                                        <a href="{{ URL::to('/') }}/{{ $item->file }}" target="_blank"
+                                                            class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
+                                                    @endif
+                                                </td>
                                                 <td class="text-center" style="width: 10%"><a href="javascript:void(0)"
                                                         class="btn btn-sm btn-info text-white"
                                                         onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')">Unggah</a>
