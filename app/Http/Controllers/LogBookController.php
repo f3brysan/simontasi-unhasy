@@ -267,6 +267,25 @@ class LogBookController extends Controller
             // Get the results
             ->get();
 
+        $data['berkas_hasil'] = DB::table('ms_berkas as b')
+            // Select the necessary fields
+            ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
+            // Join the tr_pendaftaran_berkas table to retrieve the associated file
+            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use ($dataProposal) {
+                // Use the on and where methods to specify the join condition
+                $join->on('pb.berkas_id', '=', 'b.id')
+                    ->where('pb.pendaftaran_id', '=', $dataProposal->id);
+            })
+            // Filter the documents to only include those of type 'P'
+            ->where('b.type', 'PH')
+            // Get the results
+            ->get();
+
+        // Retrieve the status of the proposal This is used to display the status of the proposal on the detail logbook page
+        $data['statusProposal'] = DB::table('tr_pendaftaran_status')
+            ->where('pendaftaran_id', $dataProposal->id)
+            ->first();
+
         /**
          * Check if the request is an AJAX request
          * Use Datatables to display the data         

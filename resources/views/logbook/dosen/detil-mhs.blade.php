@@ -56,18 +56,20 @@
                                                             class="fas fa-check"></i>
                                                         Setujui</a></div>
                                             @else
-                                                @if (empty($jadwal))
-                                                    <div class="col-md-2"><a href="javascript:void(0)"
-                                                            onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                            class="btn btn-sm btn-warning float-end"><i
-                                                                class="fas fa-refresh"></i>
-                                                            Batal Setujui</a></div>
-                                                @else
-                                                    <div class="col-md-2">
-                                                        <span class="text-center badge text-bg-success text-light"><i
-                                                                class="fa-solid fa-check"></i> Disetujui</span>
-                                                                <p class="text-muted">{{ $dataProposal->is_ok_at }}</p>
-                                                    </div>
+                                                @if (!empty($jadwal))
+                                                    @if ($jadwal->akhir > date('Y-m-d H:i:s'))
+                                                        <div class="col-md-2"><a href="javascript:void(0)"
+                                                                onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                                class="btn btn-sm btn-warning float-end"><i
+                                                                    class="fas fa-refresh"></i>
+                                                                Batal Setujui</a></div>
+                                                    @else
+                                                        <div class="col-md-2"><a href="javascript:void(0)"
+                                                                onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                                class="btn btn-sm btn-warning float-end disabled"><i
+                                                                    class="fas fa-refresh"></i>
+                                                                Batal Setujui</a></div>
+                                                    @endif
                                                 @endif
                                             @endif
                                         </div>
@@ -167,6 +169,64 @@
                 </div>
             </div>
             {{-- END JADWAL PROPOSAL --}}
+
+            {{-- START HASIL PROPOSAL --}}
+            @if (!empty($jadwal))
+                @if ($jadwal->akhir <= date('Y-m-d H:i:s'))
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Hasil Sidang Proposal</h5></span>
+                        </div>
+                        <div class="card-body">
+                            @if (!empty($dataProposal))
+                                <div class="table container-fluid">
+                                    <h6>Hasil Sidang Proposal</h6>
+                                    <table class="table table-bordered table-hover">
+                                        <tr>
+                                            <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
+                                            <td class="text-center">
+                                                @if (empty($statusProposal))
+                                                    <select class="form-select form-control" name="hasilsidang"
+                                                        id="hasilsidang">
+                                                        <option value="">Pilih</option>
+                                                        <option value="TERIMA">Diterima</option>
+                                                        <option value="CATATAN">Diterima dengan Catatan</option>
+                                                        <option value="DITOLAK">Ditolak</option>
+                                                    </select>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <h6>Monitoring Berkas Hasil Proposal</h6>
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Nama Berkas</th>
+                                                <th class="text-center">File Berkas</th>
+                                            </tr>
+                                        </thead>
+                                        @foreach ($berkas_hasil as $item)
+                                            <tbody>
+                                                <tr>
+                                                    <td style="width: 15%">{{ $item->nama }}</td>
+                                                    <td>
+                                                        @if ($item->file)
+                                                            <a href="{{ URL::to('/') }}/{{ $item->file }}"
+                                                                target="_blank"
+                                                                class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        @endforeach
+                                    </table>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+            @endif
+            {{-- END HASIL PROPOSAL --}}
 
             {{-- START LOGBOOK --}}
             <div class="card mb-4">
