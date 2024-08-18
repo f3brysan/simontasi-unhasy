@@ -390,4 +390,55 @@ class LogBookController extends Controller
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+    public function storeHasilProposal(Request $request)
+    {
+        // dd($request->all());
+        $noInduk = Crypt::decrypt($request->no_induk);
+        $hasilSidang = $request->hasilsidang;
+        $catatan = $request->catatanhasil;
+
+        $getPendaftaran = DB::table('tr_pendaftaran as tp')
+            ->select('tp.*')
+            ->whereRaw('tp.id NOT IN (SELECT pendaftaran_id FROM tr_pendaftaran_status)')
+            ->where('no_induk', $noInduk)
+            ->first();
+
+        switch ($hasilSidang) {
+            case 'TERIMA':
+                $hasilSidang = 1;
+                break;
+            case 'CATATAN':
+                $hasilSidang = 1;
+                break;
+            case 'TOLAK':
+                $hasilSidang = 0;
+                break;
+            default:
+                $hasilSidang = 1;
+                break;
+        }
+
+        if ($hasilSidang == 'TERIMA') {
+            $insert = DB::table('tr_pendaftaran_status')->insert([
+                'id' => Str::uuid(),
+                'pendaftaran_id' => $getPendaftaran->id,
+                'status' => $hasilSidang,
+                'created_by' => auth()->user()->no_induk,
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+        } else {
+            $insert = DB::table('tr_pendaftaran_status')->insert([
+                'id' => Str::uuid(),
+                'pendaftaran_id' => $getPendaftaran->id,
+                'status' => $hasilSidang,
+                'catatan' => $catatan,
+                'created_by' => auth()->user()->no_induk,
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        return back()->with('success','Hasil Sidang Proposal berhasil disimpan');
+
+    }
 }

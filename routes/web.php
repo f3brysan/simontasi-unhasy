@@ -61,11 +61,12 @@ Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen|pengelola'])->gr
     Route::get('log-book/show-detil/{id}', [LogBookController::class, 'getDetilLogBook']);
     Route::delete('log-book/delete-detil/{id}', [LogBookController::class, 'deleteDetilLogBookMhs']);
     Route::post('log-book/store', [LogBookController::class, 'storeLogBook']);
-
+    
     Route::get('dosen/log-bimbingan', [LogBookController::class, 'getDosenLogBook']);
     Route::get('dosen/log-bimbingan/detil/{id}', [LogBookController::class, 'getDetilLogBookMhs']);
     Route::get('dosen/log-bimbingan/approve/{id}', [LogBookController::class, 'approveDetilLogBookMhs']);
     Route::get('dosen/proposal/approval-dosen/{id}', [ProposalController::class, 'approvalProposalDosen']);
+    Route::post('dosen/proposal/hasil/store', [LogBookController::class, 'storeHasilProposal']);
 });
 
 Route::get('sync/prodi', [SyncDataController::class, 'syncDataProdi']);

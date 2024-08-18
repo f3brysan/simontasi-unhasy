@@ -186,18 +186,22 @@
                                             <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
                                             <td class="text-center">
                                                 @if (empty($statusProposal))
-                                                    <form action="" method="POST">
+                                                    <form action="{{ URL::to('dosen/proposal/hasil/store') }}"
+                                                        method="POST">
                                                         @csrf
+                                                        <input type="hidden" name="no_induk"
+                                                            value="{{ Crypt::encrypt($dataProposal->no_induk) }}">
                                                         <div class="col-md-12 m-2">
                                                             <select class="form-select form-control" name="hasilsidang"
                                                                 id="hasilsidang" required>
                                                                 <option value="">Pilih</option>
                                                                 <option value="TERIMA">Diterima</option>
                                                                 <option value="CATATAN">Diterima dengan Catatan</option>
-                                                                <option value="DITOLAK">Ditolak</option>
+                                                                <option value="TOLAK">Ditolak</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-md-12 m-1 mt-4" style="display: none" id="divCatatan">
+                                                        <div class="col-md-12 m-1 mt-4" style="display: none"
+                                                            id="divCatatan">
                                                             <label class="float-left" for="">Catatan</label>
                                                             <textarea name="catatanhasil" id="catatanhasil" cols="30" rows="10" style="width: 100%"></textarea>
                                                         </div>
@@ -205,6 +209,20 @@
                                                             <button class="btn btn-primary btn-sm float-end">Simpan</button>
                                                         </div>
                                                     </form>
+                                                @else
+                                                    @if ($statusProposal->status == 1 and empty($statusProposal->catatan))
+                                                        <span class="badge bg-success">Diterima</span>
+                                                        <p class="small">{{ $statusProposal->catatan }}</p>
+                                                    @endif
+                                                    @if ($statusProposal->status == 1 and !empty($statusProposal->catatan))
+                                                        <span class="badge bg-warning">Diterima dengan Catatan</span>
+                                                        <p class="small">{{ $statusProposal->catatan }}</p>
+                                                    @endif
+                                                    @if ($statusProposal->status == 0)
+                                                        <span class="badge bg-danger">Ditolak</span>
+                                                        <p class="small">{{ $statusProposal->catatan }}</p>
+                                                    @endif
+
                                                 @endif
                                             </td>
                                         </tr>
