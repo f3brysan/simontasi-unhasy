@@ -43,8 +43,15 @@ class LogBookController extends Controller
                         $status = $data->is_approve == '1' ? '<span class="badge bg-success">Disetujui</span>' : '<span class="badge bg-warning">Belum disetujui</span>';
                         return $status;
                     })
+                    ->addColumn('attachment', function ($data) {
+                        $btn = '';
+                        if (isset($data->attachment)) {                            
+                            $btn = '<a href="'.URL::to('/').'/'.$data->attachment.'" class="btn btn-sm btn-info" target="_blank"> Lihat berkas</a>';
+                        }
+                        return $btn;
+                    })
                     // Make the columns raw so that HTML can be rendered
-                    ->rawColumns(['catatan', 'action', 'status'])
+                    ->rawColumns(['catatan', 'action', 'status', 'attachment'])
                     // Add an index column
                     ->addIndexColumn()
                     // Return the Datatables object
