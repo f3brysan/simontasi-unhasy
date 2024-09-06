@@ -55,6 +55,21 @@ class LogBookController extends Controller
         }
     }
 
+    public function countLogBookProposal($id)
+    {
+        try {
+            // Decrypt the ID parameter
+            $pendaftaran_id = Crypt::decrypt($id);
+
+            // Retrieve the logbook data for the decrypted ID
+            $getData = DB::table('tr_logbook')->where('pendaftaran_id', $pendaftaran_id)->count();
+
+            return response()->json($getData);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
+    }
+
     public function getDetilLogBook($id)
     {
         try {
@@ -438,7 +453,7 @@ class LogBookController extends Controller
             ]);
         }
 
-        return back()->with('success','Hasil Sidang Proposal berhasil disimpan');
+        return back()->with('success', 'Hasil Sidang Proposal berhasil disimpan');
 
     }
 }

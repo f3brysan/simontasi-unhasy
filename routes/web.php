@@ -58,6 +58,7 @@ Route::middleware(['auth:web', 'role:mahasiswa|superadmin|pengelola'])->group(fu
 
 Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen|pengelola'])->group(function () {
     Route::get('log-book/get/{id}', [LogBookController::class, 'getLogBook']);
+    Route::get('log-book/count/{id}', [LogBookController::class, 'countLogBookProposal']);
     Route::get('log-book/show-detil/{id}', [LogBookController::class, 'getDetilLogBook']);
     Route::delete('log-book/delete-detil/{id}', [LogBookController::class, 'deleteDetilLogBookMhs']);
     Route::post('log-book/store', [LogBookController::class, 'storeLogBook']);
