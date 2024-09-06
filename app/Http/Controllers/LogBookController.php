@@ -126,7 +126,7 @@ class LogBookController extends Controller
                     $extension = $file->getClientOriginalExtension();
 
                     // Generate the path where the file will be stored
-                    $path = 'uploads/logbook/';
+                    $path = 'uploads/logbook';
 
                     // Store the file in the specified path
                     $storage = Storage::disk('my_files')->put($path, $file);
