@@ -12,6 +12,13 @@
     </div>
 @endsection
 
+@php
+$isStatusBayarDone = false;
+    if (isset($statusBayar)) {
+        $isStatusBayarDone = $statusBayar->status == '1' ? true : $isStatusBayarDone;
+    }
+@endphp
+
 @section('content')
     <div class="body flex-grow-1">
         <div class="container-lg">
@@ -97,7 +104,6 @@
                                     <td><strong>Dosen Penguji</strong></td>
                                     <td>
                                         <div class="row">
-
                                             @foreach ($penguji as $item)
                                                 <div class="col-md-9">
                                                     <u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}
@@ -115,7 +121,7 @@
                                                 <div class="col-md-3">
                                                     <a href="javascript:void(0)"
                                                         onclick="tambahPenguji('{{ $dataProposal->id }}', '{{ $biodata->no_induk }}')"
-                                                        class="btn btn-sm btn-primary float-end  {{ count($logbookDone) >= 2 ? 'disabled' : '' }}"><i
+                                                        class="btn btn-sm float-end  {{ count($logbookDone) >= 2 ? 'disabled' : '' }} {{ $isStatusBayarDone == true ? 'btn-primary' : 'btn-secondary disabled' }}"><i
                                                             class="fa-solid fa-user-plus"></i> Tambah Penguji</a>
                                                 </div>
                                             @endif
@@ -151,7 +157,7 @@
                                             <td class="text-center" colspan="2"><span class="badge bg-warning">Jadwal
                                                     belum diset !</span></td>
                                             <td class="text-center" style="width: 30%"><a href="javascript:void(0)"
-                                                    class="btn btn-sm btn-primary"
+                                                    class="btn btn-sm {{ $isStatusBayarDone == true ? 'btn-primary' : 'btn-secondary disabled' }}"
                                                     onclick="setJadwal('{{ Crypt::encrypt($dataProposal->id) }}')">Set
                                                     Jadwal</a></td>
                                         </tr>

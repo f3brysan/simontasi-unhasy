@@ -231,6 +231,7 @@ class AdminProposalController extends Controller
         $data['allDosenPembimbing'] = $allDosenPembimbing;
 
         $data['logbookDone'] = DB::table('tr_logbook')->where('pendaftaran_id', $dataProposal->id)->where('is_approve', 1)->get();
+        $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataProposal->id)->first();
 
         // Return the view with the data
         return view('admin.proposal.detil', $data);
