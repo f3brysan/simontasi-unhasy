@@ -13,7 +13,7 @@
 @section('content')
     <div class="body flex-grow-1">
         <div class="container-lg">
-            <div class="row">
+            <div class="row mb-4">
                 {{-- START DAFTAR PROPOSAL --}}
                 <div class="col-6 col-lg-6">
                     <div class="card">
@@ -58,9 +58,30 @@
                                 <span class="fa fa-arrow"></span></a></div>
                     </div>
                 </div>
-                {{-- END DAFTAR SIDANG --}}
-
-                {{-- START LOGBOOK --}}
+                {{-- END DAFTAR SIDANG --}}                
+            </div>
+            <div class="row">
+                <div class="col-12 col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Riwayat Pengajuan</h5>
+                        </div>
+                        <div class="card-body">    
+                            <div class="table container-fluid">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Judul</th>
+                                            <th>Jenis</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>                        
+                        </div>                        
+                    </div>
+                </div>
             </div>
         </div>
     </div>
