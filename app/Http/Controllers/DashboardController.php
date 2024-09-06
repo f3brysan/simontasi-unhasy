@@ -56,7 +56,10 @@ class DashboardController extends Controller
             ->select('tp.*')
             ->leftJoin('tr_pendaftaran_status as tps','tps.pendaftaran_id','=','tp.id')
             ->where('tp.no_induk', $user->no_induk)
-            ->where('tps.status','!=','0')
+            ->where(function ($query) {
+                $query->whereNull('tps.status')
+                    ->orWhere('tps.status', '!=', '0');
+            })
             ->first();      
             
             return view('dashboard.mahasiswa', $data);

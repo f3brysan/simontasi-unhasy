@@ -69,7 +69,7 @@
                                         <div class="row">
                                             @foreach ($pembimbing as $item)
                                                 <div class="col-md-9">
-                                                    <u>{{ $item->nama }}</u><br>NIP: {{ $item->nip }}
+                                                    <u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}
                                                 </div>
                                                 <div class="col-md-3">
                                                     @if ($item->is_ok == 1)
@@ -100,7 +100,7 @@
 
                                             @foreach ($penguji as $item)
                                                 <div class="col-md-9">
-                                                    <u>{{ $item->nama }}</u><br>NIP: {{ $item->nip }}
+                                                    <u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}
 
                                                     <br>
                                                 </div>
