@@ -115,7 +115,7 @@
                                                 <div class="col-md-3">
                                                     <a href="javascript:void(0)"
                                                         onclick="tambahPenguji('{{ $dataProposal->id }}', '{{ $biodata->no_induk }}')"
-                                                        class="btn btn-sm btn-primary float-end  {{ count($logbookDone) < 3 ? 'disabled' : '' }}"><i
+                                                        class="btn btn-sm btn-primary float-end  {{ count($logbookDone) >= 2 ? 'disabled' : '' }}"><i
                                                             class="fa-solid fa-user-plus"></i> Tambah Penguji</a>
                                                 </div>
                                             @endif
