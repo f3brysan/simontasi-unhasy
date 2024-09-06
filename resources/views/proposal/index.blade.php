@@ -150,7 +150,10 @@
                                 <table class="table table-bordered table-hover">
                                     <tr>
                                         <td class="text-center"><b>Daftar Seminar Proposal disini</b></td>
-                                        <td class="text-center"><button class="btn btn-sm btn-primary" id="btnDaftarSeminarProposal" onclick="daftarSeminarProposal('{{ Crypt::encrypt($dataProposal->id) }}')"><i class="fa-solid fa-right-to-bracket"></i> Daftar</button></td>
+                                        <td class="text-center"><button class="btn btn-sm btn-primary"
+                                                id="btnDaftarSeminarProposal"
+                                                onclick="daftarSeminarProposal('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                                    class="fa-solid fa-right-to-bracket"></i> Daftar</button></td>
                                     </tr>
                                 </table>
                             </div>
@@ -164,13 +167,21 @@
                         <div class="card mb-4">
                             <div class="card-body">
                                 <div class="alert alert-danger" role="alert">
-                                    <strong>Maaf, Anda belum lolos syarat pembayaran administrasi.</strong>
+                                    <strong>Maaf, Anda belum lolos syarat administrasi pembayaran.</strong>
                                 </div>
                                 <div class="table container-fluid">
                                     <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Informasi</th>
+                                                <th class="text-center">No VA</th>
+                                                <th class="text-center">Status</th>
+                                            </tr>
+                                        </thead>
+                                       <tbody>
                                         <tr>
-                                            <td>No VA Pembayaran</td>
-                                            <td>{{ $statusBayar->nomor_va }}</td>
+                                            <td>No VA Pembayaran <a href="javascript:void(0)" class="btn btn-sm btn-info float-end">Cara Pembayaran</a></td>
+                                            <td class="text-center"><b>{{ $statusBayar->nomor_va }}</b></td>
                                             <td class="text-center">
                                                 @if ($statusBayar->status == '0')
                                                     <span class="badge bg-warning">Menunggu Pembayaran</span>
@@ -180,59 +191,62 @@
                                                 @endif
                                             </td>
                                         </tr>
+                                       </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
                         {{-- END INFO VA --}}
-                        {{-- START JADWAL PROPOSAL --}}
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
-                            </div>
-                            <div class="card-body">
-                                @if (!empty($dataProposal))
-                                    <div class="table container-fluid">
-                                        <h6>Jadwal Sidang</h6>
-                                        <table class="table table-bordered table-hover">
-                                            <thead>
+                        @if ($statusBayar->status !== '1')
+                            {{-- START JADWAL PROPOSAL --}}
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
+                                </div>
+                                <div class="card-body">
+                                    @if (!empty($dataProposal))
+                                        <div class="table container-fluid">
+                                            <h6>Jadwal Sidang</h6>
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">Tanggal dan Waktu</th>
+                                                        <th class="text-center">Lokasi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (empty($jadwal))
+                                                        <tr>
+                                                            <td class="text-center" colspan="2"><span
+                                                                    class="badge bg-warning">Jadwal
+                                                                    belum diset !</span></td>
+                                                        </tr>
+                                                    @else
+                                                        <tr>
+                                                            <td class="text-center">
+                                                                {{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
+                                                                {{ date('H:i', strtotime($jadwal->awal)) }} -
+                                                                {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
+                                                            </td>
+                                                            <td class="text-center">Di {{ $jadwal->lokasi }}</td>
+                                                        </tr>
+                                                    @endif
+                                                </tbody>
+                                            </table>
+                                            <h6>Berkas Penunjang Proposal</h6>
+                                            <table class="table table-bordered table-hover">
                                                 <tr>
-                                                    <th class="text-center">Tanggal dan Waktu</th>
-                                                    <th class="text-center">Lokasi</th>
+                                                    <td>Template Berita Acara </td>
+                                                    <td class="text-center"><a href="javascript:void(0)"
+                                                            class="btn btn-sm btn-info text-white"> Unduh</a></td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if (empty($jadwal))
-                                                    <tr>
-                                                        <td class="text-center" colspan="2"><span
-                                                                class="badge bg-warning">Jadwal
-                                                                belum diset !</span></td>
-                                                    </tr>
-                                                @else
-                                                    <tr>
-                                                        <td class="text-center">
-                                                            {{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
-                                                            {{ date('H:i', strtotime($jadwal->awal)) }} -
-                                                            {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
-                                                        </td>
-                                                        <td class="text-center">Di {{ $jadwal->lokasi }}</td>
-                                                    </tr>
-                                                @endif
-                                            </tbody>
-                                        </table>
-                                        <h6>Berkas Penunjang Proposal</h6>
-                                        <table class="table table-bordered table-hover">
-                                            <tr>
-                                                <td>Template Berita Acara </td>
-                                                <td class="text-center"><a href="javascript:void(0)"
-                                                        class="btn btn-sm btn-info text-white"> Unduh</a></td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                @endif
+                                            </table>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
-                        {{-- END JADWAL PROPOSAL --}}
+                            {{-- END JADWAL PROPOSAL --}}
+                        @endif
                     @endif
                 @endif
             @endif
@@ -732,14 +746,14 @@
         }
 
         function daftarSeminarProposal(id) {
-            console.log(id);            
+            console.log(id);
             Swal.fire({
                 title: "Peringatan",
                 text: "Apakah Anda ingin melakukan pengajuan Seminar Proposal?",
                 icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33"                
+                cancelButtonColor: "#d33"
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -748,14 +762,14 @@
                         data: {
                             id: id,
                             _token: "{{ csrf_token() }}"
-                        },                        
-                        success: function (response) {
-                            $("#btnDaftarSeminarProposal").attr('disabled', true);    
+                        },
+                        success: function(response) {
+                            $("#btnDaftarSeminarProposal").attr('disabled', true);
                             Swal.fire({
                                 title: "Berhasil!",
                                 text: "Berhasil mendaftar Seminar Proposal",
                                 icon: "success"
-                            });                        
+                            });
                             location.reload();
                         }
                     });
