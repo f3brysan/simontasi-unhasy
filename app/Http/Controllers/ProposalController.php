@@ -92,7 +92,7 @@ class ProposalController extends Controller
                 ->get();
 
             $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataProposal->id)->first();
-            
+
             $data['jadwal'] = DB::table('tr_pendaftaran_jadwal')->where('id', $dataProposal->id)->first();
             $data['statusProposal'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataProposal->id)->first();
         }
@@ -145,7 +145,7 @@ class ProposalController extends Controller
                 $insertStatusProposal = DB::table('tr_pendaftaran_status')->insert([
                     'id' => Str::uuid(),
                     'pendaftaran_id' => $idPendaftaran
-                ]);                 
+                ]);
 
                 $insertDosen = DB::table('tr_pendaftaran_dosen')->insert([
                     'id' => Str::uuid(),
@@ -184,6 +184,28 @@ class ProposalController extends Controller
             // If an error occurs during the transaction, rollback the transaction and return the error message
             DB::rollBack();
             return $e->getMessage();
+        }
+    }
+
+    public function storeSeminarProposal(Request $request)
+    {
+        try {
+            $pendaftaran_id = Crypt::decrypt($request->id);
+
+            $checkExist = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $pendaftaran_id)->exists();
+            if (!$checkExist) {
+                $getProposal = DB::table('tr_pendaftaran')->where('id', $pendaftaran_id)->first();                
+                $exe = DB::table('tr_pendaftaran_va')->insert([
+                    'id' => Str::uuid(),
+                    'pendaftaran_id' => $pendaftaran_id,
+                    'nomor_va' => '07'.$getProposal->no_induk,
+                    'status' => 0,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
+            }
+            return response()->json(true);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
         }
     }
 

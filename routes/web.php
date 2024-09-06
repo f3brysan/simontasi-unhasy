@@ -54,6 +54,8 @@ Route::middleware(['auth:web', 'role:mahasiswa|superadmin|pengelola'])->group(fu
     Route::post('daftar/proposal/store', [ProposalController::class, 'storeProposal']);
     Route::get('daftar/proposal/get-judul/{id}', [ProposalController::class, 'getJudul']);
     Route::post('daftar/proposal/berkas/store', [ProposalController::class, 'storeBerkasProposal']);
+
+    Route::post('daftar/seminar-proposal/store', [ProposalController::class, 'storeSeminarProposal']);
 });
 
 Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen|pengelola'])->group(function () {

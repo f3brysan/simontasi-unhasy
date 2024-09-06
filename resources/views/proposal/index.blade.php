@@ -150,7 +150,7 @@
                                 <table class="table table-bordered table-hover">
                                     <tr>
                                         <td class="text-center"><b>Daftar Seminar Proposal disini</b></td>
-                                        <td class="text-center"><button class="btn btn-sm btn-primary"><i class="fa-solid fa-right-to-bracket"></i> Daftar</button></td>
+                                        <td class="text-center"><button class="btn btn-sm btn-primary" id="btnDaftarSeminarProposal" onclick="daftarSeminarProposal('{{ Crypt::encrypt($dataProposal->id) }}')"><i class="fa-solid fa-right-to-bracket"></i> Daftar</button></td>
                                     </tr>
                                 </table>
                             </div>
@@ -731,6 +731,38 @@
             $("#modalLogBook").modal('show');
         }
 
+        function daftarSeminarProposal(id) {
+            console.log(id);            
+            Swal.fire({
+                title: "Peringatan",
+                text: "Apakah Anda ingin melakukan pengajuan Seminar Proposal?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33"                
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('daftar/seminar-proposal/store') }}",
+                        data: {
+                            id: id,
+                            _token: "{{ csrf_token() }}"
+                        },                        
+                        success: function (response) {
+                            $("#btnDaftarSeminarProposal").attr('disabled', true);    
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Berhasil mendaftar Seminar Proposal",
+                                icon: "success"
+                            });                        
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        }
+
         $(document).on('click', '.edit', function() {
             var id = $(this).data('id')
             $.get("{{ URL::to('log-book/show-detil') }}/" + id,
@@ -768,8 +800,6 @@
                             });
                         }
                     });
-
-
                 }
             });
         });
