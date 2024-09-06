@@ -437,6 +437,10 @@
                             <label for="exampleFormControlTextarea1" class="form-label">Catatan</label>
                             <textarea class="form-control" id="catatanLogBook" rows="3" name="catatanLogBook"></textarea>
                         </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">File Lampiran</label>
+                            <input class="form-control" type="file" name="formFile" id="formFile">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Batal</button>
@@ -820,13 +824,30 @@
 
         if ($("#storeLogBook").length > 0) {
             $("#storeLogBook").validate({
+                // validasi mime type
+                rules: {
+                    formFile: {                        
+                        extension: "pdf|PDF", // ekstensi pdf
+                        filesize: 5097152, // ukuran file < 2mb
+
+                    }
+                },
+                messages: {
+                    formFile: {                        
+                        extension: "Mohon mengunggah dokumen berekstensi *pdf"
+                    }
+                },
                 submitHandler: function(form) {
+                    var formData = new FormData(form);
+                    console.log(formData);
                     $('#saveBtnLogBook').html('Menyimpan . .');
                     $.ajax({
                         type: "POST",
                         url: "{{ URL::to('log-book/store') }}",
-                        data: $('#storeLogBook').serializeArray(),
+                        data: formData,
                         dataType: 'json',
+                        processData: false,
+                        contentType: false,
                         success: function(data) {
                             if (data == true) {
                                 $('#storeLogBook').trigger("reset");

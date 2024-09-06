@@ -9,6 +9,7 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 class LogBookController extends Controller
 {
@@ -88,7 +89,7 @@ class LogBookController extends Controller
 
     public function storeLogBook(Request $request)
     {
-        try {
+        try {                        
             // Decrypt the proposal ID
             $pendaftaran_id = Crypt::decrypt($request->idProposal);
 
@@ -107,6 +108,23 @@ class LogBookController extends Controller
              * Insert or update the logbook records for each pembimbing
              */
             foreach ($getPembimbing as $pembimbing) {
+                $storage = NULL;
+
+                // Check if the formFile field is not empty
+                if ($request->formFile) {
+                    // Retrieve the uploaded file from the request
+                    $file = $request->file('formFile');
+
+                    // Get the extension of the uploaded file
+                    $extension = $file->getClientOriginalExtension();
+
+                    // Generate the path where the file will be stored
+                    $path = 'uploads/logbook/';
+
+                    // Store the file in the specified path
+                    $storage = Storage::disk('my_files')->put($path, $file);
+                }
+
                 if (empty($request->idLogBook)) {
                     // Insert a new logbook record
                     DB::table('tr_logbook')->insert([
@@ -117,9 +135,19 @@ class LogBookController extends Controller
                         'tgl_bimbingan' => $request->tgl_bimbingan,
                         'catatan' => $request->catatanLogBook,
                         'is_approve' => 0,
+                        'attachment' => $storage,
                         'created_at' => date('Y-m-d H:i:s')
                     ]);
                 } else {
+                    // Retrieve the existing logbook record
+                    $getOld = DB::table('tr_logbook')->where('id', $request->idLogBook)->first();
+
+                    // Check if the formFile field is empty
+                    if ($storage == NULL) {
+                        // Keep the existing attachment
+                        $storage = $getOld->attachment;
+                    }
+                    
                     // Update an existing logbook record
                     DB::table('tr_logbook')->where('id', $request->idLogBook)->update([
                         'pendaftaran_id' => $pendaftaran_id,
