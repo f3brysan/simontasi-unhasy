@@ -37,7 +37,7 @@
                                     <td>{{ auth()->user()->no_induk }}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>NAMA</strong></td>
+                                    <td><strong>Nama</strong></td>
                                     <td>{{ auth()->user()->nama }}</td>
                                 </tr>
                                 <tr>
@@ -65,7 +65,7 @@
                                         <div class="row">
                                             @foreach ($pembimbing as $item)
                                                 <div class="col-md-9">
-                                                    <u>{{ $item->nama }}</u><br>NIP: {{ $item->nip }}
+                                                    <u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}
                                                 </div>
                                                 <div class="col-md-3">
                                                     @if ($item->is_ok == 1)
@@ -89,7 +89,7 @@
                                             @foreach ($penguji as $item)
                                                 <div class="col-md-9">
                                                     <u>{{ $item->nama }}</u>
-                                                    <br>NIP: {{ $item->nip }}
+                                                    <br>NIY: {{ $item->nip }}
                                                     <br>
                                                 </div>
                                             @endforeach
@@ -142,12 +142,15 @@
             @if ($dataProposal)
                 @if (empty($statusBayar))
                     <div class="card mb-4" id="checkLogCompleted" style="display: none">
+                        <div class="card-header">
+                            <h5>Daftar Sidang Proposal</h5></span>
+                        </div>
                         <div class="card-body">
                             <div class="table container-fluid">
                                 <table class="table table-bordered table-hover">
                                     <tr>
                                         <td class="text-center"><b>Daftar Seminar Proposal disini</b></td>
-                                        <td class="text-center"><button class="btn btn-sm btn-primary">Daftar</button></td>
+                                        <td class="text-center"><button class="btn btn-sm btn-primary"><i class="fa-solid fa-right-to-bracket"></i> Daftar</button></td>
                                     </tr>
                                 </table>
                             </div>
@@ -183,54 +186,55 @@
                         </div>
                         {{-- END INFO VA --}}
                         {{-- START JADWAL PROPOSAL --}}
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
-                    </div>
-                    <div class="card-body">
-                        @if (!empty($dataProposal))
-                            <div class="table container-fluid">
-                                <h6>Jadwal Sidang</h6>
-                                <table class="table table-bordered table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center">Tanggal dan Waktu</th>
-                                            <th class="text-center">Lokasi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (empty($jadwal))
-                                            <tr>
-                                                <td class="text-center" colspan="2"><span class="badge bg-warning">Jadwal
-                                                        belum diset !</span></td>
-                                            </tr>
-                                        @else
-                                            <tr>
-                                                <td class="text-center">
-                                                    {{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
-                                                    {{ date('H:i', strtotime($jadwal->awal)) }} -
-                                                    {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
-                                                </td>
-                                                <td class="text-center">Di {{ $jadwal->lokasi }}</td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                                <h6>Berkas Penunjang Proposal</h6>
-                                <table class="table table-bordered table-hover">
-                                    <tr>
-                                        <td>Template Berita Acara </td>
-                                        <td class="text-center"><a href="javascript:void(0)"
-                                                class="btn btn-sm btn-info text-white"> Unduh</a></td>
-                                    </tr>
-                                </table>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
                             </div>
-                        @endif
-                    </div>
-                </div>
-                {{-- END JADWAL PROPOSAL --}}
+                            <div class="card-body">
+                                @if (!empty($dataProposal))
+                                    <div class="table container-fluid">
+                                        <h6>Jadwal Sidang</h6>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Tanggal dan Waktu</th>
+                                                    <th class="text-center">Lokasi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (empty($jadwal))
+                                                    <tr>
+                                                        <td class="text-center" colspan="2"><span
+                                                                class="badge bg-warning">Jadwal
+                                                                belum diset !</span></td>
+                                                    </tr>
+                                                @else
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            {{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
+                                                            {{ date('H:i', strtotime($jadwal->awal)) }} -
+                                                            {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
+                                                        </td>
+                                                        <td class="text-center">Di {{ $jadwal->lokasi }}</td>
+                                                    </tr>
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                        <h6>Berkas Penunjang Proposal</h6>
+                                        <table class="table table-bordered table-hover">
+                                            <tr>
+                                                <td>Template Berita Acara </td>
+                                                <td class="text-center"><a href="javascript:void(0)"
+                                                        class="btn btn-sm btn-info text-white"> Unduh</a></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        {{-- END JADWAL PROPOSAL --}}
                     @endif
-                @endif                
+                @endif
             @endif
 
             {{-- START HASIL PROPOSAL --}}
