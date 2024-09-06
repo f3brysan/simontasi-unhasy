@@ -82,59 +82,56 @@
                                         </div>
                                     </td>
                                 </tr>
-                                @if ($statusBayar)
+                                <tr>
+                                    <td><strong>Dosen Penguji</strong></td>
+                                    <td>
+                                        <div class="row">
+                                            @foreach ($penguji as $item)
+                                                <div class="col-md-9">
+                                                    <u>{{ $item->nama }}</u>
+                                                    <br>NIP: {{ $item->nip }}
+                                                    <br>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </td>
+                                </tr>
+                                @foreach ($berkas as $item)
                                     <tr>
-                                        <td><strong>Dosen Penguji</strong></td>
+                                        <td><strong>{{ $item->nama }}</strong></td>
                                         <td>
                                             <div class="row">
-                                                @foreach ($penguji as $item)
-                                                    <div class="col-md-9">
-                                                        <u>{{ $item->nama }}</u>
-                                                        <br>NIP: {{ $item->nip }}
-                                                        <br>
-                                                    </div>
-                                                @endforeach
+                                                <div class="col-md-9">
+                                                    @if ($item->file)
+                                                        <a href="{{ URL::to('/') }}/{{ $item->file }}" target="_blank"
+                                                            class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
+                                                    @else
+                                                    @endif
+                                                </div>
+                                                <div class="col-md-3">
+                                                    @if ($item->is_lock == 1)
+                                                        <span class="badge bg-info">Sudah terkunci.</span>
+                                                    @else
+                                                        @if ($item->doc_id)
+                                                            <a href="javascript:void(0)"
+                                                                onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}', '{{ $item->doc_id }}')"
+                                                                class="btn btn-sm btn-info float-end text-light"><i
+                                                                    class="fas fa-redo-alt"></i></i>
+                                                                Ganti</a>
+                                                        @else
+                                                            <a href="javascript:void(0)"
+                                                                onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')"
+                                                                class="btn btn-sm btn-primary float-end"><i
+                                                                    class="fas fa-upload"></i>
+                                                                Unggah</a>
+                                                        @endif
+                                                    @endif
+
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
-                                    @foreach ($berkas as $item)
-                                        <tr>
-                                            <td><strong>{{ $item->nama }}</strong></td>
-                                            <td>
-                                                <div class="row">
-                                                    <div class="col-md-9">
-                                                        @if ($item->file)
-                                                            <a href="{{ URL::to('/') }}/{{ $item->file }}"
-                                                                target="_blank"
-                                                                class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
-                                                        @else
-                                                        @endif
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        @if ($item->is_lock == 1)
-                                                            <span class="badge bg-info">Sudah terkunci.</span>
-                                                        @else
-                                                            @if ($item->doc_id)
-                                                                <a href="javascript:void(0)"
-                                                                    onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}', '{{ $item->doc_id }}')"
-                                                                    class="btn btn-sm btn-info float-end text-light"><i
-                                                                        class="fas fa-redo-alt"></i></i>
-                                                                    Ganti</a>
-                                                            @else
-                                                                <a href="javascript:void(0)"
-                                                                    onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')"
-                                                                    class="btn btn-sm btn-primary float-end"><i
-                                                                        class="fas fa-upload"></i>
-                                                                    Unggah</a>
-                                                            @endif
-                                                        @endif
-
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @endif
+                                @endforeach
                             </table>
                         </div>
                     @endif
@@ -142,192 +139,196 @@
             </div>
             {{-- END DAFTAR PROPOSAL --}}
 
-            {{-- INFO VA --}}
-            @if (isset($statusBayar))
-                @if ($statusBayar->status !== '1')
-                    <div class="card mb-4">
+            @if ($dataProposal)
+                @if (empty($statusBayar))
+                    <div class="card mb-4" id="checkLogCompleted" style="display: none">
                         <div class="card-body">
-                            <div class="alert alert-danger" role="alert">
-                                <strong>Maaf, Anda belum lolos syarat pembayaran administrasi.</strong>
-                            </div>
                             <div class="table container-fluid">
                                 <table class="table table-bordered table-hover">
                                     <tr>
-                                        <td>No VA Pembayaran</td>
-                                        <td>{{ $statusBayar->nomor_va }}</td>
-                                        <td class="text-center">
-                                            @if ($statusBayar->status == '0')
-                                                <span class="badge bg-warning">Menunggu Pembayaran</span>
-                                            @endif
-                                            @if ($statusBayar->status == '2')
-                                                <span class="badge bg-danger">Invalid</span>
-                                            @endif
-                                        </td>
+                                        <td class="text-center"><b>Daftar Seminar Proposal disini</b></td>
+                                        <td class="text-center"><button class="btn btn-sm btn-primary">Daftar</button></td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
                     </div>
                 @endif
-            @endif
-            {{-- END INFO VA --}}
 
-            @if (isset($statusBayar))
-                @if ($statusBayar->status == '1')
-                    {{-- START JADWAL PROPOSAL --}}
-                    @if ($dataProposal)
+                {{-- INFO VA --}}
+                @if (isset($statusBayar))
+                    @if ($statusBayar->status !== '1')
                         <div class="card mb-4">
-                            <div class="card-header">
-                                <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
-                            </div>
                             <div class="card-body">
-                                @if (!empty($dataProposal))
-                                    <div class="table container-fluid">
-                                        <h6>Jadwal Sidang</h6>
-                                        <table class="table table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center">Tanggal dan Waktu</th>
-                                                    <th class="text-center">Lokasi</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if (empty($jadwal))
-                                                    <tr>
-                                                        <td class="text-center" colspan="2"><span
-                                                                class="badge bg-warning">Jadwal
-                                                                belum diset !</span></td>
-                                                    </tr>
-                                                @else
-                                                    <tr>
-                                                        <td class="text-center">
-                                                            {{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
-                                                            {{ date('H:i', strtotime($jadwal->awal)) }} -
-                                                            {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
-                                                        </td>
-                                                        <td class="text-center">Di {{ $jadwal->lokasi }}</td>
-                                                    </tr>
+                                <div class="alert alert-danger" role="alert">
+                                    <strong>Maaf, Anda belum lolos syarat pembayaran administrasi.</strong>
+                                </div>
+                                <div class="table container-fluid">
+                                    <table class="table table-bordered table-hover">
+                                        <tr>
+                                            <td>No VA Pembayaran</td>
+                                            <td>{{ $statusBayar->nomor_va }}</td>
+                                            <td class="text-center">
+                                                @if ($statusBayar->status == '0')
+                                                    <span class="badge bg-warning">Menunggu Pembayaran</span>
                                                 @endif
-                                            </tbody>
-                                        </table>
-                                        <h6>Berkas Penunjang Proposal</h6>
-                                        <table class="table table-bordered table-hover">
-                                            <tr>
-                                                <td>Template Berita Acara </td>
-                                                <td class="text-center"><a href="javascript:void(0)"
-                                                        class="btn btn-sm btn-info text-white"> Unduh</a></td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
-                    {{-- END JADWAL PROPOSAL --}}
-
-                    {{-- START HASIL PROPOSAL --}}
-                    @if (!empty($jadwal))
-                        @if ($jadwal->akhir <= date('Y-m-d H:i:s'))
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5>Hasil Sidang Proposal</h5></span>
-                                </div>
-                                <div class="card-body">
-                                    @if (!empty($dataProposal))
-                                        <div class="table container-fluid">
-                                            <h6>Hasil Sidang Proposal</h6>
-                                            <table class="table table-bordered table-hover">
-                                                <tr>
-                                                    <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
-                                                    <td class="text-center">
-                                                        @if (empty($statusProposal))
-                                                            <span class="badge bg-warning text-dark">Hasil belum
-                                                                diinput.</span>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                            <h6>Monitoring Berkas Hasil Proposal</h6>
-                                            <table class="table table-bordered table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="text-center">Nama Berkas</th>
-                                                        <th class="text-center">File Berkas</th>
-                                                        <th class="text-center">Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                @foreach ($berkas_hasil as $item)
-                                                    <tbody>
-                                                        <tr>
-                                                            <td style="width: 15%">{{ $item->nama }}</td>
-                                                            <td>
-                                                                @if ($item->file)
-                                                                    <a href="{{ URL::to('/') }}/{{ $item->file }}"
-                                                                        target="_blank"
-                                                                        class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
-                                                                @endif
-                                                            </td>
-                                                            <td class="text-center" style="width: 10%">
-                                                                @if ($item->doc_id)
-                                                                    <a href="javascript:void(0)"
-                                                                        onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}', '{{ $item->doc_id }}')"
-                                                                        class="btn btn-sm btn-info text-light"><i
-                                                                            class="fas fa-redo-alt"></i></i>
-                                                                        Ganti</a>
-                                                                @else
-                                                                    <a href="javascript:void(0)"
-                                                                        onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')"
-                                                                        class="btn btn-sm btn-primary"><i
-                                                                            class="fas fa-upload"></i>
-                                                                        Unggah</a>
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                @endforeach
-                                            </table>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        @endif
-                    @endif
-                    {{-- END HASIL PROPOSAL --}}
-
-                    {{-- START LOGBOOK --}}
-                    @if ($dataProposal)
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5>Log Book Bimbingan</h5>
-                            </div>
-                            <div class="card-body">
-                                @php
-                                    $val = 3;
-                                @endphp
-                                @if ($statusBayar)
-                                    <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4"
-                                        onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataProposal->id) }}', '{{ auth()->user()->no_induk }}')"><i
-                                            class="fa-solid fa-file-circle-plus"></i></i> Tambah</a>
-                                @endif
-                                <div class="col-lg-12 table table-responsive">
-                                    <table class="table table-sm table-bordered table-striped" id="myTable">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">Aksi</th>
-                                                <th class="text-center">Tanggal Bimbingan</th>
-                                                <th class="text-center" style="width: 50%">Catatan</th>
-                                                <th class="text-center">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
+                                                @if ($statusBayar->status == '2')
+                                                    <span class="badge bg-danger">Invalid</span>
+                                                @endif
+                                            </td>
+                                        </tr>
                                     </table>
                                 </div>
                             </div>
                         </div>
+                        {{-- END INFO VA --}}
+                        {{-- START JADWAL PROPOSAL --}}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
+                    </div>
+                    <div class="card-body">
+                        @if (!empty($dataProposal))
+                            <div class="table container-fluid">
+                                <h6>Jadwal Sidang</h6>
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Tanggal dan Waktu</th>
+                                            <th class="text-center">Lokasi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (empty($jadwal))
+                                            <tr>
+                                                <td class="text-center" colspan="2"><span class="badge bg-warning">Jadwal
+                                                        belum diset !</span></td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <td class="text-center">
+                                                    {{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
+                                                    {{ date('H:i', strtotime($jadwal->awal)) }} -
+                                                    {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
+                                                </td>
+                                                <td class="text-center">Di {{ $jadwal->lokasi }}</td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                                <h6>Berkas Penunjang Proposal</h6>
+                                <table class="table table-bordered table-hover">
+                                    <tr>
+                                        <td>Template Berita Acara </td>
+                                        <td class="text-center"><a href="javascript:void(0)"
+                                                class="btn btn-sm btn-info text-white"> Unduh</a></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                {{-- END JADWAL PROPOSAL --}}
                     @endif
-                    {{-- END LOGBOOK --}}
+                @endif                
+            @endif
+
+            {{-- START HASIL PROPOSAL --}}
+            @if (!empty($jadwal))
+                @if ($jadwal->akhir <= date('Y-m-d H:i:s'))
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Hasil Sidang Proposal</h5></span>
+                        </div>
+                        <div class="card-body">
+                            @if (!empty($dataProposal))
+                                <div class="table container-fluid">
+                                    <h6>Hasil Sidang Proposal</h6>
+                                    <table class="table table-bordered table-hover">
+                                        <tr>
+                                            <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
+                                            <td class="text-center">
+                                                @if (empty($statusProposal))
+                                                    <span class="badge bg-warning text-dark">Hasil belum
+                                                        diinput.</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <h6>Monitoring Berkas Hasil Proposal</h6>
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Nama Berkas</th>
+                                                <th class="text-center">File Berkas</th>
+                                                <th class="text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        @foreach ($berkas_hasil as $item)
+                                            <tbody>
+                                                <tr>
+                                                    <td style="width: 15%">{{ $item->nama }}</td>
+                                                    <td>
+                                                        @if ($item->file)
+                                                            <a href="{{ URL::to('/') }}/{{ $item->file }}"
+                                                                target="_blank"
+                                                                class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center" style="width: 10%">
+                                                        @if ($item->doc_id)
+                                                            <a href="javascript:void(0)"
+                                                                onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}', '{{ $item->doc_id }}')"
+                                                                class="btn btn-sm btn-info text-light"><i
+                                                                    class="fas fa-redo-alt"></i></i>
+                                                                Ganti</a>
+                                                        @else
+                                                            <a href="javascript:void(0)"
+                                                                onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')"
+                                                                class="btn btn-sm btn-primary"><i
+                                                                    class="fas fa-upload"></i>
+                                                                Unggah</a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        @endforeach
+                                    </table>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 @endif
             @endif
+            {{-- END HASIL PROPOSAL --}}
+
+            {{-- START LOGBOOK --}}
+            @if ($dataProposal)
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Log Book Bimbingan</h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4"
+                            onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataProposal->id) }}', '{{ auth()->user()->no_induk }}')"><i
+                                class="fa-solid fa-file-circle-plus"></i></i> Tambah</a>
+                        <div class="col-lg-12 table table-responsive">
+                            <table class="table table-sm table-bordered table-striped" id="myTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Aksi</th>
+                                        <th class="text-center">Tanggal Bimbingan</th>
+                                        <th class="text-center" style="width: 50%">Catatan</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endif
+            {{-- END LOGBOOK --}}
         </div>
     </div>
 
@@ -495,6 +496,8 @@
                 }
             });
 
+            countLogBook();
+
             var options = {
                 height: 300,
                 placeholder: 'Judul proposal Anda',
@@ -529,6 +532,18 @@
                 dropdownParent: $('#modalDaftarProposal')
             });
             $("#modalDaftarProposal").modal('show');
+        }
+
+        function countLogBook() {
+            $.ajax({
+                type: "GET",
+                url: "{{ URL::to('log-book/count/' . Crypt::encrypt($dataProposal->id ?? '')) }}",
+                success: function(response) {
+                    if (response > 3) {
+                        $("#checkLogCompleted").show();
+                    }
+                }
+            });
         }
 
         if ($("#storeProposal").length > 0) {
@@ -741,6 +756,7 @@
                         url: "{{ URL::to('log-book/delete-detil') }}/" + id,
                         success: function(data) {
                             table.ajax.reload(null, false);
+                            countLogBook();
                             Swal.fire({
                                 title: "Berhasil!",
                                 text: "Catatan berhasil dihapus",
@@ -768,6 +784,7 @@
                                 $('#storeLogBook').trigger("reset");
                                 $('#modalLogBook').modal("hide");
                                 $('#saveBtnLogBook').html('Simpan');
+                                countLogBook();
                                 iziToast.success({
                                     title: 'Berhasil',
                                     message: 'Log Book tersimpan.',

@@ -60,7 +60,7 @@ class LogBookController extends Controller
         try {
             // Decrypt the ID parameter
             $pendaftaran_id = Crypt::decrypt($id);
-
+            
             // Retrieve the logbook data for the decrypted ID
             $getData = DB::table('tr_logbook')->where('pendaftaran_id', $pendaftaran_id)->count();
 

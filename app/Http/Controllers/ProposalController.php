@@ -145,16 +145,7 @@ class ProposalController extends Controller
                 $insertStatusProposal = DB::table('tr_pendaftaran_status')->insert([
                     'id' => Str::uuid(),
                     'pendaftaran_id' => $idPendaftaran
-                ]);
-
-                $serialSempro = '07';
-                $insertTagihanVA = DB::table('tr_pendaftaran_va')->insert([
-                    'id' => Str::uuid(),
-                    'pendaftaran_id' => $idPendaftaran,
-                    'nomor_va' => $serialSempro.$no_induk,
-                    'status' => 0,
-                    'created_at' => date('Y-m-d H:i:s')
-                ]);
+                ]);                 
 
                 $insertDosen = DB::table('tr_pendaftaran_dosen')->insert([
                     'id' => Str::uuid(),
