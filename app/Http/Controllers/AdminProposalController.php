@@ -319,7 +319,8 @@ class AdminProposalController extends Controller
             $store = DB::table('tr_pendaftaran_jadwal')->where('id', $pendaftaran_id)->update([
                 'awal' => $awal,
                 'akhir' => $akhir,
-                'lokasi' => $request->lokasi,
+                'gedung' => $request->gedung,
+                'ruang' => $request->ruang,
                 'created_at' => date('Y-m-d H:i:s'),
                 'created_by' => auth()->user()->nama,
             ]);
@@ -328,7 +329,8 @@ class AdminProposalController extends Controller
                 'id' => $pendaftaran_id,
                 'awal' => $awal,
                 'akhir' => $akhir,
-                'lokasi' => $request->lokasi,
+                'gedung' => $request->gedung,
+                'ruang' => $request->ruang,
                 'created_at' => date('Y-m-d H:i:s'),
                 'created_by' => auth()->user()->nama,
             ]);

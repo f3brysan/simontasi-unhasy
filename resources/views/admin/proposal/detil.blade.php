@@ -167,7 +167,7 @@ $isStatusBayarDone = false;
                                                 {{ date('H:i', strtotime($jadwal->awal)) }} -
                                                 {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
                                             </td>
-                                            <td class="text-center">Di {{ $jadwal->lokasi }}</td>
+                                            <td class="text-center">Di {{ $jadwal->gedung }} Ruang {{ $jadwal->ruang }}</td>
                                             <td class="text-center"><a href="javascript:void(0)"
                                                     onclick="editJadwal('{{ Crypt::encrypt($dataProposal->id) }}')"
                                                     class="btn btn-sm btn-primary">Edit</a></td>
@@ -321,10 +321,14 @@ $isStatusBayarDone = false;
                         <div class="mb-3">
                             <label for="exampleFormControlTextarea1" class="form-label">Jadwal Sidang</label>
                             <input type="datetime-local" class="form-control" name="jadwalsidang" id="jadwalsidang">
+                        </div>                        
+                        <div class="mb-1">
+                            <label for="exampleFormControlTextarea1" class="form-label">Lokasi Gedung</label>
+                            <input type="text" class="form-control" name="gedung" id="gedung">
                         </div>
                         <div class="mb-3">
-                            <label for="exampleFormControlTextarea1" class="form-label">Lokasi Sidang</label>
-                            <input type="text" class="form-control" name="lokasi" id="lokasi">
+                            <label for="exampleFormControlTextarea1" class="form-label">Lokasi Ruang</label>
+                            <input type="text" class="form-control" name="ruang" id="ruang">
                         </div>
                 </div>
                 <div class="modal-footer">
@@ -605,7 +609,8 @@ $isStatusBayarDone = false;
                 function(data) {
                     $("#modalSetJadwal").modal('show');
                     $("#jadwalsidang").val(data.awal);
-                    $("#lokasi").val(data.lokasi);                    
+                    $("#gedung").val(data.gedung);                    
+                    $("#ruang").val(data.ruang);                    
                 });
         }
     </script>
