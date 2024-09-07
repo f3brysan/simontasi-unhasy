@@ -350,9 +350,10 @@ class LogBookController extends Controller
                     // Determine the button type and icon based on the is_approve value
                     $btnType = $data->is_approve == 0 ? 'btn-success' : 'btn-warning';
                     $btnIcon = $data->is_approve == 0 ? 'fa-check' : 'fa-arrows-rotate';
+                    $title = $data->is_approve == 0 ? 'Terima' : 'Reset';
                     // Generate the HTML for the button
                     $btn = '<div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
-                    <button type="button" data-id="' . Crypt::encrypt($data->id) . '" data-status="' . $data->is_approve . '" class="approve btn ' . $btnType . ' text-light"><i class="fa-solid ' . $btnIcon . '"></i></button>                   
+                    <button type="button" data-id="' . Crypt::encrypt($data->id) . '" data-status="' . $data->is_approve . '" class="approve btn ' . $btnType . ' text-light" title="'.$title.'"><i class="fa-solid ' . $btnIcon . '"></i></button>                   
                   </div>';
                     // Return the button HTML
                     return $btn;
@@ -364,6 +365,13 @@ class LogBookController extends Controller
                     // Return the catatan value
                     return $data->catatan;
                 })
+                ->addColumn('attachment', function ($data) {
+                    $btn = '';
+                    if (isset($data->attachment)) {
+                        $btn = '<a href="' . URL::to('/') . '/' . $data->attachment . '" class="btn btn-sm btn-info" target="_blank"> Lihat berkas</a>';
+                    }
+                    return $btn;
+                })
                 /**
                  * Add a column for the status                 
                  */
@@ -374,7 +382,7 @@ class LogBookController extends Controller
                     return $status;
                 })
                 // Make the columns raw so that HTML can be rendered
-                ->rawColumns(['catatan', 'action', 'status'])
+                ->rawColumns(['catatan', 'action', 'status', 'attachment'])
                 // Add an index column
                 ->addIndexColumn()
                 // Return the Datatables object

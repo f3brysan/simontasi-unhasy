@@ -81,7 +81,7 @@
                                         <div class="row">
                                             @foreach ($pembimbing as $item)
                                                 <div class="col-md-9">
-                                                    <u>{{ $item->nama }}</u><br>NIP: {{ $item->nip }}
+                                                    <u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}
                                                 </div>
                                                 <div class="col-md-3">
                                                     @if ($item->is_ok == 1)
@@ -102,7 +102,7 @@
                                             @foreach ($penguji as $item)
                                                 <div class="col-md-9">
                                                     <u>{{ $item->nama }}</u>
-                                                    <br>NIP: {{ $item->nip }}
+                                                    <br>NIY: {{ $item->nip }}
                                                     <br>
                                                 </div>
                                             @endforeach
@@ -270,6 +270,7 @@
                                     <th class="text-center">Aksi</th>
                                     <th class="text-center">Tanggal Bimbingan</th>
                                     <th class="text-center" style="width: 50%">Catatan</th>
+                                    <th class="text-center">Berkas<br>Pendukung</th>
                                     <th class="text-center">Status</th>
                                 </tr>
                             </thead>
@@ -367,6 +368,10 @@
                 {
                     data: 'catatan',
                     name: 'catatan'
+                },
+                {
+                    data: 'attachment',
+                    name: 'attachment'
                 },
                 {
                     data: 'status',
