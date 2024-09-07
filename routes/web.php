@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GetDataAPISiakad;
 use App\Http\Controllers\LogBookController;
 use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\ProposalDocTemplateController;
 use App\Http\Controllers\SyncDataController;
 use App\Http\Controllers\UserController;
 
@@ -70,6 +71,8 @@ Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen|pengelola'])->gr
     Route::get('dosen/log-bimbingan/approve/{id}', [LogBookController::class, 'approveDetilLogBookMhs']);
     Route::get('dosen/proposal/approval-dosen/{id}', [ProposalController::class, 'approvalProposalDosen']);
     Route::post('dosen/proposal/hasil/store', [LogBookController::class, 'storeHasilProposal']);
+
+    Route::get('document/berita-acara-proposal/{id}', [ProposalDocTemplateController::class, 'pdfBeritaAcaraProposal']);
 });
 
 Route::get('sync/prodi', [SyncDataController::class, 'syncDataProdi']);

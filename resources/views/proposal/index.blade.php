@@ -240,7 +240,7 @@
                                         <table class="table table-bordered table-hover">
                                             <tr>
                                                 <td>Template Berita Acara </td>
-                                                <td class="text-center"><a href="javascript:void(0)"
+                                                <td class="text-center"><a href="{{ URL::to('document/berita-acara-proposal/'.$dataProposal->id) }}"
                                                         class="btn btn-sm btn-info text-white"> Unduh</a></td>
                                             </tr>
                                         </table>
