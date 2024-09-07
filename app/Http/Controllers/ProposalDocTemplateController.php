@@ -37,7 +37,7 @@ class ProposalDocTemplateController extends Controller
             ];
 
             $pdf = Pdf::loadView('master-pdf.berita-acara-proposal', $data)->setPaper('a4', 'potrait');
-            $uniqueCode = strtotime('now');
+            $uniqueCode = date('YmdHis');
             // Return the PDF stream with a unique file name
             // return view('master-pdf.berita-acara-proposal', $data);
             return $pdf->stream($data['fileName'].'-'.$dataProposal->no_induk. '-' . $uniqueCode . '.pdf');
