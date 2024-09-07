@@ -222,7 +222,6 @@
                                                         <span class="badge bg-danger">Ditolak</span>
                                                         <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
                                                     @endif
-
                                                 @endif
                                             </td>
                                         </tr>
