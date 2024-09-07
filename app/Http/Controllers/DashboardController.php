@@ -80,7 +80,7 @@ class DashboardController extends Controller
             ->join("ms_prodi as mp", function ($join) {
                 $join->on("mp.kode_prodi", "=", "u.prodi_kode");
             })            
-            ->select("p.*", "u.nama", "u.prodi_kode", "mp.prodi", "pj.lokasi", "pj.awal", "pj.akhir")
+            ->select("p.*", "u.nama", "u.prodi_kode", "mp.prodi", "pj.gedung", "pj.ruang", "pj.awal", "pj.akhir")
             ->where("pd.nip", auth()->user()->no_induk)
             ->get();
 
@@ -89,7 +89,7 @@ class DashboardController extends Controller
                 $jenis = $item->type == 'P' ? 'Sidang Proposal' : 'Sidang Skripsi';
                 $jenis = in_array($item->prodi_kode, ['25', '22', '23']) ? 'Sidang Tesis' : $jenis;
                 $events[] = [
-                    'title' => $jenis.' '.$item->nama.' ('.$item->prodi.') bertempat di '.$item->lokasi.'.',
+                    'title' => $jenis.' '.$item->nama.' ('.$item->prodi.') bertempat di '.$item->gedung.', Ruang : '.$item->ruang,
                     'start' => $item->awal,
                     'end' => $item->akhir,
                 ];
