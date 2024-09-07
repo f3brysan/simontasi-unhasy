@@ -45,8 +45,8 @@ class LogBookController extends Controller
                     })
                     ->addColumn('attachment', function ($data) {
                         $btn = '';
-                        if (isset($data->attachment)) {                            
-                            $btn = '<a href="'.URL::to('/').'/'.$data->attachment.'" class="btn btn-sm btn-info" target="_blank"> Lihat berkas</a>';
+                        if (isset($data->attachment)) {
+                            $btn = '<a href="' . URL::to('/') . '/' . $data->attachment . '" class="btn btn-sm btn-info" target="_blank"> Lihat berkas</a>';
                         }
                         return $btn;
                     })
@@ -68,7 +68,7 @@ class LogBookController extends Controller
         try {
             // Decrypt the ID parameter
             $pendaftaran_id = Crypt::decrypt($id);
-            
+
             // Retrieve the logbook data for the decrypted ID
             $getData = DB::table('tr_logbook')->where('pendaftaran_id', $pendaftaran_id)->count();
 
@@ -96,7 +96,7 @@ class LogBookController extends Controller
 
     public function storeLogBook(Request $request)
     {
-        try {                        
+        try {
             // Decrypt the proposal ID
             $pendaftaran_id = Crypt::decrypt($request->idProposal);
 
@@ -154,7 +154,7 @@ class LogBookController extends Controller
                         // Keep the existing attachment
                         $storage = $getOld->attachment;
                     }
-                    
+
                     // Update an existing logbook record
                     DB::table('tr_logbook')->where('id', $request->idLogBook)->update([
                         'pendaftaran_id' => $pendaftaran_id,
@@ -448,12 +448,16 @@ class LogBookController extends Controller
         $hasilSidang = $request->hasilsidang;
         $catatan = $request->catatanhasil;
 
+
         $getPendaftaran = DB::table('tr_pendaftaran as tp')
             ->select('tp.*')
-            ->whereRaw('tp.id NOT IN (SELECT pendaftaran_id FROM tr_pendaftaran_status)')
-            ->where('no_induk', $noInduk)
+            ->leftJoin('tr_pendaftaran_status as tps', 'tps.pendaftaran_id', '=', 'tp.id')
+            ->where('tp.no_induk', $noInduk)
+            ->where(function ($query) {
+                $query->whereNull('tps.status')
+                    ->orWhere('tps.status', '!=', '0');
+            })
             ->first();
-
         switch ($hasilSidang) {
             case 'TERIMA':
                 $hasilSidang = 1;
@@ -470,17 +474,13 @@ class LogBookController extends Controller
         }
 
         if ($hasilSidang == 'TERIMA') {
-            $insert = DB::table('tr_pendaftaran_status')->insert([
-                'id' => Str::uuid(),
-                'pendaftaran_id' => $getPendaftaran->id,
+            $insert = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $getPendaftaran->id)->update([                                
                 'status' => $hasilSidang,
                 'created_by' => auth()->user()->no_induk,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         } else {
-            $insert = DB::table('tr_pendaftaran_status')->insert([
-                'id' => Str::uuid(),
-                'pendaftaran_id' => $getPendaftaran->id,
+            $update = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $getPendaftaran->id)->update([                
                 'status' => $hasilSidang,
                 'catatan' => $catatan,
                 'created_by' => auth()->user()->no_induk,

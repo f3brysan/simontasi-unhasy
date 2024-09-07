@@ -159,7 +159,7 @@
                                                 {{ date('H:i', strtotime($jadwal->awal)) }} -
                                                 {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
                                             </td>
-                                            <td class="text-center">Di {{ $jadwal->lokasi }}</td>
+                                            <td class="text-center">Di Gedung {{ $jadwal->gedung }}, Ruang {{ $jadwal->ruang }}</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -185,7 +185,7 @@
                                         <tr>
                                             <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
                                             <td class="text-center">
-                                                @if (empty($statusProposal))
+                                                @if ($statusProposal->status == NULL)
                                                     <form action="{{ URL::to('dosen/proposal/hasil/store') }}"
                                                         method="POST">
                                                         @csrf
@@ -212,15 +212,15 @@
                                                 @else
                                                     @if ($statusProposal->status == 1 and empty($statusProposal->catatan))
                                                         <span class="badge bg-success">Diterima</span>
-                                                        <p class="small">{{ $statusProposal->catatan }}</p>
+                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
                                                     @endif
                                                     @if ($statusProposal->status == 1 and !empty($statusProposal->catatan))
                                                         <span class="badge bg-warning">Diterima dengan Catatan</span>
-                                                        <p class="small">{{ $statusProposal->catatan }}</p>
+                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
                                                     @endif
                                                     @if ($statusProposal->status == 0)
                                                         <span class="badge bg-danger">Ditolak</span>
-                                                        <p class="small">{{ $statusProposal->catatan }}</p>
+                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
                                                     @endif
 
                                                 @endif
