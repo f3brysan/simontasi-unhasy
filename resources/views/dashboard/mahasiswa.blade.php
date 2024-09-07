@@ -49,16 +49,28 @@
                             </div>
                             <div>
                                 <div class="fs-6 fw-semibold text-primary">Sidang Skripsi/TA/Tesis</div>
-                                <p class="text-danger">Anda Belum mendaftar Sidang Proposal</p>
+                                @if (isset($proposalAccepted))
+                                    <p class="text-info">Anda dapat mendaftar Sidang Proposal</p>
+                                @else
+                                    <p class="text-danger">Anda Belum mendaftar Sidang Proposal</p>
+                                @endif
                             </div>
                         </div>
-                        <div class="card-footer px-3 py-2"><a
-                                class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
-                                href="{{ URL::to('daftar/sidang') }}"><span class="small fw-semibold">Daftar Disini</span>
-                                <span class="fa fa-arrow"></span></a></div>
+                        <div class="card-footer px-3 py-2">
+                            @if (isset($proposalAccepted))
+                            <a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
+                            href="{{ URL::to('daftar/sidang') }}"><span class="small fw-semibold">Daftar Disini</span>
+                            <span class="fa fa-arrow"></span></a>
+                            @else
+                            <a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
+                            href="javascript:void(0)"><span class="small fw-semibold">Belum bisa daftar</span>
+                            <span class="fa fa-warning"></span></a>
+                            @endif
+                            
+                        </div>
                     </div>
                 </div>
-                {{-- END DAFTAR SIDANG --}}                
+                {{-- END DAFTAR SIDANG --}}
             </div>
             <div class="row">
                 <div class="col-12 col-lg-12">
@@ -66,20 +78,55 @@
                         <div class="card-header">
                             <h5>Riwayat Pengajuan</h5>
                         </div>
-                        <div class="card-body">    
+                        <div class="card-body">
                             <div class="table container-fluid">
                                 <table class="table table-bordered table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Judul</th>
-                                            <th>Jenis</th>
-                                            <th>Status</th>
-                                            <th>Aksi</th>
+                                            <th class="text-center">Judul</th>
+                                            <th class="text-center">Jenis</th>
+                                            <th class="text-center">Status</th>
+                                            <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
+                                    <tbody>
+                                        @foreach ($allPendaftaran as $item)
+                                            <tr>
+                                                <td>{!! $item->title !!}</td>
+                                                <td class="text-center">
+                                                    @switch($item->type)
+                                                        @case('P')
+                                                            <span class="badge bg-primary">Proposal</span>
+                                                            @break
+                                                        @case('T')
+                                                            <span class="badge bg-info">Sidang AKHIR/TESIS/MUNAQOSAH</span>
+                                                            @break
+                                                        @default                                                            
+                                                    @endswitch
+                                                </td>
+                                                <td class="text-center">
+                                                    @if ($item->status == 1 and empty($item->catatan))
+                                                    <span class="badge bg-success">Diterima</span>
+                                                    <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
+                                                @endif
+                                                @if ($item->status == 1 and !empty($item->catatan))
+                                                    <span class="badge bg-warning">Diterima dengan Catatan</span>
+                                                    <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
+                                                @endif
+                                                @if ($item->status == 0)
+                                                    <span class="badge bg-danger">Ditolak</span>
+                                                    <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
+                                                @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    <a href="" class="btn btn-sm btn-info text-light">Lihat</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
                                 </table>
-                            </div>                        
-                        </div>                        
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -72,7 +72,7 @@
                                                         <span class="text-center badge text-bg-success text-light"><i
                                                                 class="fa-solid fa-check"></i> Disetujui</span>
 
-                                                        <p class="text-muted">{{ $item->is_ok_at }}</p>
+                                                        <p class="small text-muted">{{ $item->is_ok_at }}</p>
                                                     @else
                                                         <span class="badge text-bg-warning text-light"> Menunggu
                                                             Persetujuan</span>
@@ -231,7 +231,8 @@
                                                             {{ date('H:i', strtotime($jadwal->awal)) }} -
                                                             {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
                                                         </td>
-                                                        <td class="text-center">Di {{ $jadwal->gedung }}, Ruang {{ $jadwal->ruang }}</td>
+                                                        <td class="text-center">Di {{ $jadwal->gedung }}, Ruang
+                                                            {{ $jadwal->ruang }}</td>
                                                     </tr>
                                                 @endif
                                             </tbody>
@@ -240,8 +241,10 @@
                                         <table class="table table-bordered table-hover">
                                             <tr>
                                                 <td>Template Berita Acara </td>
-                                                <td class="text-center"><a href="{{ URL::to('document/berita-acara-proposal/'.$dataProposal->id) }}" target="_blank"
-                                                        class="btn btn-sm btn-info text-white"> Unduh</a></td>
+                                                <td class="text-center"><a
+                                                        href="{{ URL::to('document/berita-acara-proposal/' . $dataProposal->id) }}"
+                                                        target="_blank" class="btn btn-sm btn-info text-white"> Unduh</a>
+                                                </td>
                                             </tr>
                                         </table>
                                     </div>
@@ -251,7 +254,7 @@
                         {{-- END JADWAL PROPOSAL --}}
                     @endif
                 @endif
-            @endif            
+            @endif
 
             {{-- START HASIL PROPOSAL --}}
             @if (!empty($jadwal))
@@ -269,17 +272,17 @@
                                             <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
                                             <td class="text-center">
                                                 @if ($statusProposal->status == 1 and empty($statusProposal->catatan))
-                                                <span class="badge bg-success">Diterima</span>
-                                                <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
-                                            @endif
-                                            @if ($statusProposal->status == 1 and !empty($statusProposal->catatan))
-                                                <span class="badge bg-warning">Diterima dengan Catatan</span>
-                                                <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
-                                            @endif
-                                            @if ($statusProposal->status == 0)
-                                                <span class="badge bg-danger">Ditolak</span>
-                                                <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
-                                            @endif
+                                                    <span class="badge bg-success">Diterima</span>
+                                                    <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
+                                                @endif
+                                                @if ($statusProposal->status == 1 and !empty($statusProposal->catatan))
+                                                    <span class="badge bg-warning">Diterima dengan Catatan</span>
+                                                    <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
+                                                @endif
+                                                @if ($statusProposal->status == 0)
+                                                    <span class="badge bg-danger">Ditolak</span>
+                                                    <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
+                                                @endif
                                             </td>
                                         </tr>
                                     </table>

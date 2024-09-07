@@ -60,7 +60,20 @@ class DashboardController extends Controller
                 $query->whereNull('tps.status')
                     ->orWhere('tps.status', '!=', '0');
             })
-            ->first();      
+            ->first();    
+            
+            $data['proposalAccepted'] = DB::table('tr_pendaftaran as tp')
+            ->select('tp.*')
+            ->leftJoin('tr_pendaftaran_status as tps','tps.pendaftaran_id','=','tp.id')
+            ->where('tp.no_induk', $user->no_induk)            
+            ->whereIn('tps.status', ['1'])            
+            ->first(); 
+
+            $data['allPendaftaran'] = DB::table('tr_pendaftaran as tp')
+            ->select('tp.*', 'tps.status', 'tps.catatan')
+            ->leftJoin('tr_pendaftaran_status as tps','tps.pendaftaran_id','=','tp.id')
+            ->where('tp.no_induk', $user->no_induk)
+            ->get();
             
             return view('dashboard.mahasiswa', $data);
         }

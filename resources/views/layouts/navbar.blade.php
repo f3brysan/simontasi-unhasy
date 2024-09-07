@@ -20,7 +20,7 @@
         @role('dosen')
             <li class="nav-title">Monitoring</li>
             <li class="nav-item"><a class="nav-link" href="{{ URL::to('dosen/log-bimbingan') }}">
-                    <i class="fa-regular fa-rectangle-list nav-icon"></i> Log Bimbingan </a></li>
+                    <i class="fa-regular fa-rectangle-list nav-icon"></i> Mahasiswa Bimbingan </a></li>
         @endrole
         @role('superadmin|pengelola')
         <li class="nav-title">Data Pendaftar</li>
