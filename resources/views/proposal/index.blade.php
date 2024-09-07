@@ -178,78 +178,80 @@
                                                 <th class="text-center">Status</th>
                                             </tr>
                                         </thead>
-                                       <tbody>
-                                        <tr>
-                                            <td>No VA Pembayaran <a href="javascript:void(0)" class="btn btn-sm btn-info float-end">Cara Pembayaran</a></td>
-                                            <td class="text-center"><b>{{ $statusBayar->nomor_va }}</b></td>
-                                            <td class="text-center">
-                                                @if ($statusBayar->status == '0')
-                                                    <span class="badge bg-warning">Menunggu Pembayaran</span>
-                                                @endif
-                                                @if ($statusBayar->status == '2')
-                                                    <span class="badge bg-danger">Invalid</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                       </tbody>
+                                        <tbody>
+                                            <tr>
+                                                <td>No VA Pembayaran <a href="javascript:void(0)"
+                                                        class="btn btn-sm btn-info float-end">Cara Pembayaran</a></td>
+                                                <td class="text-center"><b>{{ $statusBayar->nomor_va }}</b></td>
+                                                <td class="text-center">
+                                                    @if ($statusBayar->status == '0')
+                                                        <span class="badge bg-warning">Menunggu Pembayaran</span>
+                                                    @endif
+                                                    @if ($statusBayar->status == '2')
+                                                        <span class="badge bg-danger">Invalid</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-                        {{-- END INFO VA --}}
-                        @if ($statusBayar->status !== '1')
-                            {{-- START JADWAL PROPOSAL --}}
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
-                                </div>
-                                <div class="card-body">
-                                    @if (!empty($dataProposal))
-                                        <div class="table container-fluid">
-                                            <h6>Jadwal Sidang</h6>
-                                            <table class="table table-bordered table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="text-center">Tanggal dan Waktu</th>
-                                                        <th class="text-center">Lokasi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (empty($jadwal))
-                                                        <tr>
-                                                            <td class="text-center" colspan="2"><span
-                                                                    class="badge bg-warning">Jadwal
-                                                                    belum diset !</span></td>
-                                                        </tr>
-                                                    @else
-                                                        <tr>
-                                                            <td class="text-center">
-                                                                {{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
-                                                                {{ date('H:i', strtotime($jadwal->awal)) }} -
-                                                                {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
-                                                            </td>
-                                                            <td class="text-center">Di {{ $jadwal->lokasi }}</td>
-                                                        </tr>
-                                                    @endif
-                                                </tbody>
-                                            </table>
-                                            <h6>Berkas Penunjang Proposal</h6>
-                                            <table class="table table-bordered table-hover">
-                                                <tr>
-                                                    <td>Template Berita Acara </td>
-                                                    <td class="text-center"><a href="javascript:void(0)"
-                                                            class="btn btn-sm btn-info text-white"> Unduh</a></td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    @endif
-                                </div>
+                    @endif
+                    {{-- END INFO VA --}}
+
+                    @if ($statusBayar->status == 1)
+                        {{-- START JADWAL PROPOSAL --}}
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
                             </div>
-                            {{-- END JADWAL PROPOSAL --}}
-                        @endif
+                            <div class="card-body">
+                                @if (!empty($dataProposal))
+                                    <div class="table container-fluid">
+                                        <h6>Jadwal Sidang</h6>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Tanggal dan Waktu</th>
+                                                    <th class="text-center">Lokasi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (empty($jadwal))
+                                                    <tr>
+                                                        <td class="text-center" colspan="2"><span
+                                                                class="badge bg-warning">Jadwal
+                                                                belum diset !</span></td>
+                                                    </tr>
+                                                @else
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            {{ date('d-m-Y', strtotime($jadwal->awal)) }}<br>
+                                                            {{ date('H:i', strtotime($jadwal->awal)) }} -
+                                                            {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
+                                                        </td>
+                                                        <td class="text-center">Di {{ $jadwal->gedung }}, Ruang {{ $jadwal->ruang }}</td>
+                                                    </tr>
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                        <h6>Berkas Penunjang Proposal</h6>
+                                        <table class="table table-bordered table-hover">
+                                            <tr>
+                                                <td>Template Berita Acara </td>
+                                                <td class="text-center"><a href="javascript:void(0)"
+                                                        class="btn btn-sm btn-info text-white"> Unduh</a></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        {{-- END JADWAL PROPOSAL --}}
                     @endif
                 @endif
-            @endif
+            @endif            
 
             {{-- START HASIL PROPOSAL --}}
             @if (!empty($jadwal))
@@ -832,14 +834,14 @@
             $("#storeLogBook").validate({
                 // validasi mime type
                 rules: {
-                    formFile: {                        
+                    formFile: {
                         extension: "pdf|PDF", // ekstensi pdf
                         filesize: 5097152, // ukuran file < 2mb
 
                     }
                 },
                 messages: {
-                    formFile: {                        
+                    formFile: {
                         extension: "Mohon mengunggah dokumen berekstensi *pdf"
                     }
                 },
