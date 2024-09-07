@@ -508,7 +508,8 @@
     {{-- JQ Validate --}}
 
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
+    <script src="{{ asset('js/jquery-validate-additional-methods.js') }}"></script>
+    {{-- <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script> --}}
     <script src="{{ URL::to('/') }}/js/summernote-ext-rtl.js"></script>
 
     <script>
