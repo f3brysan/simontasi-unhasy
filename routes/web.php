@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GetDataAPISiakad;
+use App\Http\Controllers\IndikatorPenilaianController;
 use App\Http\Controllers\KomponenPenilaianController;
 use App\Http\Controllers\LogBookController;
 use App\Http\Controllers\ProposalController;
@@ -55,6 +56,8 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::post('setting/komponen-penilaian/store', [KomponenPenilaianController::class, 'store']);
     Route::get('setting/komponen-penilaian/get/{id}', [KomponenPenilaianController::class, 'edit']);
     Route::delete('setting/komponen-penilaian/delete/{id}', [KomponenPenilaianController::class, 'delete']);
+
+    Route::get('setting/indikator-penilaian', [IndikatorPenilaianController::class, 'index']);
 });
 
 
