@@ -71,14 +71,37 @@ class KomponenPenilaianController extends Controller
             return response()->json(['error' => $th->getMessage()]);
         }
     }
-
+    
     public function edit($id)
     {
         try {
+            // Decrypt the encrypted ID
             $id = Crypt::decrypt($id);
+
+            // Retrieve the data from the database
             $data = DB::table('ms_komponen_penilaian')->where('id', $id)->first();
+
+            // Return the data to the user
             return response()->json($data);
         } catch (\Exception $e) {
+            // Return the error message if an exception occurs
+            return response()->json($e->getMessage());
+        }
+    }
+    
+    public function delete($id)
+    {
+        try {
+            // Decrypt the encrypted ID
+            $id = Crypt::decrypt($id);
+
+            // Delete the komponen penilaian from the database
+            $exe = DB::table('ms_komponen_penilaian')->where('id', $id)->delete();
+
+            // Return the result of the delete operation
+            return response()->json($exe);
+        } catch (\Exception $e) {
+            // Return the error message if an exception occurs
             return response()->json($e->getMessage());
         }
     }

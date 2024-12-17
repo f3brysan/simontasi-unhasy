@@ -30,7 +30,7 @@
                                         <table class="table table-sm table-bordered table-hover" id="myTable">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center">Aksi</th>                                                    
+                                                    <th class="text-center">Aksi</th>
                                                     <th class="text-center" style="width: 90%">Nama</th>
                                                 </tr>
                                             </thead>
@@ -55,7 +55,7 @@
                     <h5 class="modal-title" id="modalTitle"></h5>
                     <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="crudForm">                    
+                <form id="crudForm">
                     <input type="text" id="id" name="id" style="display: none">
                     <div class="modal-body">
                         <div class="mb-3">
@@ -118,7 +118,7 @@
                         className: 'text-center',
                         orderable: false,
                         searchable: false
-                    },                    
+                    },
                     {
                         data: 'nama',
                         name: 'nama'
@@ -131,9 +131,9 @@
 
             $(document).on("click", "#addKomponen", function() {
                 $("#crudModal").modal('show');
-                $("#modalTitle").html("Tambah Komponen Penilaian");                
+                $("#modalTitle").html("Tambah Komponen Penilaian");
                 $("#crudForm").trigger('reset');
-                
+
             });
 
             if ($("#crudForm").length > 0) {
@@ -169,22 +169,51 @@
             }
 
             $(document).on("click", ".edit", function() {
-                var id = $(this).data("id");                
+                var id = $(this).data("id");
                 $.get("{{ URL::to('setting/komponen-penilaian/get') }}/" + id,
-                    function (data) {
+                    function(data) {
                         $("#crudModal").modal('show');
                         $("#modalTitle").html("Edit Komponen Penilaian");
                         $("#id").val(data.id);
-                        $("#nama").val(data.nama);                      
-                    });                
+                        $("#nama").val(data.nama);
+                    });
             });
 
             $(document).on("click", ".delete", function() {
                 var id = $(this).data("id");
+                $.get("{{ URL::to('setting/komponen-penilaian/get') }}/" + id,
+                    function(data) {
+                        Swal.fire({
+                            title: "Apakah Anda yakin?",
+                            text: 'Akan menghapus komponen "' + data.nama + '".',
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#3085d6",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "Iya, hapus!"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    type: "DELETE",
+                                    url: "{{ URL::to('setting/komponen-penilaian/delete') }}/" +
+                                        id,
+                                    success: function(response) {
+                                        iziToast.success({
+                                            title: 'Berhasil',
+                                            message: 'Komponen penilaian berhasil dihapus.',
+                                            position: 'topRight'
+                                        });
+                                        table.ajax.reload(null, false);
+                                    }
+                                });
+
+                            }
+                        });
+                    });
                 console.log(id);
-                // $("#viewDetailModal").modal('show');
+
             });
-            
+
         })
     </script>
 @endpush
