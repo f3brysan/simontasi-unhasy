@@ -53,6 +53,7 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
 
     Route::get('setting/komponen-penilaian', [KomponenPenilaianController::class, 'index']);
     Route::post('setting/komponen-penilaian/store', [KomponenPenilaianController::class, 'store']);
+    Route::get('setting/komponen-penilaian/get/{id}', [KomponenPenilaianController::class, 'edit']);
 });
 
 

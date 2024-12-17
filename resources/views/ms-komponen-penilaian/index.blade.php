@@ -27,11 +27,10 @@
                             <div class="tab-pane p-3 active preview" role="tabpanel" id="preview-1005">
                                 <div class="row">
                                     <div class="col-lg-12 table table-responsive">
-                                        <table class="table table-sm table-bordered table-striped" id="myTable">
+                                        <table class="table table-sm table-bordered table-hover" id="myTable">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center">Aksi</th>
-                                                    <th class="text-center">No</th>
+                                                    <th class="text-center">Aksi</th>                                                    
                                                     <th class="text-center" style="width: 90%">Nama</th>
                                                 </tr>
                                             </thead>
@@ -56,12 +55,13 @@
                     <h5 class="modal-title" id="modalTitle"></h5>
                     <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="crudForm">
-                    <input type="hidden" id="id" name="id">
+                <form id="crudForm">                    
+                    <input type="text" id="id" name="id" style="display: none">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Nama Komponen</label>
-                            <input type="text" class="form-control" id="nama" name="nama" placeholder="Aspek . . .">
+                            <input type="text" class="form-control" id="nama" name="nama"
+                                placeholder="Aspek . . .">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -118,11 +118,7 @@
                         className: 'text-center',
                         orderable: false,
                         searchable: false
-                    },
-                    {
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                    },
+                    },                    
                     {
                         data: 'nama',
                         name: 'nama'
@@ -135,87 +131,60 @@
 
             $(document).on("click", "#addKomponen", function() {
                 $("#crudModal").modal('show');
-                $("#modalTitle").html("Tambah Komponen Penilaian");
+                $("#modalTitle").html("Tambah Komponen Penilaian");                
+                $("#crudForm").trigger('reset');
+                
             });
 
             if ($("#crudForm").length > 0) {
-            $("#crudForm").validate({
-                submitHandler: function(form) {
-                    $('#saveBtn').html('Menyimpan . .');
+                $("#crudForm").validate({
+                    submitHandler: function(form) {
+                        $('#saveBtn').html('Menyimpan . .');
 
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ URL::to('setting/komponen-penilaian/store') }}",
-                        data: $('#crudForm').serializeArray(),
-                        dataType: 'json',
-                        success: function(data) {
-                            if (data == true) {
-                                $('#crudForm').trigger("reset");
-                                $('#crudModal').modal("hide");
-                                $('#saveBtn').html('Simpan');
-                                iziToast.success({
-                                    title: 'Berhasil',
-                                    message: 'Komponen penilaian berhasil tersimpan.',
-                                    position: 'topRight'
-                                });
-                                table.ajax.reload(null, false);
-                            }
-                        },
-                        error: function(data) {
-                            console.log('Error', data);
-                            $('#saveBtn').html('Simpan');
-                        }
-                    });
-                }
-            });
-        }
-
-            $(document).on("click", ".edit", function() {
-                var id = $(this).data("id");
-                $("#viewDetailModal").modal('show');
-            });
-
-            $(document).on("click", ".approve", function() {
-                var id = $(this).data("id");
-                var nim = $(this).data("nim");
-                var name = $(this).data("name");
-                var status = $(this).data("status");
-
-                if (status == '1') {
-                    var msg = 'Tolak';
-                    var btn = 'unapprove';
-                } else {
-                    var msg = 'Setujui';
-                    var btn = 'approve';
-                }
-
-                Swal.fire({
-                    title: "Perhatian",
-                    text: msg + " pendaftaran Proposal " + nim + " - " + name + "?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes, " + btn
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.get("{{ URL::to('proposal/approve/') }}/" + id,
-                            function(data) {
-                                if (data == '1') {
-                                    var msg = 'disetujui';
-                                } else {
-                                    var msg = 'ditolak';
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ URL::to('setting/komponen-penilaian/store') }}",
+                            data: $('#crudForm').serializeArray(),
+                            dataType: 'json',
+                            success: function(data) {
+                                if (data == true) {
+                                    $('#crudForm').trigger("reset");
+                                    $('#crudModal').modal("hide");
+                                    $('#saveBtn').html('Simpan');
+                                    iziToast.success({
+                                        title: 'Berhasil',
+                                        message: 'Komponen penilaian berhasil tersimpan.',
+                                        position: 'topRight'
+                                    });
+                                    table.ajax.reload(null, false);
                                 }
-                                table.ajax.reload(null, false);
-                                iziToast.success({
-                                    title: 'Berhasil',
-                                    message: 'Proposal berhasil ' + msg + '.',
-                                    position: 'topRight'
-                                });
-                            });
+                            },
+                            error: function(data) {
+                                console.log('Error', data);
+                                $('#saveBtn').html('Simpan');
+                            }
+                        });
                     }
                 });
+            }
+
+            $(document).on("click", ".edit", function() {
+                var id = $(this).data("id");                
+                $.get("{{ URL::to('setting/komponen-penilaian/get') }}/" + id,
+                    function (data) {
+                        $("#crudModal").modal('show');
+                        $("#modalTitle").html("Edit Komponen Penilaian");
+                        $("#id").val(data.id);
+                        $("#nama").val(data.nama);                      
+                    });                
             });
+
+            $(document).on("click", ".delete", function() {
+                var id = $(this).data("id");
+                console.log(id);
+                // $("#viewDetailModal").modal('show');
+            });
+            
         })
     </script>
 @endpush

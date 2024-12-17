@@ -12,9 +12,9 @@ use Yajra\DataTables\Facades\DataTables;
 
 class KomponenPenilaianController extends Controller
 {
-    public function index(Request $request) 
+    public function index(Request $request)
     {
-        $data = DB::table('ms_komponen_penilaian')->get();        
+        $data = DB::table('ms_komponen_penilaian')->get();
 
         // If the request is an AJAX request, return a datatable of the data data
         if ($request->ajax()) {
@@ -32,7 +32,7 @@ class KomponenPenilaianController extends Controller
                     </ul>
                   </div>';
                     return $btn;
-                })                
+                })
                 ->rawColumns(['action'])
                 ->addIndexColumn()
                 ->make(true);
@@ -40,8 +40,8 @@ class KomponenPenilaianController extends Controller
 
         return view('ms-komponen-penilaian.index', compact('data'));
     }
-    
-    public function store(Request $request) 
+
+    public function store(Request $request)
     {
         try {
             // Check if an ID is provided to determine if it's an insert or update operation
@@ -69,6 +69,17 @@ class KomponenPenilaianController extends Controller
         } catch (\Exception $th) {
             // Return the error message if an exception occurs
             return response()->json(['error' => $th->getMessage()]);
+        }
+    }
+
+    public function edit($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $data = DB::table('ms_komponen_penilaian')->where('id', $id)->first();
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
         }
     }
 }
