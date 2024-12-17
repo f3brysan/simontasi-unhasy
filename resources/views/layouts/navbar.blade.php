@@ -37,6 +37,17 @@
             <li class="nav-item"><a class="nav-link" href="{{ URL::to('setting/users') }}">
                     <i class="fa-solid fa-users nav-icon"></i> User</a></li>
         @endrole
+        @role('superadmin')
+        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
+            <i class="fa-solid fa-database nav-icon"></i> Master Penilaian</a>
+        <ul class="nav-group-items">
+            <li class="nav-item"><a class="nav-link" href="{{ URL::to('setting/komponen-penilaian') }}"><i
+                        class="fa-solid fa-database nav-icon"></i> Komponen Penilaian</a></li>            
+            <li class="nav-item"><a class="nav-link" href="{{ URL::to('setting/indikator-penilaian') }}"><i
+                        class="fa-solid fa-database nav-icon"></i> Indikator Penilaian</a></li>            
+        </ul>
+    </li>
+        @endrole
     </ul>
     <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
 </div>

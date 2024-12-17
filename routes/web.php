@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GetDataAPISiakad;
+use App\Http\Controllers\KomponenPenilaianController;
 use App\Http\Controllers\LogBookController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ProposalDocTemplateController;
@@ -31,11 +32,7 @@ Route::middleware(['auth:web'])->group(function () {
 });
 
 Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () {
-    Route::get('proposal/approve/{id}', [ProposalController::class, 'approveDosenProposal']);
-
-    Route::get('setting/users', [UserController::class, 'index']);
-    Route::get('setting/users/{id}', [UserController::class, 'show']);
-    Route::post('setting/users/store', [UserController::class, 'store']);
+    Route::get('proposal/approve/{id}', [ProposalController::class, 'approveDosenProposal']);    
 
     Route::get('admin/data/proposal', [AdminProposalController::class, 'index']);
     Route::get('admin/data/proposal/detil/{id}', [AdminProposalController::class, 'detil']);
@@ -49,13 +46,21 @@ Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () 
     Route::get('admin/data/proposal/get/jadwal-sidang/{id}', [AdminProposalController::class, 'getJadwalSidang']);
 });
 
+Route::middleware(['auth:web', 'role:superadmin'])->group(function () {    
+    Route::get('setting/users', [UserController::class, 'index']);
+    Route::get('setting/users/{id}', [UserController::class, 'show']);
+    Route::post('setting/users/store', [UserController::class, 'store']);
+
+    Route::get('setting/komponen-penilaian', [KomponenPenilaianController::class, 'index']);
+    Route::post('setting/komponen-penilaian/store', [KomponenPenilaianController::class, 'store']);
+});
+
 
 Route::middleware(['auth:web', 'role:mahasiswa|superadmin|pengelola'])->group(function () {
     Route::get('daftar/proposal', [ProposalController::class, 'index']);    
     Route::post('daftar/proposal/store', [ProposalController::class, 'storeProposal']);
     Route::get('daftar/proposal/get-judul/{id}', [ProposalController::class, 'getJudul']);
     Route::post('daftar/proposal/berkas/store', [ProposalController::class, 'storeBerkasProposal']);
-
     Route::post('daftar/seminar-proposal/store', [ProposalController::class, 'storeSeminarProposal']);
 });
 
