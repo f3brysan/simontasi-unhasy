@@ -30,10 +30,10 @@
                                         <table class="table table-sm table-bordered table-hover" id="myTable">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center">Aksi</th>
+                                                    <th class="text-center" style="width: 5%">Aksi</th>
                                                     <th class="text-center" style="">Nama Komponen</th>
                                                     <th class="text-center" style="">Nama Indikator</th>
-                                                    <th class="text-center" style="">Range Nilai</th>
+                                                    <th class="text-center" style="width: 5%">Range Nilai</th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>
@@ -173,7 +173,7 @@
 
                         $.ajax({
                             type: "POST",
-                            url: "{{ URL::to('setting/komponen-penilaian/store') }}",
+                            url: "{{ URL::to('setting/indikator-penilaian/store') }}",
                             data: $('#crudForm').serializeArray(),
                             dataType: 'json',
                             success: function(data) {
@@ -183,7 +183,7 @@
                                     $('#saveBtn').html('Simpan');
                                     iziToast.success({
                                         title: 'Berhasil',
-                                        message: 'Komponen penilaian berhasil tersimpan.',
+                                        message: 'Indikator penilaian berhasil tersimpan.',
                                         position: 'topRight'
                                     });
                                     table.ajax.reload(null, false);

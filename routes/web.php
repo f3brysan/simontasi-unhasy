@@ -58,6 +58,7 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::delete('setting/komponen-penilaian/delete/{id}', [KomponenPenilaianController::class, 'delete']);
 
     Route::get('setting/indikator-penilaian', [IndikatorPenilaianController::class, 'index']);
+    Route::post('setting/indikator-penilaian/store', [IndikatorPenilaianController::class, 'store']);
 });
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -48,5 +49,38 @@ class IndikatorPenilaianController extends Controller
         }
         // Return the view with the data
         return view('ms-indikator-penilaian.index', compact('msKomponen'));
+    }
+
+    public function store(Request $request)
+    {
+        try {            
+            if ($request->id == null) {
+                // Insert the new data into the database
+                $exe = DB::table('ms_indikator_penilaian')->insert([
+                    'id' => Str::uuid(),
+                    'komponen_penilaian_id' => $request->id_komponen,
+                    'nama' => $request->nama,
+                    'min_score' => $request->min_score,
+                    'max_score' => $request->max_score,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'created_by' => auth()->user()->nama
+                ]);
+            } else {
+                // Update the existing data in the database
+                $exe = DB::table('ms_indikator_penilaian')->where('id', $request->id)->update([
+                    'komponen_penilaian_id' => $request->id_komponen,
+                    'nama' => $request->nama,
+                    'min_score' => $request->min_score,
+                    'max_score' => $request->max_score,
+                    'updated_at' => date('Y-m-d H:i:s'),
+                    'updated_by' => auth()->user()->nama
+                ]);
+            }
+            if ($exe) {
+                return response()->json(true);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
     }
 }
