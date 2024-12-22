@@ -112,11 +112,11 @@
                                                         <span class="badge bg-secondary">Menunggu Persetujuan</span>
                                                         
                                                     @endif
-                                                    @if ($item->status === 1 and empty($item->catatan))
+                                                    @if ($item->status == 1 and empty($item->catatan))
                                                         <span class="badge bg-success">Diterima</span>
                                                         <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
                                                     @endif
-                                                    @if ($item->status === 1 and !empty($item->catatan))
+                                                    @if ($item->status == 1 and !empty($item->catatan))
                                                         <span class="badge bg-warning">Diterima dengan Catatan</span>
                                                         <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
                                                     @endif
