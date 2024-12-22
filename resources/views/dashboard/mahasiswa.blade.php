@@ -58,15 +58,16 @@
                         </div>
                         <div class="card-footer px-3 py-2">
                             @if (isset($proposalAccepted))
-                            <a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
-                            href="{{ URL::to('daftar/sidang') }}"><span class="small fw-semibold">Daftar Disini</span>
-                            <span class="fa fa-arrow"></span></a>
+                                <a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
+                                    href="{{ URL::to('daftar/sidang') }}"><span class="small fw-semibold">Daftar
+                                        Disini</span>
+                                    <span class="fa fa-arrow"></span></a>
                             @else
-                            <a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
-                            href="javascript:void(0)"><span class="small fw-semibold">Belum bisa daftar</span>
-                            <span class="fa fa-warning"></span></a>
+                                <a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
+                                    href="javascript:void(0)"><span class="small fw-semibold">Belum bisa daftar</span>
+                                    <span class="fa fa-warning"></span></a>
                             @endif
-                            
+
                         </div>
                     </div>
                 </div>
@@ -97,26 +98,32 @@
                                                     @switch($item->type)
                                                         @case('P')
                                                             <span class="badge bg-primary">Proposal</span>
-                                                            @break
+                                                        @break
+
                                                         @case('T')
                                                             <span class="badge bg-info">Sidang AKHIR/TESIS/MUNAQOSAH</span>
-                                                            @break
-                                                        @default                                                            
+                                                        @break
+
+                                                        @default
                                                     @endswitch
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($item->status == 1 and empty($item->catatan))
-                                                    <span class="badge bg-success">Diterima</span>
-                                                    <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
-                                                @endif
-                                                @if ($item->status == 1 and !empty($item->catatan))
-                                                    <span class="badge bg-warning">Diterima dengan Catatan</span>
-                                                    <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
-                                                @endif
-                                                @if ($item->status == 0)
-                                                    <span class="badge bg-danger">Ditolak</span>
-                                                    <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
-                                                @endif
+                                                    @if ($item->status == NULL)
+                                                        <span class="badge bg-secondary">Menunggu Persetujuan</span>
+                                                        
+                                                    @endif
+                                                    @if ($item->status === 1 and empty($item->catatan))
+                                                        <span class="badge bg-success">Diterima</span>
+                                                        <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
+                                                    @endif
+                                                    @if ($item->status === 1 and !empty($item->catatan))
+                                                        <span class="badge bg-warning">Diterima dengan Catatan</span>
+                                                        <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
+                                                    @endif
+                                                    @if ($item->status === 0)
+                                                        <span class="badge bg-danger">Ditolak</span>
+                                                        <p class="small text-left">Catatan : {{ $item->catatan ?? '-' }}</p>
+                                                    @endif
                                                 </td>
                                                 <td class="text-center">
                                                     <a href="" class="btn btn-sm btn-info text-light">Lihat</a>

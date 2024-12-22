@@ -271,18 +271,26 @@
                                         <tr>
                                             <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
                                             <td class="text-center">
-                                                @if ($statusProposal->status == 1 and empty($statusProposal->catatan))
-                                                    <span class="badge bg-success">Diterima</span>
-                                                    <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
+                                                @if (!empty($statusProposal))
+                                                    @if ($statusProposal->status == 1 and empty($statusProposal->catatan))
+                                                        <span class="badge bg-success">Diterima</span>
+                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}
+                                                        </p>
+                                                    @endif
+                                                    @if ($statusProposal->status == 1 and !empty($statusProposal->catatan))
+                                                        <span class="badge bg-warning">Diterima dengan Catatan</span>
+                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}
+                                                        </p>
+                                                    @endif
+                                                    @if ($statusProposal->status == 0)
+                                                        <span class="badge bg-danger">Ditolak</span>
+                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}
+                                                        </p>
+                                                    @endif
+                                                @else
+                                                    <span class="badge bg-secondary">Menunggu Penilaian</span>
                                                 @endif
-                                                @if ($statusProposal->status == 1 and !empty($statusProposal->catatan))
-                                                    <span class="badge bg-warning">Diterima dengan Catatan</span>
-                                                    <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
-                                                @endif
-                                                @if ($statusProposal->status == 0)
-                                                    <span class="badge bg-danger">Ditolak</span>
-                                                    <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
-                                                @endif
+
                                             </td>
                                         </tr>
                                     </table>

@@ -94,7 +94,7 @@ class ProposalController extends Controller
             $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataProposal->id)->first();
 
             $data['jadwal'] = DB::table('tr_pendaftaran_jadwal')->where('id', $dataProposal->id)->first();
-            $data['statusProposal'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataProposal->id)->first();
+            $data['statusProposal'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataProposal->id)->first();            
         }
         
         return view('proposal.index', $data);

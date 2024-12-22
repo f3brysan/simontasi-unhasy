@@ -10,6 +10,7 @@ use App\Http\Controllers\KomponenPenilaianController;
 use App\Http\Controllers\LogBookController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ProposalDocTemplateController;
+use App\Http\Controllers\SidangController;
 use App\Http\Controllers\SyncDataController;
 use App\Http\Controllers\UserController;
 
@@ -68,6 +69,9 @@ Route::middleware(['auth:web', 'role:mahasiswa|superadmin|pengelola'])->group(fu
     Route::get('daftar/proposal/get-judul/{id}', [ProposalController::class, 'getJudul']);
     Route::post('daftar/proposal/berkas/store', [ProposalController::class, 'storeBerkasProposal']);
     Route::post('daftar/seminar-proposal/store', [ProposalController::class, 'storeSeminarProposal']);
+
+    Route::get('daftar/sidang', [SidangController::class, 'index']);  
+    Route::post('daftar/sidang/store', [SidangController::class, 'daftarSidang']);  
 });
 
 Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen|pengelola'])->group(function () {
