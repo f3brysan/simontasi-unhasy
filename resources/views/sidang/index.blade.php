@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb my-0 ms-2">
-                <li class="breadcrumb-item active"><span>Sidang Sidang AKHIR/TESIS/MUNAQOSAH</span></li>
+                <li class="breadcrumb-item active"><span>Sidang Sidang Akhir/TESIS/MUNAQOSAH</span></li>
             </ol>
         </nav>
     </div>
@@ -16,7 +16,7 @@
             {{-- START DAFTAR PROPOSAL --}}
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5>Pendaftaran Sidang Sidang AKHIR/TESIS/MUNAQOSAH</h5></span>
+                    <h5>Pendaftaran Sidang Sidang Akhir/TESIS/MUNAQOSAH</h5></span>
                 </div>
                 <div class="card-body">                    
                     @if (!empty($dataSidang))
@@ -56,18 +56,7 @@
                                             @foreach ($pembimbing as $item)
                                                 <div class="col-md-9">
                                                     <u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}
-                                                </div>
-                                                <div class="col-md-3">
-                                                    @if ($item->is_ok == 1)
-                                                        <span class="text-center badge text-bg-success text-light"><i
-                                                                class="fa-solid fa-check"></i> Disetujui</span>
-
-                                                        <p class="small text-muted">{{ $item->is_ok_at }}</p>
-                                                    @else
-                                                        <span class="badge text-bg-warning text-light"> Menunggu
-                                                            Persetujuan</span>
-                                                    @endif
-                                                </div>
+                                                </div>                                                
                                             @endforeach
                                         </div>
                                     </td>
