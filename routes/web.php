@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminProposalController;
+use App\Http\Controllers\AdminSidangController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -46,6 +47,8 @@ Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () 
     Route::get('admin/data/proposal/get/jadwal-sidang/{id}', [AdminProposalController::class, 'getJadwalSidang']);
     Route::post('admin/data/proposal/store/jadwal-sidang', [AdminProposalController::class, 'storeJadwalSidang']);
     Route::get('admin/data/proposal/get/jadwal-sidang/{id}', [AdminProposalController::class, 'getJadwalSidang']);
+
+    Route::get('admin/data/sidang', [AdminSidangController::class, 'index']);
 });
 
 Route::middleware(['auth:web', 'role:superadmin'])->group(function () {    

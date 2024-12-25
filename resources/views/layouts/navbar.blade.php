@@ -29,8 +29,8 @@
                 <ul class="nav-group-items">
                     <li class="nav-item"><a class="nav-link" href="{{ URL::to('admin/data/proposal') }}"><i
                                 class="fa-solid fa-book nav-icon"></i> Data Sidang Proposal</a></li>
-                    {{-- <li class="nav-item"><a class="nav-link" href="forms/form-control.html"><i
-                            class="fa-solid fa-book nav-icon"></i> Sidang</a></li> --}}
+                    <li class="nav-item"><a class="nav-link" href="{{ URL::to('admin/data/sidang') }}"><i
+                            class="fa-solid fa-book nav-icon"></i> Data Sidang Akhir</a></li>
                 </ul>
             </li>
             <li class="nav-title">Setting</li>

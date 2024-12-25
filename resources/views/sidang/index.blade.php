@@ -195,7 +195,7 @@
                                                 @endif
                                             </tbody>
                                         </table>
-                                        <h6>Berkas Penunjang Proposal</h6>
+                                        <h6>Berkas Penunjang Sidang</h6>
                                         <table class="table table-bordered table-hover">
                                             <tr>
                                                 <td>Template Berita Acara </td>
