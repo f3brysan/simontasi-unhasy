@@ -18,7 +18,7 @@
                 <div class="card-header">
                     <h5>Pendaftaran Sidang Sidang Akhir/TESIS/MUNAQOSAH</h5></span>
                 </div>
-                <div class="card-body">                    
+                <div class="card-body">
                     @if (!empty($dataSidang))
                         <div class="table container-fluid">
                             <table class="table table-bordered table-hover">
@@ -56,7 +56,7 @@
                                             @foreach ($pembimbing as $item)
                                                 <div class="col-md-9">
                                                     <u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}
-                                                </div>                                                
+                                                </div>
                                             @endforeach
                                         </div>
                                     </td>
@@ -118,28 +118,7 @@
             </div>
             {{-- END DAFTAR PROPOSAL --}}
 
-            @if ($dataSidang)
-                @if (empty($statusBayar))
-                    <div class="card mb-4" id="checkLogCompleted" style="display: none">
-                        <div class="card-header">
-                            <h5>Daftar Sidang Proposal</h5></span>
-                        </div>
-                        <div class="card-body">
-                            <div class="table container-fluid">
-                                <table class="table table-bordered table-hover">
-                                    <tr>
-                                        <td class="text-center"><b>Daftar Seminar Proposal disini</b></td>
-                                        <td class="text-center"><button class="btn btn-sm btn-primary"
-                                                id="btnDaftarSeminarProposal"
-                                                onclick="daftarSeminarProposal('{{ Crypt::encrypt($dataSidang->id) }}')"><i
-                                                    class="fa-solid fa-right-to-bracket"></i> Daftar</button></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
+            @if ($dataSidang)                
                 {{-- INFO VA --}}
                 @if (isset($statusBayar))
                     @if ($statusBayar->status !== '1')
@@ -236,7 +215,7 @@
             @endif
 
             {{-- START HASIL PROPOSAL --}}
-            @if (!empty($jadwal))
+            @if (!empty($jadwal))   
                 @if ($jadwal->akhir <= date('Y-m-d H:i:s'))
                     <div class="card mb-4">
                         <div class="card-header">
@@ -349,7 +328,7 @@
             @endif
             {{-- END LOGBOOK --}}
         </div>
-    </div>    
+    </div>
 
     {{-- MODAL PROPOSAL --}}
     <div class="modal fade" id="modalEditProposal" data-coreui-backdrop="static" data-coreui-keyboard="false"
