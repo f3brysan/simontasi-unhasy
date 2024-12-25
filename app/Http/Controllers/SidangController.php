@@ -24,11 +24,11 @@ class SidangController extends Controller
         }
 
         $dataSidang = DB::table('tr_pendaftaran as tp')
-        ->select('tp.*')
-        ->leftJoin('tr_pendaftaran_status as tps', 'tps.pendaftaran_id', '=', 'tp.id')
-        ->where('tp.no_induk', $no_induk)
-        ->where('type', 'T')        
-        ->first();
+            ->select('tp.*')
+            ->leftJoin('tr_pendaftaran_status as tps', 'tps.pendaftaran_id', '=', 'tp.id')
+            ->where('tp.no_induk', $no_induk)
+            ->where('type', 'T')
+            ->first();
 
         if (empty($dataSidang)) {
             $data['proposal'] = $dataProposal;
@@ -39,7 +39,7 @@ class SidangController extends Controller
                 ->where('pendaftaran_id', $dataProposal->id)
                 ->where('tipe', 'like', 'U%')->get();
             return view('sidang.daftar', $data);
-        }else{
+        } else {
             $data['dataSidang'] = $dataSidang;
             $data['pembimbing'] = DB::table('tr_pendaftaran_dosen')
                 ->where('pendaftaran_id', $dataSidang->id)
@@ -47,7 +47,7 @@ class SidangController extends Controller
             $data['penguji'] = DB::table('tr_pendaftaran_dosen')
                 ->where('pendaftaran_id', $dataSidang->id)
                 ->where('tipe', 'like', 'U%')->get();
-                $data['berkas'] = DB::table('ms_berkas as b')
+            $data['berkas'] = DB::table('ms_berkas as b')
                 // Select the necessary fields
                 ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
                 // Join the tr_pendaftaran_berkas table to retrieve the associated file
@@ -55,7 +55,7 @@ class SidangController extends Controller
                     // Use the on and where methods to specify the join condition
                     $join->on('pb.berkas_id', '=', 'b.id')
                         ->where('pb.pendaftaran_id', '=', $dataSidang->id);
-                })
+                })  
                 // Filter the documents to only include those of type 'P'
                 ->where('b.type', 'T')
                 // Get the results
@@ -74,13 +74,17 @@ class SidangController extends Controller
                 ->where('b.type', 'TH')
                 // Get the results
                 ->get();
-                return view('sidang.index', $data);
-        }                   
+
+            $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataSidang->id)->first();
+            $data['jadwal'] = DB::table('tr_pendaftaran_jadwal')->where('id', $dataSidang->id)->first();
+            $data['statusProposal'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataSidang->id)->first();   
+            return view('sidang.index', $data);
+        }
     }
 
 
     public function daftarSidang(Request $request)
-    {        
+    {
 
         try {
             DB::beginTransaction();
@@ -89,7 +93,7 @@ class SidangController extends Controller
                 'id' => $idPendaftaranSidang,
                 'no_induk' => $request->nim,
                 'title' => $request->judul,
-                'type' => 'T', 
+                'type' => 'T',
                 'created_at' => now(),
             ]);
 
@@ -100,17 +104,17 @@ class SidangController extends Controller
             $exe = DB::table('tr_pendaftaran_va')->insert([
                 'id' => Str::uuid(),
                 'pendaftaran_id' => $idPendaftaranSidang,
-                'nomor_va' => '07'.$request->nim,
+                'nomor_va' => '07' . $request->nim,
                 'status' => 0,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
             $idProposal = DB::table('tr_pendaftaran as tp')
-            ->select('tp.*')
-            ->leftJoin('tr_pendaftaran_status as tps', 'tps.pendaftaran_id', '=', 'tp.id')
-            ->where('tp.no_induk', $request->nim)
-            ->whereIn('tps.status', ['1'])
-            ->first()->id;
+                ->select('tp.*')
+                ->leftJoin('tr_pendaftaran_status as tps', 'tps.pendaftaran_id', '=', 'tp.id')
+                ->where('tp.no_induk', $request->nim)
+                ->whereIn('tps.status', ['1'])
+                ->first()->id;
 
             $getDosen = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $idProposal)->get();
             $countDosen = count($getDosen);
@@ -123,16 +127,16 @@ class SidangController extends Controller
                     'nama' => $value->nama,
                     'tipe' => $value->tipe,
                     'created_by' => $request->nim,
-                    'created_at' => now()                    
+                    'created_at' => now()
                 ]);
 
-            $countDosenDone++;
+                $countDosenDone++;
             }
 
             if ($countDosen == $countDosenDone) {
                 DB::commit();
             }
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
             return $e->getMessage();
