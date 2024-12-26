@@ -510,18 +510,31 @@ class LogBookController extends Controller
 
     }
 
+    /**
+     * Store or update nilai sidang for a given pendaftaran.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeNilaiSidang(Request $request)
     {
         try {
-            $pendaftaran_id = Crypt::decrypt($request->pendaftaran_id);            
+            // Decrypt the pendaftaran_id from the request
+            $pendaftaran_id = Crypt::decrypt($request->pendaftaran_id);
+
+            // Begin a database transaction
             DB::beginTransaction();
+
+            // Iterate through each nilai item in the request
             foreach ($request->nilai as $key => $value) {
+                // Check if the nilai already exists for the given pendaftaran_id and indikator_penilaian
                 $checkExist = DB::table('tr_nilai')
                     ->where('pendaftaran_id', $pendaftaran_id)
                     ->where('indikator_penilaian', $key)
                     ->where('created_by', auth()->user()->no_induk)
                     ->exists();
-                
+
+                // If it exists, update the existing entry
                 if ($checkExist) {
                     $exe = DB::table('tr_nilai')
                         ->where('pendaftaran_id', $pendaftaran_id)
@@ -529,29 +542,32 @@ class LogBookController extends Controller
                         ->where('created_by', auth()->user()->no_induk)
                         ->update([
                             'nilai' => $value,
-                            'updated_at' => date('Y-m-d H:i:s')
+                            'updated_at' => date('Y-m-d H:i:s'),
                         ]);
                 } else {
-                    $exe = DB::table('tr_nilai')
-                        ->insert([
-                            'id' => Str::uuid(),
-                            'pendaftaran_id' => $pendaftaran_id,
-                            'indikator_penilaian' => $key,
-                            'nilai' => $value,
-                            'created_at' => date('Y-m-d H:i:s'),
-                            'created_by' => auth()->user()->no_induk,
-                        ]);
+                    // Otherwise, insert a new entry
+                    $exe = DB::table('tr_nilai')->insert([
+                        'id' => Str::uuid(),
+                        'pendaftaran_id' => $pendaftaran_id,
+                        'indikator_penilaian' => $key,
+                        'nilai' => $value,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'created_by' => auth()->user()->no_induk,
+                    ]);
                 }
 
+                // If the operation fails, roll back the transaction and return an error
                 if (!$exe) {
                     DB::rollBack();
                     return back()->with('error', 'Gagal menyimpan nilai sidang');
                 }
-
-                DB::commit();
-                return back()->with('success', 'Berhasil menyimpan nilai sidang');
             }
+
+            // Commit the transaction if all operations succeed
+            DB::commit();
+            return back()->with('success', 'Berhasil menyimpan nilai sidang');
         } catch (\Throwable $th) {
+            // Handle any exceptions and output the error message
             dd($th->getMessage());
         }
     }
