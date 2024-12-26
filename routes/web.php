@@ -89,6 +89,7 @@ Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen|pengelola'])->gr
     Route::get('dosen/log-bimbingan/approve/{id}', [LogBookController::class, 'approveDetilLogBookMhs']);
     Route::get('dosen/proposal/approval-dosen/{id}', [ProposalController::class, 'approvalProposalDosen']);
     Route::post('dosen/proposal/hasil/store', [LogBookController::class, 'storeHasilProposal']);
+    Route::post('dosen/sidang/penilaian/store', [LogBookController::class, 'storeNilaiSidang']);
 
     Route::get('document/berita-acara-proposal/{id}', [ProposalDocTemplateController::class, 'pdfBeritaAcaraProposal']);
 });

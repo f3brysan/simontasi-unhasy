@@ -135,7 +135,7 @@
             {{-- START JADWAL PROPOSAL --}}
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5>Jadwal Sidang</h5></span>
+                    <h5>Jadwal Sidang</h5>
                 </div>
                 <div class="card-body">
                     @if (!empty($dataProposal))
@@ -159,7 +159,8 @@
                                                 {{ date('H:i', strtotime($jadwal->awal)) }} -
                                                 {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
                                             </td>
-                                            <td class="text-center">Di Gedung {{ $jadwal->gedung }}, Ruang {{ $jadwal->ruang }}</td>
+                                            <td class="text-center">Di Gedung {{ $jadwal->gedung }}, Ruang
+                                                {{ $jadwal->ruang }}</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -185,7 +186,7 @@
                                         <tr>
                                             <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
                                             <td class="text-center">
-                                                @if ($statusProposal->status == NULL)
+                                                @if ($statusProposal->status == null)
                                                     <form action="{{ URL::to('dosen/proposal/hasil/store') }}"
                                                         method="POST">
                                                         @csrf
@@ -212,15 +213,18 @@
                                                 @else
                                                     @if ($statusProposal->status == 1 and empty($statusProposal->catatan))
                                                         <span class="badge bg-success">Diterima</span>
-                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
+                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}
+                                                        </p>
                                                     @endif
                                                     @if ($statusProposal->status == 1 and !empty($statusProposal->catatan))
                                                         <span class="badge bg-warning">Diterima dengan Catatan</span>
-                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
+                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}
+                                                        </p>
                                                     @endif
                                                     @if ($statusProposal->status == 0)
                                                         <span class="badge bg-danger">Ditolak</span>
-                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}</p>
+                                                        <p class="small">Catatan : {{ $statusProposal->catatan ?? '-' }}
+                                                        </p>
                                                     @endif
                                                 @endif
                                             </td>
@@ -256,6 +260,49 @@
                 @endif
             @endif
             {{-- END HASIL PROPOSAL --}}
+
+            {{-- START JADWAL PROPOSAL --}}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Borang Penilaian</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ URL::to('dosen/sidang/penilaian/store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="pendaftaran_id" value="{{ Crypt::encrypt($dataProposal->id) }}">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">No</th>
+                                    <th class="text-center">Komponen<br>Penilaian</th>
+                                    <th class="text-center">Indikator<br>Penilaian</th>
+                                    <th class="text-center">Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($formPenilaian as $item)
+                                    <tr>
+                                        <td class="text-end">{{ $loop->iteration }}</td>
+                                        <td>{{ $item->nama_komponen }}</td>
+                                        <td>{{ $item->nama }}</td>
+                                        <td><label class="small" style="color: red">Rentang Nilai {{ $item->min_score }} - {{ $item->max_score }}</label>
+                                            <input type="number" min="0" max="{{ $item->max_score }}"
+                                                class="form-control" name="nilai[{{ $item->id }}]" id="nilai"
+                                                data-id="{{ $item->id }}" data-nim="{{ $dataProposal->no_induk }}" value="{{ $item->nilai ?? '' }}">
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <td colspan="4">
+                                        <button class="btn btn-primary float-end">Simpan</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
 
             {{-- START LOGBOOK --}}
             <div class="card mb-4">

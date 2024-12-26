@@ -282,13 +282,23 @@ class LogBookController extends Controller
 
         $jadwal = DB::table('tr_pendaftaran_jadwal')->where('id', $dataProposal->id)->first();
 
+        $formPenilaian = DB::table('ms_indikator_penilaian as ip')
+            ->select('ip.*', 'kp.nama as nama_komponen', 'n.nilai')
+            ->join('ms_komponen_penilaian as kp', 'kp.id', '=', 'ip.komponen_penilaian_id')
+            ->leftJoin('tr_nilai as n', function ($join) use ($dataProposal) {
+                $join->on('n.indikator_penilaian', '=', 'ip.id')
+                    ->where('n.pendaftaran_id', $dataProposal->id);
+            })
+            ->get();
+
         // Prepare the data for the view
         $data = [
             'dataProposal' => $dataProposal,
             'dataMHS' => $dataMHS,
             'logBooks' => $logBooks,
             'prodi' => $prodi,
-            'jadwal' => $jadwal
+            'jadwal' => $jadwal,
+            'formPenilaian' => $formPenilaian
         ];
 
         if (!empty($dataProposal)) {
@@ -353,7 +363,7 @@ class LogBookController extends Controller
                     $title = $data->is_approve == 0 ? 'Terima' : 'Reset';
                     // Generate the HTML for the button
                     $btn = '<div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
-                    <button type="button" data-id="' . Crypt::encrypt($data->id) . '" data-status="' . $data->is_approve . '" class="approve btn ' . $btnType . ' text-light" title="'.$title.'"><i class="fa-solid ' . $btnIcon . '"></i></button>                   
+                    <button type="button" data-id="' . Crypt::encrypt($data->id) . '" data-status="' . $data->is_approve . '" class="approve btn ' . $btnType . ' text-light" title="' . $title . '"><i class="fa-solid ' . $btnIcon . '"></i></button>                   
                   </div>';
                     // Return the button HTML
                     return $btn;
@@ -482,13 +492,13 @@ class LogBookController extends Controller
         }
 
         if ($hasilSidang == 'TERIMA') {
-            $insert = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $getPendaftaran->id)->update([                                
+            $insert = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $getPendaftaran->id)->update([
                 'status' => $hasilSidang,
                 'created_by' => auth()->user()->no_induk,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         } else {
-            $update = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $getPendaftaran->id)->update([                
+            $update = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $getPendaftaran->id)->update([
                 'status' => $hasilSidang,
                 'catatan' => $catatan,
                 'created_by' => auth()->user()->no_induk,
@@ -498,5 +508,51 @@ class LogBookController extends Controller
 
         return back()->with('success', 'Hasil Sidang Proposal berhasil disimpan');
 
+    }
+
+    public function storeNilaiSidang(Request $request)
+    {
+        try {
+            $pendaftaran_id = Crypt::decrypt($request->pendaftaran_id);            
+            DB::beginTransaction();
+            foreach ($request->nilai as $key => $value) {
+                $checkExist = DB::table('tr_nilai')
+                    ->where('pendaftaran_id', $pendaftaran_id)
+                    ->where('indikator_penilaian', $key)
+                    ->where('created_by', auth()->user()->no_induk)
+                    ->exists();
+                
+                if ($checkExist) {
+                    $exe = DB::table('tr_nilai')
+                        ->where('pendaftaran_id', $pendaftaran_id)
+                        ->where('indikator_penilaian', $key)
+                        ->where('created_by', auth()->user()->no_induk)
+                        ->update([
+                            'nilai' => $value,
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ]);
+                } else {
+                    $exe = DB::table('tr_nilai')
+                        ->insert([
+                            'id' => Str::uuid(),
+                            'pendaftaran_id' => $pendaftaran_id,
+                            'indikator_penilaian' => $key,
+                            'nilai' => $value,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'created_by' => auth()->user()->no_induk,
+                        ]);
+                }
+
+                if (!$exe) {
+                    DB::rollBack();
+                    return back()->with('error', 'Gagal menyimpan nilai sidang');
+                }
+
+                DB::commit();
+                return back()->with('success', 'Berhasil menyimpan nilai sidang');
+            }
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+        }
     }
 }
