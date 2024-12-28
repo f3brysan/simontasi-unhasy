@@ -261,12 +261,14 @@
             @endif
             {{-- END HASIL PROPOSAL --}}
 
-            {{-- START JADWAL PROPOSAL --}}
+            @if ($dataProposal->type == 'T')
+                {{-- START Penilaian Seminar --}}
             <div class="card mb-4">
                 <div class="card-header">
                     <h5>Borang Penilaian</h5>
                 </div>
                 <div class="card-body">
+                    <h6>Penilaian Seminar Akhir</h6>
                     <form action="{{ URL::to('dosen/sidang/penilaian/store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="pendaftaran_id" value="{{ Crypt::encrypt($dataProposal->id) }}">
@@ -293,6 +295,10 @@
                                     </tr>
                                 @endforeach
                                 <tr>
+                                    <td colspan="3" class="text-center">Total Nilai</td>
+                                    <td class="text-center"><strong>{{ $totalNilai }}</strong></td>
+                                </tr>
+                                <tr>
                                     <td colspan="4">
                                         <button class="btn btn-primary float-end">Simpan</button>
                                     </td>
@@ -302,8 +308,9 @@
                     </form>
                 </div>
             </div>
-
-
+            {{-- END Penilaian Seminar --}}
+            @endif
+            
             {{-- START LOGBOOK --}}
             <div class="card mb-4">
                 <div class="card-header">

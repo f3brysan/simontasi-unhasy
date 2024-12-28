@@ -273,7 +273,7 @@ class LogBookController extends Controller
             ->where('p.id', $id)
             ->select("p.*", "u.nama")
             ->first();
-
+        
         // Retrieve the user data (mahasiswa) for the given proposal data
         $dataMHS = User::where('no_induk', $dataProposal->no_induk)->first();
 
@@ -282,14 +282,24 @@ class LogBookController extends Controller
 
         $jadwal = DB::table('tr_pendaftaran_jadwal')->where('id', $dataProposal->id)->first();
 
-        $formPenilaian = DB::table('ms_indikator_penilaian as ip')
+        if ($dataProposal->type == 'T') {
+            $formPenilaian = DB::table('ms_indikator_penilaian as ip')
             ->select('ip.*', 'kp.nama as nama_komponen', 'n.nilai')
             ->join('ms_komponen_penilaian as kp', 'kp.id', '=', 'ip.komponen_penilaian_id')
             ->leftJoin('tr_nilai as n', function ($join) use ($dataProposal) {
                 $join->on('n.indikator_penilaian', '=', 'ip.id')
-                    ->where('n.pendaftaran_id', $dataProposal->id);
+                    ->where('n.pendaftaran_id', $dataProposal->id)
+                    ->where('n.created_by', auth()->user()->no_induk);
             })
             ->get();
+            $totalNilai = $formPenilaian->sum('nilai');
+            $namaJenisPendaftaran = 'TA/Skripsi/Tesis/Munosaqah';
+        }else{
+            $formPenilaian = [];
+            $namaJenisPendaftaran = 'Proposal';
+            $totalNilai = 0;
+        }
+        
 
         // Prepare the data for the view
         $data = [
@@ -298,7 +308,9 @@ class LogBookController extends Controller
             'logBooks' => $logBooks,
             'prodi' => $prodi,
             'jadwal' => $jadwal,
-            'formPenilaian' => $formPenilaian
+            'formPenilaian' => $formPenilaian,
+            'namaJenisPendaftaran' => $namaJenisPendaftaran,
+            'totalNilai' => $totalNilai
         ];
 
         if (!empty($dataProposal)) {
