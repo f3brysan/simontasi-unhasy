@@ -49,26 +49,28 @@
                                     <td>
                                         <div class="row">
                                             <div class="col-md-10">{!! $dataProposal->title !!}</div>
-                                            @if ($dataProposal->is_ok == null)
-                                                <div class="col-md-2"><a href="javascript:void(0)"
-                                                        onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                        class="btn btn-sm btn-primary float-end"><i
-                                                            class="fas fa-check"></i>
-                                                        Setujui</a></div>
-                                            @else
-                                                @if (!empty($jadwal))
-                                                    @if ($jadwal->akhir > date('Y-m-d H:i:s'))
-                                                        <div class="col-md-2"><a href="javascript:void(0)"
-                                                                onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                                class="btn btn-sm btn-warning float-end"><i
-                                                                    class="fas fa-refresh"></i>
-                                                                Batal Setujui</a></div>
-                                                    @else
-                                                        <div class="col-md-2"><a href="javascript:void(0)"
-                                                                onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                                class="btn btn-sm btn-warning float-end disabled"><i
-                                                                    class="fas fa-refresh"></i>
-                                                                Batal Setujui</a></div>
+                                            @if ($checkDosenRole->tipe == 'B')
+                                                @if ($dataProposal->is_ok == null)
+                                                    <div class="col-md-2"><a href="javascript:void(0)"
+                                                            onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                            class="btn btn-sm btn-primary float-end"><i
+                                                                class="fas fa-check"></i>
+                                                            Setujui</a></div>
+                                                @else
+                                                    @if (!empty($jadwal) and $checkDosenRole == 'B')
+                                                        @if ($jadwal->akhir > date('Y-m-d H:i:s'))
+                                                            <div class="col-md-2"><a href="javascript:void(0)"
+                                                                    onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                                    class="btn btn-sm btn-warning float-end"><i
+                                                                        class="fas fa-refresh"></i>
+                                                                    Batal Setujui</a></div>
+                                                        @else
+                                                            <div class="col-md-2"><a href="javascript:void(0)"
+                                                                    onclick="approveJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                                    class="btn btn-sm btn-warning float-end disabled"><i
+                                                                        class="fas fa-refresh"></i>
+                                                                    Batal Setujui</a></div>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             @endif
@@ -263,54 +265,57 @@
 
             @if ($dataProposal->type == 'T')
                 {{-- START Penilaian Seminar --}}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5>Borang Penilaian</h5>
-                </div>
-                <div class="card-body">
-                    <h6>Penilaian Seminar Akhir</h6>
-                    <form action="{{ URL::to('dosen/sidang/penilaian/store') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="pendaftaran_id" value="{{ Crypt::encrypt($dataProposal->id) }}">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">No</th>
-                                    <th class="text-center">Komponen<br>Penilaian</th>
-                                    <th class="text-center">Indikator<br>Penilaian</th>
-                                    <th class="text-center">Nilai</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($formPenilaian as $item)
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Borang Penilaian</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Penilaian Seminar Akhir</h6>
+                        <form action="{{ URL::to('dosen/sidang/penilaian/store') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="pendaftaran_id" value="{{ Crypt::encrypt($dataProposal->id) }}">
+                            <table class="table table-bordered table-hover">
+                                <thead>
                                     <tr>
-                                        <td class="text-end">{{ $loop->iteration }}</td>
-                                        <td>{{ $item->nama_komponen }}</td>
-                                        <td>{{ $item->nama }}</td>
-                                        <td><label class="small" style="color: red">Rentang Nilai {{ $item->min_score }} - {{ $item->max_score }}</label>
-                                            <input type="number" min="0" max="{{ $item->max_score }}"
-                                                class="form-control" name="nilai[{{ $item->id }}]" id="nilai"
-                                                data-id="{{ $item->id }}" data-nim="{{ $dataProposal->no_induk }}" value="{{ $item->nilai ?? '' }}">
+                                        <th class="text-center">No</th>
+                                        <th class="text-center">Komponen<br>Penilaian</th>
+                                        <th class="text-center">Indikator<br>Penilaian</th>
+                                        <th class="text-center">Nilai</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($formPenilaian as $item)
+                                        <tr>
+                                            <td class="text-end">{{ $loop->iteration }}</td>
+                                            <td>{{ $item->nama_komponen }}</td>
+                                            <td>{{ $item->nama }}</td>
+                                            <td><label class="small" style="color: red">Rentang Nilai
+                                                    {{ $item->min_score }} - {{ $item->max_score }}</label>
+                                                <input type="number" min="0" max="{{ $item->max_score }}"
+                                                    class="form-control" name="nilai[{{ $item->id }}]"
+                                                    id="nilai" data-id="{{ $item->id }}"
+                                                    data-nim="{{ $dataProposal->no_induk }}"
+                                                    value="{{ $item->nilai ?? '' }}">
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    <tr>
+                                        <td colspan="3" class="text-center">Total Nilai</td>
+                                        <td class="text-center"><strong>{{ $totalNilai }}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            <button class="btn btn-primary float-end">Simpan</button>
                                         </td>
                                     </tr>
-                                @endforeach
-                                <tr>
-                                    <td colspan="3" class="text-center">Total Nilai</td>
-                                    <td class="text-center"><strong>{{ $totalNilai }}</strong></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="4">
-                                        <button class="btn btn-primary float-end">Simpan</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </form>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            {{-- END Penilaian Seminar --}}
+                {{-- END Penilaian Seminar --}}
             @endif
-            
+
             {{-- START LOGBOOK --}}
             <div class="card mb-4">
                 <div class="card-header">

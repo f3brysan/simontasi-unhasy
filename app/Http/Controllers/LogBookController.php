@@ -273,7 +273,7 @@ class LogBookController extends Controller
             ->where('p.id', $id)
             ->select("p.*", "u.nama")
             ->first();
-        
+
         // Retrieve the user data (mahasiswa) for the given proposal data
         $dataMHS = User::where('no_induk', $dataProposal->no_induk)->first();
 
@@ -284,22 +284,27 @@ class LogBookController extends Controller
 
         if ($dataProposal->type == 'T') {
             $formPenilaian = DB::table('ms_indikator_penilaian as ip')
-            ->select('ip.*', 'kp.nama as nama_komponen', 'n.nilai')
-            ->join('ms_komponen_penilaian as kp', 'kp.id', '=', 'ip.komponen_penilaian_id')
-            ->leftJoin('tr_nilai as n', function ($join) use ($dataProposal) {
-                $join->on('n.indikator_penilaian', '=', 'ip.id')
-                    ->where('n.pendaftaran_id', $dataProposal->id)
-                    ->where('n.created_by', auth()->user()->no_induk);
-            })
-            ->get();
+                ->select('ip.*', 'kp.nama as nama_komponen', 'n.nilai')
+                ->join('ms_komponen_penilaian as kp', 'kp.id', '=', 'ip.komponen_penilaian_id')
+                ->leftJoin('tr_nilai as n', function ($join) use ($dataProposal) {
+                    $join->on('n.indikator_penilaian', '=', 'ip.id')
+                        ->where('n.pendaftaran_id', $dataProposal->id)
+                        ->where('n.created_by', auth()->user()->no_induk);
+                })
+                ->get();
             $totalNilai = $formPenilaian->sum('nilai');
             $namaJenisPendaftaran = 'TA/Skripsi/Tesis/Munosaqah';
-        }else{
+        } else {
             $formPenilaian = [];
             $namaJenisPendaftaran = 'Proposal';
             $totalNilai = 0;
         }
-        
+
+        $checkDosenRole = DB::table('tr_pendaftaran_dosen')
+            ->where('pendaftaran_id', $dataProposal->id)
+            ->where('nip', auth()->user()->no_induk)
+            ->first();
+
 
         // Prepare the data for the view
         $data = [
@@ -310,7 +315,8 @@ class LogBookController extends Controller
             'jadwal' => $jadwal,
             'formPenilaian' => $formPenilaian,
             'namaJenisPendaftaran' => $namaJenisPendaftaran,
-            'totalNilai' => $totalNilai
+            'totalNilai' => $totalNilai,
+            'checkDosenRole' => $checkDosenRole
         ];
 
         if (!empty($dataProposal)) {
@@ -368,15 +374,19 @@ class LogBookController extends Controller
                 /**
                  * Add a column for the action button                 
                  */
-                ->addColumn('action', function ($data) {
+                ->addColumn('action', function ($data) use ($checkDosenRole) {
                     // Determine the button type and icon based on the is_approve value
                     $btnType = $data->is_approve == 0 ? 'btn-success' : 'btn-warning';
                     $btnIcon = $data->is_approve == 0 ? 'fa-check' : 'fa-arrows-rotate';
                     $title = $data->is_approve == 0 ? 'Terima' : 'Reset';
                     // Generate the HTML for the button
-                    $btn = '<div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                    $btn = '';
+                    if ($checkDosenRole->tipe == 'B') {
+                        $btn = '<div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
                     <button type="button" data-id="' . Crypt::encrypt($data->id) . '" data-status="' . $data->is_approve . '" class="approve btn ' . $btnType . ' text-light" title="' . $title . '"><i class="fa-solid ' . $btnIcon . '"></i></button>                   
-                  </div>';
+                    </div>';
+                    }
+
                     // Return the button HTML
                     return $btn;
                 })
