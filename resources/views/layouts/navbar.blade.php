@@ -38,6 +38,8 @@
                     <i class="fa-solid fa-users nav-icon"></i> User</a></li>
         @endrole
         @role('superadmin')
+        <li class="nav-item"><a class="nav-link" href="{{ URL::to('setting/pembayaran') }}">
+            <i class="fa-solid fa-key nav-icon"></i> Master VA Pembayaran </a></li>
         <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
             <i class="fa-solid fa-database nav-icon"></i> Master Penilaian</a>
         <ul class="nav-group-items">

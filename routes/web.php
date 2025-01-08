@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminProposalController;
 use App\Http\Controllers\AdminSidangController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\M_VAPembayaranController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GetDataAPISiakad;
@@ -63,6 +64,8 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
 
     Route::get('setting/indikator-penilaian', [IndikatorPenilaianController::class, 'index']);
     Route::post('setting/indikator-penilaian/store', [IndikatorPenilaianController::class, 'store']);
+
+    Route::get('setting/pembayaran', [M_VAPembayaranController::class, 'index']);
 });
 
 
