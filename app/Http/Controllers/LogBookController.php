@@ -546,7 +546,7 @@ class LogBookController extends Controller
 
             // Begin a database transaction
             DB::beginTransaction();
-
+            $sumNilai = 0;
             // Iterate through each nilai item in the request
             foreach ($request->nilai as $key => $value) {
                 // Check if the nilai already exists for the given pendaftaran_id and indikator_penilaian
@@ -558,6 +558,7 @@ class LogBookController extends Controller
 
                 // If it exists, update the existing entry
                 if ($checkExist) {
+                    // Update the existing entry
                     $exe = DB::table('tr_nilai')
                         ->where('pendaftaran_id', $pendaftaran_id)
                         ->where('indikator_penilaian', $key)
@@ -576,13 +577,24 @@ class LogBookController extends Controller
                         'created_at' => date('Y-m-d H:i:s'),
                         'created_by' => auth()->user()->no_induk,
                     ]);
-                }
+                }                               
+                // Add the nilai to the sum
+                $sumNilai += $value;
+            }
 
-                // If the operation fails, roll back the transaction and return an error
-                if (!$exe) {
-                    DB::rollBack();
-                    return back()->with('error', 'Gagal menyimpan nilai sidang');
-                }
+            // Update the nilai of the pendaftaran_dosen table
+            $updateNilaiDosen = DB::table('tr_pendaftaran_dosen')
+                ->where('pendaftaran_id', $pendaftaran_id)
+                ->where('nip', auth()->user()->no_induk)
+                ->update([
+                    'nilai' => $sumNilai,
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+
+            // If the operation fails, roll back the transaction and return an error
+            if(!$updateNilaiDosen){
+                DB::rollBack();
+                return back()->with('error', 'Gagal menyimpan nilai sidang');
             }
 
             // Commit the transaction if all operations succeed
