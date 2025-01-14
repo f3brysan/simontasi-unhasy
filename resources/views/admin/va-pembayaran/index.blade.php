@@ -25,8 +25,8 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">Timestamp</th>
-                                        <th class="text-center">No Induk</th>
-                                        <th class="text-center">Nama</th>
+                                        <th class="text-center">No Induk<br>Nama</th>
+                                        <th class="text-center">No VA</th>
                                         <th class="text-center">Prodi</th>
                                         <th class="text-center">Jenis</th>
                                         <th class="text-center">Status</th>
@@ -72,18 +72,18 @@
                     type: 'GET'
                 },
                 columns: [{
-                        data: 'timestamp',
-                        name: 'timestamp',
+                        data: 'created_at',
+                        name: 'created_at',
                         className: 'text-center'
                     },
                     {
-                        data: 'no_induk',
-                        name: 'no_induk',
+                        data: 'detil_mhs',
+                        name: 'detil_mhs',
                         className: 'text-center'
                     },
                     {
-                        data: 'nama',
-                        name: 'nama'
+                        data: 'nomor_va',
+                        name: 'nomor_va'
                     },
                     {
                         data: 'prodi',
