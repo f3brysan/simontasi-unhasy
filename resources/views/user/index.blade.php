@@ -110,6 +110,9 @@
     <link rel="stylesheet" href="//cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
     <script src="//cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
 
+    {{-- Swal --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         $(document).ready(function() {
             $.ajaxSetup({
@@ -198,6 +201,39 @@
                     $("#roles").val(data.roles).change();
                     $("#password-form").hide();
                 });
+        });
+
+        $(document).on('click', '.login-as', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            Swal.fire({
+                title: "Login As",
+                text: "Apakah Anda ingin login sebagai " + name + "?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Iya, login!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('login-as') }}",
+                        data: {
+                            id: id,
+                            name: name
+                        },
+                        dataType: "JSON",
+                        success: function(response) {                            
+                                window.location.href = "{{ URL::to('/') }}";                            
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+            });
+
         });
 
 

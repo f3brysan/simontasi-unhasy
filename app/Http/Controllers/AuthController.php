@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Crypt;
 
 class AuthController extends Controller
 {
@@ -97,6 +98,27 @@ class AuthController extends Controller
         // If all authentication attempts fail, return to the previous page with an error message
         return back()->with('LoginError', 'Email atau Password Anda salah !');
 
+    }
+
+    public function loginAs(Request $request) 
+    {
+        try {
+            $id = Crypt::decrypt($request->id);            
+
+            $getUser = User::where('id', $id)->exists();
+            if ($getUser) {
+                Auth::loginUsingId($id);
+                $request->session()->regenerate();
+                $user = auth()->user();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login Berhasil',
+                    'data' => $user
+                ]);                
+            }
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
     }
 
     public function logout(Request $request)

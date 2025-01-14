@@ -29,6 +29,7 @@ use App\Http\Controllers\UserController;
 
 Route::get('login', [AuthController::class, 'index'])->name('login');
 Route::post('login', [AuthController::class, 'auth']);
+Route::post('login-as', [AuthController::class, 'loginAs']);
 Route::post('logout', [AuthController::class, 'logout']);
 
 Route::middleware(['auth:web'])->group(function () {
