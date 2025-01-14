@@ -66,6 +66,7 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::post('setting/indikator-penilaian/store', [IndikatorPenilaianController::class, 'store']);
 
     Route::get('setting/pembayaran', [M_VAPembayaranController::class, 'index']);
+    Route::post('setting/terima-pembayaran', [M_VAPembayaranController::class, 'acceptVA']);
 });
 
 
