@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
 
 class M_VAPembayaranController extends Controller
-{  
+{
   public function index(Request $request)
   {
     $getData = DB::table('tr_pendaftaran_va as va')
@@ -24,18 +24,20 @@ class M_VAPembayaranController extends Controller
     if ($request->ajax()) {
       // Generate columns for the datatable
       return DataTables::of($getData)
-        // Add a column for the timestamp
-        ->addColumn('timestamp', function ($getData) {
-          // Return the timestamp
-          $result = $getData->updated_at ?? $getData->created_at;
+        ->addColumn('detil_mhs', function ($getData) {
+          $result = '';
+          $result .= '<span class="badge bg-info">'.$getData->no_induk.'</span>';
+          $result .= '<br>';
+          $result .= $getData->nama;
           return $result;
-        })
+        })                
         // Add a column for the status of the VA
         ->addColumn('statusVA', function ($getData) {
           // Return a label indicating the status of the VA
           $label = '';
           if ($getData->status == '1') {
-            $label = '<span class="badge bg-success">Paid</span>';
+            $label = '<span class="badge bg-success">Paid</span>';            
+            $label .= '<p class="small">'.$getData->updated_at ?? '-'.'></p>';
           } else {
             $label = '<span class="badge bg-danger">Unpaid</span>';
           }
@@ -68,7 +70,7 @@ class M_VAPembayaranController extends Controller
           return $btn;
         })
         // Make the action column raw
-        ->rawColumns(['action', 'timestamp', 'statusVA', 'typePendaftaran'])
+        ->rawColumns(['action', 'timestamp', 'statusVA', 'typePendaftaran', 'detil_mhs'])
         // Add the index column
         ->addIndexColumn()
         // Make the DataTables
@@ -78,7 +80,7 @@ class M_VAPembayaranController extends Controller
     // If the request is not an AJAX request, return the view
     return view('admin.va-pembayaran.index');
   }
-  
+
   public function acceptVA(Request $request)
   {
     try {
