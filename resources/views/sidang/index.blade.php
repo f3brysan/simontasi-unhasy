@@ -118,7 +118,7 @@
             </div>
             {{-- END DAFTAR PROPOSAL --}}
 
-            @if ($dataSidang)                
+            @if ($dataSidang)
                 {{-- INFO VA --}}
                 @if (isset($statusBayar))
                     @if ($statusBayar->status !== '1')
@@ -162,7 +162,7 @@
                         {{-- START JADWAL PROPOSAL --}}
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h5>Jadwal Sidang dan Berkas Proposal</h5></span>
+                                <h5>Jadwal Sidang dan Berkas Proposal</h5>
                             </div>
                             <div class="card-body">
                                 @if (!empty($dataSidang))
@@ -210,12 +210,54 @@
                             </div>
                         </div>
                         {{-- END JADWAL PROPOSAL --}}
+                        @if (count($nilai))
+                        @php
+                            $nilaiAkhir = 0;
+                        @endphp
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5>Hasil Sidang</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table container-fluid">
+                                        <h6>Hasil Sidang Seminar</h6>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <td class="text-center">Dosen</td>
+                                                    <td class="text-center">Nilai</td>
+                                                    <td class="text-center">Status</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($nilai as $item)
+                                                @php
+                                                    $nilaiAkhir += $item->nilai;
+                                                @endphp
+                                                    <tr>
+                                                        <td>{{ $item->nama }}<br><u>{{ $item->dosen }}</u></td>
+                                                        <td class="text-end">{{ $item->nilai }}</td>
+                                                        <td class="text-center">{{ $item->is_lock == 1 ? 'Final' : 'Belum Final' }}</td>
+                                                    </tr>
+                                                @endforeach
+                                                <tr>
+                                                    <td class="text-center"><b>Nilai Akhir</b></td>
+                                                    <td class="text-end">{{ $nilaiAkhir/count($nilai) }}</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>                                           
+                                </div>
+                            </div>
+                        @endif
+                        <div></div>
                     @endif
                 @endif
             @endif
 
             {{-- START HASIL PROPOSAL --}}
-            @if (!empty($jadwal))   
+            @if (!empty($jadwal))
                 @if ($jadwal->akhir <= date('Y-m-d H:i:s'))
                     <div class="card mb-4">
                         <div class="card-header">

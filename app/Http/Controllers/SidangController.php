@@ -74,6 +74,13 @@ class SidangController extends Controller
                 ->where('b.type', 'TH')
                 // Get the results
                 ->get();
+            $data['nilai'] = DB::table('tr_nilai as n')
+            ->select('created_by as dosen','u.nama', 'n.is_lock', DB::raw('SUM(nilai) as nilai'))
+            ->leftJoin('users as u','u.no_induk','=','created_by')
+            ->where('pendaftaran_id', $dataSidang->id)
+            ->groupBy(['created_by','u.nama', 'n.is_lock'])
+            ->get();
+            
 
             $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataSidang->id)->first();
             $data['jadwal'] = DB::table('tr_pendaftaran_jadwal')->where('id', $dataSidang->id)->first();
