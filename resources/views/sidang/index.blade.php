@@ -236,13 +236,13 @@
                                                 @endphp
                                                     <tr>
                                                         <td>{{ $item->nama }}<br><u>{{ $item->dosen }}</u></td>
-                                                        <td class="text-end">{{ $item->nilai }}</td>
+                                                        <td class="text-end">{{ number_format($item->nilai, 2) }}</td>
                                                         <td class="text-center">{{ $item->is_lock == 1 ? 'Final' : 'Belum Final' }}</td>
                                                     </tr>
                                                 @endforeach
                                                 <tr>
                                                     <td class="text-center"><b>Nilai Akhir</b></td>
-                                                    <td class="text-end">{{ $nilaiAkhir/count($nilai) }}</td>
+                                                    <td class="text-end">{{ number_format($nilaiAkhir/count($nilai), 2) }}</td>
                                                     <td></td>
                                                 </tr>
                                             </tbody>
