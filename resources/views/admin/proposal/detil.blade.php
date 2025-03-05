@@ -4,8 +4,8 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb my-0 ms-2">
-                <li class="breadcrumb-item "><span>Proposal</span></li>
-                <li class="breadcrumb-item active"><span>Detil Proposal {{ $biodata->no_induk }} -
+                <li class="breadcrumb-item "><span>{{ $dataProposal->type == 'P' ? 'Proposal' : 'Tugas Akhir / Tesis / Munasaqoh' }}</span></li>
+                <li class="breadcrumb-item active"><span>Detil {{ $dataProposal->type == 'P' ? 'Proposal' : 'Tugas Akhir / Tesis / Munasaqoh' }} - {{ $biodata->no_induk }} -
                         {{ $biodata->nama }}</span></li>
             </ol>
         </nav>
@@ -25,7 +25,7 @@ $isStatusBayarDone = false;
             {{-- START DAFTAR PROPOSAL --}}
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5>Pendaftaran Proposal</h5></span>
+                    <h5>Pendaftaran {{ $dataProposal->type == 'P' ? 'Proposal' : 'Tugas Akhir / Tesis / Munasaqoh' }}</h5></span>
                 </div>
                 <div class="card-body">
                     @if (!empty($dataProposal))

@@ -51,6 +51,7 @@ Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () 
     Route::get('admin/data/proposal/get/jadwal-sidang/{id}', [AdminProposalController::class, 'getJadwalSidang']);
 
     Route::get('admin/data/sidang', [AdminSidangController::class, 'index']);
+    Route::get('admin/data/sidang/detil/{id}', [AdminProposalController::class, 'detil']);
 });
 
 Route::middleware(['auth:web', 'role:superadmin'])->group(function () {    
