@@ -142,11 +142,38 @@ class AdminSidangController extends Controller
         return $data;
     }
 
+
     public function kunciNilaiHasilMahasiswa(Request $request)
     {
         try {
             $id = Crypt::decrypt($request->id);
+            // Lock the nilai table to prevent other users from updating the nilai
             $lockNilai = DB::table('tr_nilai')->where('pendaftaran_id', $id)->update(['is_lock' => 1]);
+
+            // Get the nilai data from the tr_nilai table
+            $getNilais = DB::table('tr_nilai')
+                ->select('created_by', 'is_lock', DB::raw("COALESCE(SUM(nilai), '0') AS total_nilai"))
+                ->where('pendaftaran_id', $id)
+                ->groupBy(['created_by', 'is_lock'])
+                ->get()
+                ->keyBy('created_by');
+
+            // Calculate the sum of nilai
+            $sumNilai = array_sum($getNilais->pluck('total_nilai')->toArray());
+
+            // Calculate the nilai akhir
+            $nilaiAkhir = round($sumNilai / count($getNilais->toArray()), 2);
+
+            // Update the status of the proposal to 1 (selesai)
+            $updateStatus = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $id)->update(
+                [
+                    'status' => 1,
+                    'created_at' => now(),
+                    'created_by' => auth()->user()->no_induk,
+                    'nilai' => $nilaiAkhir
+                ]
+            );
+
             return response()->json(['status' => 'success', 'message' => 'Nilai berhasil dikunci']);
         } catch (\Throwable $th) {
             return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan']);
