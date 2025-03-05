@@ -16,6 +16,7 @@ class AdminSidangController extends Controller
         // Get data for the datatable of the proposal data
         $data = $this->getAllDataSidang();
         $proposalData = $data['getDataProposals'];
+        
 
         // If the request is an AJAX request, return a datatable of the proposal data
         if ($request->ajax()) {
@@ -37,6 +38,8 @@ class AdminSidangController extends Controller
                 ->addColumn('approved', function ($proposal) {
                     // Generate the approval status for the datatable
                     $isOk = $proposal['is_ok'] == 0 ? '<span class="badge bg-warning">Belum Disetujui</span>' : '<span class="badge bg-success">Disetujui</span>';
+                    $isOk .="<br>";
+                    $isOk .= $proposal['status'] == 0 ? '<span class="badge bg-warning">Nilai Belum Disetujui</span>' : '<span class="badge bg-success">Nilai Disetujui</span>';
                     return $isOk;
                 })
                 ->addColumn('title', function ($proposal) {
@@ -70,12 +73,16 @@ class AdminSidangController extends Controller
                     $join->on("u.no_induk", "=", "p.no_induk")
                         ->whereIn("u.prodi_kode", $getUserProdi);
                 })
+                ->join("tr_pendaftaran_status as ps", function ($join) use ($getUserProdi) {
+                    // Join the 'users' table with the 'tr_pendaftaran' table
+                    $join->on("ps.pendaftaran_id", "=", "p.id");
+                })
                 ->leftjoin("tr_pendaftaran_dosen as pd", function ($join) {
                     // Join the 'tr_pendaftaran_dosen' table with the 'tr_pendaftaran' table
                     $join->on("pd.pendaftaran_id", "=", "p.id")
                         ->where("pd.tipe", "B");
                 })
-                ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok as dosen_ok")
+                ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok as dosen_ok", "ps.status", "ps.nilai")
                 ->get();
         }
         if (auth()->user()->hasRole('superadmin')) {
@@ -85,12 +92,16 @@ class AdminSidangController extends Controller
                     // Join the 'users' table with the 'tr_pendaftaran' table
                     $join->on("u.no_induk", "=", "p.no_induk");
                 })
+                ->join("tr_pendaftaran_status as ps", function ($join) use ($getUserProdi) {
+                    // Join the 'users' table with the 'tr_pendaftaran' table
+                    $join->on("ps.pendaftaran_id", "=", "p.id");
+                })
                 ->leftjoin("tr_pendaftaran_dosen as pd", function ($join) {
                     // Join the 'tr_pendaftaran_dosen' table with the 'tr_pendaftaran' table
                     $join->on("pd.pendaftaran_id", "=", "p.id")
                         ->where("pd.tipe", "B");
                 })
-                ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok as dosen_ok")
+                ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok as dosen_ok", "ps.status", "ps.nilai")
                 ->get();
         }
 
@@ -110,7 +121,9 @@ class AdminSidangController extends Controller
                 'title' => $proposal->title,
                 'prodi_kode' => $proposal->prodi_kode,
                 'nama' => $proposal->nama,
-                'is_ok' => $proposal->is_ok
+                'is_ok' => $proposal->is_ok,
+                'status' => $proposal->status,
+                'nilai' => $proposal->nilai
             ];
 
             // Get the name of the program

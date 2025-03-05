@@ -232,6 +232,8 @@ class AdminProposalController extends Controller
         ->groupBy(['created_by','is_lock'])
         ->get()
         ->keyBy('created_by');
+
+        $data['statusPendaftaran'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataProposal->id)->first();
         
 
         // Add the filtered dosens to the data array

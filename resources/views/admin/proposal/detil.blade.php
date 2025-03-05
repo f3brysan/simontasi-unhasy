@@ -220,10 +220,10 @@
                                     <tr>
                                         <td><u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}</td>
                                         <td class="text-center">
-                                            @if (!empty($getNilaibyDosen[$item->nip]))  
+                                            @if (!empty($getNilaibyDosen[$item->nip]))
                                                 {{ $getNilaibyDosen[$item->nip]->total_nilai }}
                                             @else
-                                            <span class="badge bg-danger">Belum Menilai</span>
+                                                <span class="badge bg-danger">Belum Menilai</span>
                                             @endif
                                         </td>
                                         <td class="text-center">
@@ -247,15 +247,20 @@
                             $canLock = $totalPenilai == $totalTernilai ? true : false;
                         @endphp
                         @if ($canLock)
-                        <button class="btn btn-info float-end text-white"
-                        onclick="kunciHasil('{{ Crypt::encrypt($dataProposal->id) }}')"><i
-                            class="fa-solid fa-lock"></i> Kunci Hasil</button>
+                            @if ($statusPendaftaran->status == '1')
+                                <button class="btn btn-success float-end text-white"><i class="fa-solid fa-lock"></i> Sudah
+                                    Terkunci</button>
+                            @else
+                                <button class="btn btn-info float-end text-white"
+                                    onclick="kunciHasil('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                        class="fa-solid fa-lock"></i> Kunci Hasil</button>
+                            @endif
                         @else
-                        <button class="btn btn-secondary float-end text-white" disabled
-                        onclick="kunciHasil('{{ Crypt::encrypt($dataProposal->id) }}')"><i
-                            class="fa-solid fa-lock"></i> Kunci Hasil</button>
+                            <button class="btn btn-secondary float-end text-white" disabled
+                                onclick="kunciHasil('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                    class="fa-solid fa-lock"></i> Kunci Hasil</button>
                         @endif
-                        
+
                     </div>
                 </div>
             </div>
