@@ -21,9 +21,9 @@
                     <div class="example">
                         <div class="tab-content rounded-bottom">
                             <div class="tab-pane p-3 active preview" role="tabpanel" id="preview-1005">
-                                <div class="row">
+                                <div class="row g-4">                                    
                                     {{-- Seluruh Tugas Akhir / Tesis / Munasaqoh --}}
-                                    <div class="col-6 col-lg-3">
+                                    <div class="col-12 col-sm-6 col-xl-4 col-xxl-3">
                                         <div class="card">
                                             <div class="card-body p-3 d-flex align-items-center">
                                                 <div class="bg-primary text-white p-3 me-3">
@@ -42,7 +42,7 @@
                                         </div>
                                     </div>
                                     {{-- Tugas Akhir / Tesis / Munasaqoh Menunggu Konfirmasi --}}
-                                    <div class="col-6 col-lg-3">
+                                    <div class="col-12 col-sm-6 col-xl-4 col-xxl-3">
                                         <div class="card">
                                             <div class="card-body p-3 d-flex align-items-center">
                                                 <div class="bg-warning text-white p-3 me-3">
@@ -60,7 +60,7 @@
                                         </div>
                                     </div>
                                     {{-- Tugas Akhir / Tesis / Munasaqoh Telah Dikonfirmasi --}}
-                                    <div class="col-6 col-lg-3">
+                                    <div class="col-12 col-sm-6 col-xl-4 col-xxl-3">
                                         <div class="card">
                                             <div class="card-body p-3 d-flex align-items-center">
                                                 <div class="bg-success text-white p-3 me-3">

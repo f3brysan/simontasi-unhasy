@@ -66,7 +66,6 @@ class UserController extends Controller
                         $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($user['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn btn-primary btn-sm edit-user m-1"><i class="fa-solid fa-wrench"></i></a>';
                     }                    
                     $btn .= '<a href="javascript:(0)" class="btn btn-sm btn-warning m-1 login-as" data-id="' . Crypt::encrypt($user['id']) . '" data-name="'.$user['name'].'" title="Login as"><i class="fa-solid fa-right-to-bracket"></i></a>';
-
                     return $btn;
                 })
                 // Add a column for the user's roles

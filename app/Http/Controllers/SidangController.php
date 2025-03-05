@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 
 class SidangController extends Controller
 {
@@ -142,6 +143,7 @@ class SidangController extends Controller
 
             if ($countDosen == $countDosenDone) {
                 DB::commit();
+                return redirect(URL::to('/'))->with('success', 'Berhasil mendaftar sidang');
             }
 
         } catch (\Exception $e) {
