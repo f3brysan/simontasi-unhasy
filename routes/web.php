@@ -52,6 +52,7 @@ Route::middleware(['auth:web', 'role:superadmin|pengelola'])->group(function () 
 
     Route::get('admin/data/sidang', [AdminSidangController::class, 'index']);
     Route::get('admin/data/sidang/detil/{id}', [AdminProposalController::class, 'detil']);
+    Route::post('admin/data/sidang/kunci', [AdminSidangController::class, 'kunciNilaiHasilMahasiswa']);
 });
 
 Route::middleware(['auth:web', 'role:superadmin'])->group(function () {    

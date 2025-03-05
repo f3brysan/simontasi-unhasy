@@ -16,7 +16,7 @@ class AdminSidangController extends Controller
         // Get data for the datatable of the proposal data
         $data = $this->getAllDataSidang();
         $proposalData = $data['getDataProposals'];
-        
+
         // If the request is an AJAX request, return a datatable of the proposal data
         if ($request->ajax()) {
             // Generate columns for the datatable
@@ -73,7 +73,7 @@ class AdminSidangController extends Controller
                 ->leftjoin("tr_pendaftaran_dosen as pd", function ($join) {
                     // Join the 'tr_pendaftaran_dosen' table with the 'tr_pendaftaran' table
                     $join->on("pd.pendaftaran_id", "=", "p.id")
-                    ->where("pd.tipe", "B");
+                        ->where("pd.tipe", "B");
                 })
                 ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok as dosen_ok")
                 ->get();
@@ -88,7 +88,7 @@ class AdminSidangController extends Controller
                 ->leftjoin("tr_pendaftaran_dosen as pd", function ($join) {
                     // Join the 'tr_pendaftaran_dosen' table with the 'tr_pendaftaran' table
                     $join->on("pd.pendaftaran_id", "=", "p.id")
-                    ->where("pd.tipe", "B");
+                        ->where("pd.tipe", "B");
                 })
                 ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok as dosen_ok")
                 ->get();
@@ -96,7 +96,7 @@ class AdminSidangController extends Controller
 
         // Filter the data for proposals
         $getDataProposals = $getData->where('type', 'T');
-        
+
         // Get the program data and supervisor data
         $getProdi = DB::table('ms_prodi')->get();
         $getDosenPembimbing = DB::table('tr_pendaftaran_dosen')->where('tipe', 'B')->get();
@@ -140,5 +140,16 @@ class AdminSidangController extends Controller
         ];
 
         return $data;
+    }
+
+    public function kunciNilaiHasilMahasiswa(Request $request)
+    {
+        try {
+            $id = Crypt::decrypt($request->id);
+            $lockNilai = DB::table('tr_nilai')->where('pendaftaran_id', $id)->update(['is_lock' => 1]);
+            return response()->json(['status' => 'success', 'message' => 'Nilai berhasil dikunci']);
+        } catch (\Throwable $th) {
+            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan']);
+        }
     }
 }

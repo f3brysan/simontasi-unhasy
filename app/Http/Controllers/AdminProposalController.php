@@ -226,6 +226,14 @@ class AdminProposalController extends Controller
         ksort($allDosenPenguji);
         ksort($allDosenPembimbing);
 
+        $data['getNilaibyDosen'] = DB::table('tr_nilai')
+        ->select('created_by', 'is_lock',DB::raw("COALESCE(SUM(nilai), '0') AS total_nilai"))
+        ->where('pendaftaran_id',$dataProposal->id)
+        ->groupBy(['created_by','is_lock'])
+        ->get()
+        ->keyBy('created_by');
+        
+
         // Add the filtered dosens to the data array
         $data['allDosenPenguji'] = $allDosenPenguji;
         $data['allDosenPembimbing'] = $allDosenPembimbing;

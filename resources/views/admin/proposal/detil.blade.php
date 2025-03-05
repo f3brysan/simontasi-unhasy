@@ -4,8 +4,12 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb my-0 ms-2">
-                <li class="breadcrumb-item "><span>{{ $dataProposal->type == 'P' ? 'Proposal' : 'Tugas Akhir / Tesis / Munasaqoh' }}</span></li>
-                <li class="breadcrumb-item active"><span>Detil {{ $dataProposal->type == 'P' ? 'Proposal' : 'Tugas Akhir / Tesis / Munasaqoh' }} - {{ $biodata->no_induk }} -
+                <li class="breadcrumb-item ">
+                    <span>{{ $dataProposal->type == 'P' ? 'Proposal' : 'Tugas Akhir / Tesis / Munasaqoh' }}</span>
+                </li>
+                <li class="breadcrumb-item active"><span>Detil
+                        {{ $dataProposal->type == 'P' ? 'Proposal' : 'Tugas Akhir / Tesis / Munasaqoh' }} -
+                        {{ $biodata->no_induk }} -
                         {{ $biodata->nama }}</span></li>
             </ol>
         </nav>
@@ -13,7 +17,7 @@
 @endsection
 
 @php
-$isStatusBayarDone = false;
+    $isStatusBayarDone = false;
     if (isset($statusBayar)) {
         $isStatusBayarDone = $statusBayar->status == '1' ? true : $isStatusBayarDone;
     }
@@ -25,7 +29,8 @@ $isStatusBayarDone = false;
             {{-- START DAFTAR PROPOSAL --}}
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5>Pendaftaran {{ $dataProposal->type == 'P' ? 'Proposal' : 'Tugas Akhir / Tesis / Munasaqoh' }}</h5></span>
+                    <h5>Pendaftaran {{ $dataProposal->type == 'P' ? 'Proposal' : 'Tugas Akhir / Tesis / Munasaqoh' }}</h5>
+                    </span>
                 </div>
                 <div class="card-body">
                     @if (!empty($dataProposal))
@@ -167,7 +172,8 @@ $isStatusBayarDone = false;
                                                 {{ date('H:i', strtotime($jadwal->awal)) }} -
                                                 {{ date('H:i', strtotime($jadwal->akhir)) }} WIB
                                             </td>
-                                            <td class="text-center">Di {{ $jadwal->gedung }} Ruang {{ $jadwal->ruang }}</td>
+                                            <td class="text-center">Di {{ $jadwal->gedung }} Ruang {{ $jadwal->ruang }}
+                                            </td>
                                             <td class="text-center"><a href="javascript:void(0)"
                                                     onclick="editJadwal('{{ Crypt::encrypt($dataProposal->id) }}')"
                                                     class="btn btn-sm btn-primary">Edit</a></td>
@@ -180,6 +186,80 @@ $isStatusBayarDone = false;
                 </div>
             </div>
             {{-- END JADWAL PROPOSAL --}}
+
+            {{-- START HASIL --}}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Hasil</h5></span>
+                </div>
+                <div class="card-body">
+                    <div class="col-lg-12 table table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td class="text-center">Nama Pembimbing & Penguji</td>
+                                    <td class="text-center">Nilai</td>
+                                    <td class="text-center">Status</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($pembimbing as $item)
+                                    <tr>
+                                        <td><u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}</td>
+                                        <td class="text-center">{{ $getNilaibyDosen[$item->nip]->total_nilai }}</td>
+                                        <td class="text-center">
+                                            @if ($getNilaibyDosen[$item->nip]->is_lock == 1)
+                                                <span class="badge bg-success">Final</span>
+                                            @else
+                                                <span class="badge bg-warning">Belum Final</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                @foreach ($penguji as $item)
+                                    <tr>
+                                        <td><u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}</td>
+                                        <td class="text-center">
+                                            @if (!empty($getNilaibyDosen[$item->nip]))  
+                                                {{ $getNilaibyDosen[$item->nip]->total_nilai }}
+                                            @else
+                                            <span class="badge bg-danger">Belum Menilai</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            @if (!empty($getNilaibyDosen[$item->nip]))
+                                                @if ($getNilaibyDosen[$item->nip]->is_lock == 1)
+                                                    <span class="badge bg-success">Final</span>
+                                                @else
+                                                    <span class="badge bg-warning">Belum Final</span>
+                                                @endif
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-lg-12">
+                        @php
+                            $totalPenilai = count($pembimbing) + count($penguji);
+                            $totalTernilai = count($getNilaibyDosen);
+                            $canLock = $totalPenilai == $totalTernilai ? true : false;
+                        @endphp
+                        @if ($canLock)
+                        <button class="btn btn-info float-end text-white"
+                        onclick="kunciHasil('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                            class="fa-solid fa-lock"></i> Kunci Hasil</button>
+                        @else
+                        <button class="btn btn-secondary float-end text-white" disabled
+                        onclick="kunciHasil('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                            class="fa-solid fa-lock"></i> Kunci Hasil</button>
+                        @endif
+                        
+                    </div>
+                </div>
+            </div>
+            {{-- END HASIL --}}
 
             {{-- START LOGBOOK --}}
             <div class="card mb-4">
@@ -206,8 +286,8 @@ $isStatusBayarDone = false;
     </div>
 
     {{-- MODAL PROPOSAL --}}
-    <div class="modal fade" id="modalEditProposal" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="modalEditProposal" data-coreui-backdrop="static" data-coreui-keyboard="false"
+        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -321,7 +401,7 @@ $isStatusBayarDone = false;
                         <div class="mb-3">
                             <label for="exampleFormControlTextarea1" class="form-label">Jadwal Sidang</label>
                             <input type="datetime-local" class="form-control" name="jadwalsidang" id="jadwalsidang">
-                        </div>                        
+                        </div>
                         <div class="mb-1">
                             <label for="exampleFormControlTextarea1" class="form-label">Lokasi Gedung</label>
                             <input type="text" class="form-control" name="gedung" id="gedung">
@@ -568,6 +648,37 @@ $isStatusBayarDone = false;
             });
         }
 
+        function kunciHasil(id) {
+            console.log(id);
+            Swal.fire({
+
+                text: "Apakah Anda ingin mengunci hasil?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('admin/data/sidang/kunci/') }}",
+                        data: {
+                            id: id
+                        },
+                        dataType: "json",
+                        success: function(ress) {
+                            iziToast.success({
+                                title: 'Berhasil',
+                                message: 'Hasil berhasil dikunci.',
+                                position: 'topRight'
+                            });
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        }
         if ($("#storeProposal").length > 0) {
             $("#storeProposal").validate({
                 submitHandler: function(form) {
@@ -604,13 +715,13 @@ $isStatusBayarDone = false;
             $("#modalSetJadwal").modal('show');
         }
 
-        function editJadwal(id) {        
+        function editJadwal(id) {
             $.get("{{ URL::to('admin/data/proposal/get/jadwal-sidang') }}/" + id,
                 function(data) {
                     $("#modalSetJadwal").modal('show');
                     $("#jadwalsidang").val(data.awal);
-                    $("#gedung").val(data.gedung);                    
-                    $("#ruang").val(data.ruang);                    
+                    $("#gedung").val(data.gedung);
+                    $("#ruang").val(data.ruang);
                 });
         }
     </script>
