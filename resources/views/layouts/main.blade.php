@@ -88,8 +88,8 @@
     @if (session()->has('error'))
         <script>
             $(document).ready(function() {
-                iziToast.danger({
-                    title: 'Berhasil !',
+                iziToast.warning({
+                    title: 'Perhatian !',
                     message: "{{ session('error') }}",
                     position: 'topRight'
                 });

@@ -98,7 +98,29 @@
     <!-- CoreUI and necessary plugins-->
     <script src="{{ URL::to('/') }}/vendors/@coreui/coreui/js/coreui.bundle.min.js"></script>
     <script src="{{ URL::to('/') }}/vendors/simplebar/js/simplebar.min.js"></script>
-    <script></script>
+    @if (session()->has('success'))
+        <script>
+            $(document).ready(function() {
+                iziToast.success({
+                    title: 'Berhasil !',
+                    message: "{{ session('success') }}",
+                    position: 'topRight'
+                });
+            });
+        </script>
+    @endif
+
+    @if (session()->has('error'))
+        <script>
+            $(document).ready(function() {
+                iziToast.warning({
+                    title: 'Perhatian !',
+                    message: "{{ session('error') }}",
+                    position: 'topRight'
+                });
+            });
+        </script>
+    @endif
 
 </body>
 
