@@ -6,6 +6,7 @@ use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Crypt;
 
@@ -134,6 +135,11 @@ class AuthController extends Controller
 
     public function gantiPassword() 
     {
-        return view('auth.ganti-password');
+        $usernameAsPass = auth()->user()->no_induk;        
+        $firstPassword = NULL;
+        if (Hash::check($usernameAsPass, auth()->user()->password)) {                                    
+            $firstPassword = $usernameAsPass;
+        }
+        return view('auth.ganti-password', compact('firstPassword'));
     }
 }

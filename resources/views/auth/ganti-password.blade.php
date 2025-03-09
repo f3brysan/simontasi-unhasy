@@ -18,21 +18,13 @@
         }
 
         .pass_show .ptxt {
-
             position: absolute;
-
             top: 50%;
-
             right: 10px;
-
             z-index: 1;
-
-            color: #f36c01;
-
+            color: #006eff;
             margin-top: -10px;
-
             cursor: pointer;
-
             transition: .3s ease all;
 
         }
@@ -43,8 +35,13 @@
     </style>
 @endpush
 @section('content')
-    <div class="body flex-grow-1 px-3">
-        <div class="container-lg px-4">
+    <div class="body flex-grow-1">
+        <div class="container-lg">
+            @if (!empty($firstPassword))
+            <div class="alert alert-info" role="alert">
+                Demi keamanan, mohon ganti password Anda terlebih dahulu.
+              </div>
+            @endif
             <div class="card mb-4">
                 <div class="card-header">
                     <h5>Ganti Password</h5>
@@ -53,7 +50,8 @@
                     <form action="" method="post">
                         <label>Current Password</label>
                         <div class="form-group pass_show mb-4">
-                            <input type="password" class="form-control" placeholder="Current Password">
+                            <input type="password" class="form-control" placeholder="Current Password"
+                                value="{{ $firstPassword }}">
                         </div>
                         <label>New Password</label>
                         <div class="form-group pass_show mb-4">
