@@ -32,6 +32,8 @@ Route::post('login', [AuthController::class, 'auth']);
 Route::post('login-as', [AuthController::class, 'loginAs']);
 Route::post('logout', [AuthController::class, 'logout']);
 
+Route::get('ganti-password', [AuthController::class, 'gantiPassword']);    
+
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);    
 });

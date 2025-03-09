@@ -18,12 +18,12 @@
                     <div class="dropdown-header bg-light py-2">
                         <div class="fw-semibold">Account</div>
                     </div>
+                    <a class="dropdown-item" href="{{ URL::to('ganti-password') }}">
+                        <i class="icon me-2 fa fa-user"></i> Ganti Password</a>
                     <form action="{{ URL::to('logout') }}" method="post">
                         @csrf
                         <button class="dropdown-item" href="#">
-                            <svg class="icon me-2">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-account-logout"></use>
-                            </svg> Logout</button>
+                            <i class="icon me-2 fa-solid fa-right-from-bracket"></i> Logout</button>
                     </form>
                 </div>
             </li>

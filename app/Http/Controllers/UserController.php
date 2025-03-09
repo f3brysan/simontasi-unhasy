@@ -225,8 +225,7 @@ class UserController extends Controller
                 // If updating an existing user, update the user
                 $store = $this->update($parr);
             } else { // Otherwise create a new user
-                // If creating a new user, create the user
-                
+                // If creating a new user, create the user                
                 $store = $this->create($parr);                
             }
 

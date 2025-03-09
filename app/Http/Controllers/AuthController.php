@@ -131,4 +131,9 @@ class AuthController extends Controller
         // Redirect to the login page
         return redirect('/login');
     }
+
+    public function gantiPassword() 
+    {
+        return view('auth.ganti-password');
+    }
 }
