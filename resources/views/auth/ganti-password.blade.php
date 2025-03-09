@@ -32,38 +32,42 @@
         .pass_show .ptxt:hover {
             color: #333333;
         }
+        
     </style>
 @endpush
 @section('content')
     <div class="body flex-grow-1">
         <div class="container-lg">
             @if (!empty($firstPassword))
-            <div class="alert alert-info" role="alert">
-                Demi keamanan, mohon ganti password Anda terlebih dahulu.
-              </div>
+                <div class="alert alert-info" role="alert">
+                    Demi keamanan, mohon ganti password Anda terlebih dahulu.
+                </div>
             @endif
             <div class="card mb-4">
                 <div class="card-header">
                     <h5>Ganti Password</h5>
                 </div>
                 <div class="card-body">
-                    <form action="" method="post">
+                    <form action="{{ URL::to('store-ganti-password') }}" method="post">
+                        @csrf
                         <label>Current Password</label>
                         <div class="form-group pass_show mb-4">
-                            <input type="password" class="form-control" placeholder="Current Password"
-                                value="{{ $firstPassword }}">
+                            <input type="password" class="form-control" name="old_password" placeholder="Current Password"
+                                value="{{ $firstPassword }}" required>
                         </div>
                         <label>New Password</label>
                         <div class="form-group pass_show mb-4">
-                            <input type="password" class="form-control" placeholder="New Password">
+                            <input type="password" class="form-control" name="new_password" placeholder="New Password" required>
                         </div>
                         <label>Confirm Password</label>
                         <div class="form-group pass_show mb-4">
-                            <input type="password" class="form-control" placeholder="Confirm Password">
+                            <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" required>
                         </div>
-                    </form>
-                </div>
-                {{-- </div> --}}
+                        <div class="form-group mb-4">
+                            <button type="submit" class="btn btn-primary float-end">Ganti Password</button>
+                        </div>
+                </div>                
+                </form>
             </div>
         </div>
     </div>

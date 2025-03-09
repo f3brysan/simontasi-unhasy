@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -141,5 +142,28 @@ class AuthController extends Controller
             $firstPassword = $usernameAsPass;
         }
         return view('auth.ganti-password', compact('firstPassword'));
+    }
+
+    public function storeGantiPassword(Request $request) 
+    {
+        $user = auth()->user();
+        // check password tersimpan dengan inputan
+        if (!Hash::check($request->old_password, $user->password)) {                                    
+            return back()->with('error', 'Password Lama Salah');                
+        }
+
+        if ($request->new_password !== $request->confirm_password) {            
+            return back()->with('error', 'Password baru Anda tidak sama.');
+        } 
+
+        $updatePassword = DB::table('users')->where('id', $user->id)->update([
+            'password' => bcrypt($request->new_password)
+        ]);
+
+        request()->session()->invalidate();
+
+        request()->session()->regenerateToken();
+    
+        return redirect('/')->with('success', 'Silahkan masuk dengan sandi baru!');
     }
 }
