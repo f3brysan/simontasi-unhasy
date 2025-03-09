@@ -51,7 +51,7 @@
                     <div class="card-group d-block d-md-flex row">
                         <div class="card col-md-7 p-4 mb-0">
                             <form action="{{ URL::to('login') }}" method="POST">
-                              @csrf
+                                @csrf
                                 <div class="card-body">
                                     <h1>Login</h1>
                                     <p class="text-medium-emphasis">Sign In to your account</p>
@@ -77,7 +77,11 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <button class="btn btn-primary px-4" type="submit">Login</button>
-                                        </div>                                        
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <button class="btn btn-link px-0" type="button"
+                                                onclick="showModalForgotPassword()">Forgot password?</button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -86,11 +90,32 @@
                             <div class="card-body text-center">
                                 <div>
                                     <h2>MONIT UNHASY</h2>
-                                    <p>Sistem Monitoring Tugas Akhir/Skripsi/Tesis</p>                                    
+                                    <p>Sistem Monitoring Tugas Akhir/Skripsi/Tesis</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="forgortPasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Informasi</h5>
+                    <button type="button" class="close" data-coreui-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Untuk mereset password, silahkan hubungi admin LLTI.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Close</button>                    
                 </div>
             </div>
         </div>
@@ -103,6 +128,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"
         integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        function showModalForgotPassword() {
+            $('#forgortPasswordModal').modal('show');
+        }
+    </script>
     @if (session()->has('success'))
         <script>
             $(document).ready(function() {
