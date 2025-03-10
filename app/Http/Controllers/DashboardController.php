@@ -38,71 +38,104 @@ class DashboardController extends Controller
         if (array_intersect($useIndex, $roles)) {
             // If the user is pengelola, we do not need to display the pengelola page
             if ($user->hasRole('pengelola')) {
-                $getUserProdi = DB::table('tr_user_prodi')->where('user_id', auth()->user()->id)->get()->pluck('kode_prodi');                
+                $getUserProdi = DB::table('tr_user_prodi')->where('user_id', auth()->user()->id)->get()->pluck('kode_prodi');
                 $getProdi = DB::table('ms_prodi')->whereIn('kode_prodi', $getUserProdi)->get();
                 $data['prodi'] = $getProdi;
-            } else {                
+            } else {
                 $getProdi = DB::table('ms_prodi')->get();
                 $data['prodi'] = $getProdi;
             }
+
+            // Retrieve distinct faculties from the 'ms_prodi' table
+            $getFaculties = DB::table('ms_prodi')->distinct()->get();
+            $faculitesData = [];
+
+            // Initialize faculties data structure with default values
+            foreach ($getFaculties as $key => $value) {
+                $faculitesData['P'][$value->kode_fakultas]['namaFakultas'] = $value->fakultas;
+                $faculitesData['P'][$value->kode_fakultas]['total'] = 0;
+                $faculitesData['T'][$value->kode_fakultas]['namaFakultas'] = $value->fakultas;
+                $faculitesData['T'][$value->kode_fakultas]['total'] = 0;
+            }
+
+            // Get the maximum count of registrations
+            $data['maxCount'] = DB::table('tr_pendaftaran')->count();            
+
+            // Retrieve transaction counts grouped by faculty and type
+            $getTransactionCountFaculties = DB::table('ms_prodi as mp')
+                ->distinct()
+                ->select('mp.kode_fakultas', 'p.type', DB::raw('COUNT(p.*) as total'))
+                ->leftJoin('users as u', 'u.prodi_kode', '=', 'mp.kode_prodi')
+                ->join('tr_pendaftaran as p', 'p.no_induk', '=', 'u.no_induk')
+                ->groupBy(['mp.kode_fakultas', 'p.type'])
+                ->orderBy('mp.kode_fakultas', 'ASC')
+                ->get();
+            
+            // Aggregate transaction totals into faculties data
+            foreach ($getTransactionCountFaculties as $key => $value) {
+                $faculitesData[$value->type][$value->kode_fakultas]['total'] += $value->total;
+            }
+
+            // Store the transaction counts by faculty in the data array
+            $data['countTransactionfaculties'] = $faculitesData;
 
             // Return the superadmin dashboard
             return view('dashboard.superadmin', $data);
         }
 
         // If the user is a mahasiswa, return the mahasiswa dashboard
-        if (in_array('mahasiswa', $roles)) {                 
+        if (in_array('mahasiswa', $roles)) {
             $data['getProposal'] = DB::table('tr_pendaftaran as tp')
-            ->select('tp.*')
-            ->leftJoin('tr_pendaftaran_status as tps','tps.pendaftaran_id','=','tp.id')
-            ->where('tp.no_induk', $user->no_induk)
-            ->where(function ($query) {
-                $query->whereNull('tps.status')
-                    ->orWhere('tps.status', '!=', '0');
-            })
-            ->first();    
-            
+                ->select('tp.*')
+                ->leftJoin('tr_pendaftaran_status as tps', 'tps.pendaftaran_id', '=', 'tp.id')
+                ->where('tp.no_induk', $user->no_induk)
+                ->where(function ($query) {
+                    $query->whereNull('tps.status')
+                        ->orWhere('tps.status', '!=', '0');
+                })
+                ->first();
+
             $data['proposalAccepted'] = DB::table('tr_pendaftaran as tp')
-            ->select('tp.*')
-            ->leftJoin('tr_pendaftaran_status as tps','tps.pendaftaran_id','=','tp.id')
-            ->where('tp.no_induk', $user->no_induk)            
-            ->whereIn('tps.status', ['1'])            
-            ->first(); 
+                ->select('tp.*')
+                ->leftJoin('tr_pendaftaran_status as tps', 'tps.pendaftaran_id', '=', 'tp.id')
+                ->where('tp.no_induk', $user->no_induk)
+                ->whereIn('tps.status', ['1'])
+                ->first();
 
             $data['allPendaftaran'] = DB::table('tr_pendaftaran as tp')
-            ->select('tp.*', 'tps.status', 'tps.catatan')
-            ->leftJoin('tr_pendaftaran_status as tps','tps.pendaftaran_id','=','tp.id')
-            ->where('tp.no_induk', $user->no_induk)
-            ->get();
-            
+                ->select('tp.*', 'tps.status', 'tps.catatan')
+                ->leftJoin('tr_pendaftaran_status as tps', 'tps.pendaftaran_id', '=', 'tp.id')
+                ->where('tp.no_induk', $user->no_induk)
+                ->get();
+
             return view('dashboard.mahasiswa', $data);
         }
 
         // If the user is a dosen, return the dosen dashboard
-        if (in_array('dosen', $roles)) {            
+        if (in_array('dosen', $roles)) {
             $getProposal = DB::table("tr_pendaftaran as p")
-            ->join("users as u", function ($join) {
-                $join->on("u.no_induk", "=", "p.no_induk");
-            })
-            ->join("tr_pendaftaran_dosen as pd", function ($join) {
-                $join->on("pd.pendaftaran_id", "=", "p.id");
-            })
-            ->join("tr_pendaftaran_jadwal as pj", function ($join) {
-                $join->on("pj.id", "=", "p.id");
-            })
-            ->join("ms_prodi as mp", function ($join) {
-                $join->on("mp.kode_prodi", "=", "u.prodi_kode");
-            })            
-            ->select("p.*", "u.nama", "u.prodi_kode", "mp.prodi", "pj.gedung", "pj.ruang", "pj.awal", "pj.akhir")
-            ->where("pd.nip", auth()->user()->no_induk)
-            ->get();
+                ->join("users as u", function ($join) {
+                    $join->on("u.no_induk", "=", "p.no_induk");
+                })
+                ->join("tr_pendaftaran_dosen as pd", function ($join) {
+                    $join->on("pd.pendaftaran_id", "=", "p.id");
+                })
+                ->join("tr_pendaftaran_jadwal as pj", function ($join) {
+                    $join->on("pj.id", "=", "p.id");
+                })
+                ->join("ms_prodi as mp", function ($join) {
+                    $join->on("mp.kode_prodi", "=", "u.prodi_kode");
+                })
+                ->select("p.*", "u.nama", "u.prodi_kode", "mp.prodi", "pj.gedung", "pj.ruang", "pj.awal", "pj.akhir")
+                ->where("pd.nip", auth()->user()->no_induk)
+                ->get();
 
             $events = [];
             foreach ($getProposal as $item) {
                 $jenis = $item->type == 'P' ? 'Sidang Proposal' : 'Sidang Skripsi';
                 $jenis = in_array($item->prodi_kode, ['25', '22', '23']) ? 'Sidang Tesis' : $jenis;
                 $events[] = [
-                    'title' => $jenis.' '.$item->nama.' ('.$item->prodi.') bertempat di '.$item->gedung.', Ruang : '.$item->ruang,
+                    'title' => $jenis . ' ' . $item->nama . ' (' . $item->prodi . ') bertempat di ' . $item->gedung . ', Ruang : ' . $item->ruang,
                     'start' => $item->awal,
                     'end' => $item->akhir,
                 ];
@@ -114,5 +147,5 @@ class DashboardController extends Controller
 
 
 
-    
+
 }
