@@ -74,12 +74,7 @@
                 </div>
                 <div class="card-body">
                     <figure class="highcharts-figure">
-                        <div id="container"></div>
-                        <p class="highcharts-description">
-                            Bar chart showing horizontal columns. This chart type is often
-                            beneficial for smaller screens, as the user can scroll through the data
-                            vertically, and axis labels are easy to read.
-                        </p>
+                        <div id="container"></div>                        
                     </figure>
                 </div>
             </div>
@@ -143,7 +138,7 @@
                 xAxis: {
                     categories: [
                         @foreach ($countTransactionfaculties['P'] as $key => $value)
-                            "{{ $value['namaFakultas'] }}",
+                            "Fakultas {{ $value['namaFakultas'] }}",
                         @endforeach
                     ],
                     title: {

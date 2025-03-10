@@ -47,7 +47,7 @@ class DashboardController extends Controller
             }
 
             // Retrieve distinct faculties from the 'ms_prodi' table
-            $getFaculties = DB::table('ms_prodi')->distinct()->get();
+            $getFaculties = DB::table('ms_prodi')->distinct()->orderBy('fakultas')->get();
             $faculitesData = [];
 
             // Initialize faculties data structure with default values
