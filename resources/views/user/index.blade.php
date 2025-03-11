@@ -23,7 +23,7 @@
                             class="fa-solid fa-user-plus"></i> Tambah
                         Pengguna</a>
                     <div class="table-responsive">
-                        <table class="table table-striped" id="myTable">
+                        <table class="table table-striped table-bordered" id="myTable">
                             <thead>
                                 <tr>
                                     <td class="text-center">No</td>
@@ -141,7 +141,8 @@
                     },
                     {
                         data: 'prodi',
-                        name: 'prodi'
+                        name: 'prodi',
+                        className: 'text-center'
                     },
                     {
                         data: 'roles',

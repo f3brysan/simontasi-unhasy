@@ -46,7 +46,7 @@ class UserController extends Controller
             // Get the program of study name            
             $prodi = DB::table('ms_prodi')->where('kode_prodi', $item->kode_prodi)->first()->prodi ?? '';
             // Get the user's index based on the user's ID
-            $prodiIndex = array_search($item->user_id, array_column($usersData, 'id'));            
+            $prodiIndex = array_search($item->user_id, array_column($usersData, 'id'));
             // Add the program of study to the user's data
             $usersData[$prodiIndex]['prodi'][] = $prodi;
         }
@@ -62,12 +62,16 @@ class UserController extends Controller
                     $btn = '<div class="btn-group" role="group" aria-label="Basic example">';
                     // If the user has a role that can be assigned to the user
                     if (array_intersect($user['roles'], $roles->pluck('name')->toArray())) {
-                        // Add a button to assign roles to the user
-                        $btn .= '<button href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($user['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn btn-primary btn-sm edit-user"><i class="fa-solid fa-wrench"></i></button>';
-                    }else{
-                        $btn .= '<button href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($user['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn btn-secondary btn-sm edit-user" disabled><i class="fa-solid fa-wrench"></i></button>';
-                    }                    
-                    $btn .= '<button href="javascript:(0)" class="btn btn-sm btn-warning login-as" data-id="' . Crypt::encrypt($user['id']) . '" data-name="'.$user['name'].'" title="Login as"><i class="fa-solid fa-right-to-bracket"></i></button>';
+                        $btnAction = '';
+                        $btnType = 'btn-primary';
+                    } else {
+                        $btnAction = 'disabled';
+                        $btnType = 'btn-secondary';
+                    }
+
+                    $btn .= '<button href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($user['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn '.$btnType.' btn-sm edit-user"' . $btnAction . '><i class="fa-solid fa-wrench"></i> Ubah</button>';
+                    $btn .= '<button href="javascript:(0)" class="btn btn-sm btn-warning login-as" data-id="' . Crypt::encrypt($user['id']) . '" data-name="' . $user['name'] . '" title="Login as"><i class="fa-solid fa-right-to-bracket"></i> Login As</button>';
+                    $btn .= '<button href="javascript:(0)" class="btn btn-sm btn-info login-as" data-id="' . Crypt::encrypt($user['id']) . '" data-name="' . $user['name'] . '" title="Login as"><i class="fa-solid fa-key"></i> Reset</button>';
                     $btn .= '</div>';
                     return $btn;
                 })
@@ -104,7 +108,7 @@ class UserController extends Controller
                     // Loop through each program of study
                     foreach ($user['prodi'] as $prodi) {
                         // Add the program of study to the result
-                        $result .= '<ol>' . $prodi . '</ol>';
+                        $result .= '<ul><li>' . $prodi . '</li></ul>';                        
                     }
                     return $result;
                 })
@@ -134,7 +138,7 @@ class UserController extends Controller
                 'email' => $parr['no_induk'] . '@unhasy.ac.id',
                 'password' => bcrypt($parr['password'])
             ]);
-            
+
             // Assign roles to the user
             foreach ($parr['roles'] as $role) {
                 $user->assignRole($role);
@@ -229,7 +233,7 @@ class UserController extends Controller
                 $store = $this->update($parr);
             } else { // Otherwise create a new user
                 // If creating a new user, create the user                
-                $store = $this->create($parr);                
+                $store = $this->create($parr);
             }
 
             // If the store operation is successful
@@ -275,5 +279,5 @@ class UserController extends Controller
 
         return response()->json($result); // return the user data
 
-    }    
+    }
 }
