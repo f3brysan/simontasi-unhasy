@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         // Get all users
-        $users = User::with('roles')->get();
+        $users = User::with('roles')->orderBy('created_at', 'desc')->get();
         // Initialize an empty array for the users data
         $usersData = [];
         // Get roles that can be assigned to the user
