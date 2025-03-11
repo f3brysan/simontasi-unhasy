@@ -36,16 +36,6 @@ class DashboardController extends Controller
 
         // If the user is a superadmin or pengelola, return the superadmin dashboard
         if (array_intersect($useIndex, $roles)) {
-            // If the user is pengelola, we do not need to display the pengelola page
-            if ($user->hasRole('pengelola')) {
-                $getUserProdi = DB::table('tr_user_prodi')->where('user_id', auth()->user()->id)->get()->pluck('kode_prodi');
-                $getProdi = DB::table('ms_prodi')->whereIn('kode_prodi', $getUserProdi)->get();
-                $data['prodi'] = $getProdi;
-            } else {
-                $getProdi = DB::table('ms_prodi')->get();
-                $data['prodi'] = $getProdi;
-            }
-
             // Retrieve distinct faculties from the 'ms_prodi' table
             $getFaculties = DB::table('ms_prodi')->distinct()->orderBy('fakultas')->get();
             $faculitesData = [];
@@ -59,7 +49,7 @@ class DashboardController extends Controller
             }
 
             // Get the maximum count of registrations
-            $data['maxCount'] = DB::table('tr_pendaftaran')->count();            
+            $data['maxCount'] = DB::table('tr_pendaftaran')->count();
 
             // Retrieve transaction counts grouped by faculty and type
             $getTransactionCountFaculties = DB::table('ms_prodi as mp')
@@ -70,7 +60,7 @@ class DashboardController extends Controller
                 ->groupBy(['mp.kode_fakultas', 'p.type'])
                 ->orderBy('mp.kode_fakultas', 'ASC')
                 ->get();
-            
+
             // Aggregate transaction totals into faculties data
             foreach ($getTransactionCountFaculties as $key => $value) {
                 $faculitesData[$value->type][$value->kode_fakultas]['total'] += $value->total;
@@ -79,6 +69,46 @@ class DashboardController extends Controller
             // Store the transaction counts by faculty in the data array
             $data['countTransactionfaculties'] = $faculitesData;
 
+            // If the user is pengelola, we do not need to display the pengelola page
+            if ($user->hasRole('pengelola')) {
+                $superUser = false;
+                $getUserProdi = DB::table('tr_user_prodi')->where('user_id', auth()->user()->id)->get()->pluck('kode_prodi');
+                $getProdi = DB::table('ms_prodi')->whereIn('kode_prodi', $getUserProdi)->orderby('fakultas')->get();
+                $data['prodi'] = $getProdi;
+            } else {
+                $superUser = true;
+                $getProdi = DB::table('ms_prodi')->orderby('fakultas')->get();
+                $data['prodi'] = $getProdi;
+            }
+
+            $prodiDatas = [];
+            foreach ($getProdi as $key => $value) {
+                $prodiDatas['P'][$value->kode_prodi]['namaProdi'] = $value->prodi;
+                $prodiDatas['P'][$value->kode_prodi]['total'] = 0;
+                $prodiDatas['T'][$value->kode_prodi]['namaProdi'] = $value->prodi;
+                $prodiDatas['T'][$value->kode_prodi]['total'] = 0;
+            }
+
+            $arrProdi = $getProdi->pluck('kode_prodi')->toArray();
+            
+            $getTransCountProdis = DB::table('ms_prodi as mp')
+                ->distinct()
+                ->select('mp.kode_prodi', 'p.type', DB::raw('COUNT(p.*) as total'))
+                ->leftJoin('users as u', 'u.prodi_kode', '=', 'mp.kode_prodi')
+                ->join('tr_pendaftaran as p', 'p.no_induk', '=', 'u.no_induk')
+                ->when($superUser == false, function ($q) use ($arrProdi) {
+                    return $q->whereIn('mp.kode_prodi', $arrProdi);
+                })
+                ->groupBy(['mp.kode_prodi', 'p.type'])
+                ->orderBy('mp.kode_prodi', 'ASC')
+                ->get();
+            
+
+            foreach ($getTransCountProdis as $key => $value) {
+                $prodiDatas[$value->type][$value->kode_prodi]['total'] += $value->total;
+            }
+
+            $data['countTransactionProdis'] = $prodiDatas;
             // Return the superadmin dashboard
             return view('dashboard.superadmin', $data);
         }

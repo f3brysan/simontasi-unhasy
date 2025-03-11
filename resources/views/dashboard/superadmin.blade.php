@@ -14,13 +14,13 @@
     <style>
         .highcharts-figure,
         .highcharts-data-table table {
-            min-width: 310px;
+            min-width: 480px;
             max-width: 1080px;
             margin: 1em auto;
         }
 
         #container {
-            height: 400px;
+            height: 480px;
         }
 
         .highcharts-data-table table {
@@ -73,9 +73,18 @@
                     <h5>Jumlah Pendaftar</h5>
                 </div>
                 <div class="card-body">
-                    <figure class="highcharts-figure">
-                        <div id="container"></div>                        
-                    </figure>
+                    <div class="row">
+                        <div class="col-12">
+                            <figure class="highcharts-figure">
+                                <div id="containerFakultas"></div>                        
+                            </figure>
+                        </div>
+                        <div class="col-12">                            
+                            <figure class="highcharts-figure">
+                                <div id="containerProdi"></div>                        
+                            </figure>
+                        </div>
+                    </div>                   
                 </div>
             </div>
             <div class="card mb-4">
@@ -128,12 +137,12 @@
         $(document).ready(function() {
 
             // Highchart
-            Highcharts.chart('container', {
+            Highcharts.chart('containerFakultas', {
                 chart: {
                     type: 'bar'
                 },
                 title: {
-                    text: 'Jumlah Mahasiswa Berdasar Fakultas'
+                    text: 'Jumlah Mahasiswa Berdasarkan Fakultas'
                 },                
                 xAxis: {
                     categories: [
@@ -199,6 +208,76 @@
             ]
             });
 
+            Highcharts.chart('containerProdi', {
+                chart: {
+                    type: 'bar'
+                },
+                title: {
+                    text: 'Jumlah Mahasiswa Berdasarkan Program Didik'
+                },                
+                xAxis: {
+                    categories: [
+                        @foreach ($countTransactionProdis['P'] as $key => $value)
+                            "{{ $value['namaProdi'] }}",
+                        @endforeach
+                    ],
+                    title: {
+                        text: null
+                    },
+                    gridLineWidth: 1,
+                    lineWidth: 0
+                },
+                yAxis: {
+                    min: 0,
+                    max: {{ $maxCount < 1 ? '1' : $maxCount }},
+                    title: {
+                        text: 'Mahasiswa',  
+                        align: 'high'
+                    },
+                    labels: {
+                        overflow: 'justify'
+                    },
+                    gridLineWidth: 0
+                },
+                tooltip: {
+                    valueSuffix: ' Mahasiswa'
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: '50%',
+                        dataLabels: {
+                            enabled: true
+                        },
+                        groupPadding: 0.1
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'top',
+                    x: 0,
+                    y: 80,
+                    floating: true,
+                    borderWidth: 1,
+                    backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+                    shadow: true
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [
+                @foreach ($countTransactionProdis as $key => $value)                                     
+                {
+                    name: "{{ $key == 'P' ? 'Proposal' : 'Skripsi, Tesis, Munasaqoh' }}",
+                    data: [
+                        @foreach ($value as $key2 => $value2)
+                            {{ $value2['total'] }},
+                        @endforeach
+                    ]
+                }, 
+                @endforeach   
+            ]
+            });
         });
     </script>
 @endpush
