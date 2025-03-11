@@ -180,6 +180,7 @@
                 theme: "classic",
             });
             $("#modalTitle").html('Tambah Pengguna');
+            $('#crud-form').trigger("reset"); //mereset semua input dll didalamnya
             $("#crudModalUser").modal('show');
         });
 
@@ -192,7 +193,7 @@
                         placeholder: "Pilih",
                         theme: "classic",
                     });
-                    $("#modalTitle").html('Tambah Pengguna');
+                    $("#modalTitle").html('Edit Pengguna');
                     $("#crudModalUser").modal('show');
                     $("#id").val(data.user.id);
                     $("#no_induk").val(data.user.no_induk);
@@ -233,7 +234,43 @@
                     });
                 }
             });
+        });
 
+        $(document).on('click', '.reset-password', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            Swal.fire({
+                title: "Reset Password",
+                text: "Apakah Anda ingin mereset password " + name + "?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Iya, reset!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('setting/users/reset-password') }}",
+                        data: {
+                            id: id                            
+                        },
+                        dataType: "JSON",
+                        success: function(response) {
+                            table.ajax.reload(null, false);
+
+                                iziToast.success({
+                                    title: 'Berhasil',
+                                    message: 'Password berhasil direset.',
+                                    position: 'topRight'
+                                });
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+            });
         });
 
 
@@ -256,7 +293,7 @@
 
                                 iziToast.success({
                                     title: 'Berhasil',
-                                    message: 'Proposal tersimpan.',
+                                    message: 'Data tersimpan.',
                                     position: 'topRight'
                                 });
                             }

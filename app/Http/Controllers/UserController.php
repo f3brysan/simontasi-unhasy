@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 
 class UserController extends Controller
@@ -69,9 +70,9 @@ class UserController extends Controller
                         $btnType = 'btn-secondary';
                     }
 
-                    $btn .= '<button href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($user['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn '.$btnType.' btn-sm edit-user"' . $btnAction . '><i class="fa-solid fa-wrench"></i> Ubah</button>';
-                    $btn .= '<button href="javascript:(0)" class="btn btn-sm btn-warning login-as" data-id="' . Crypt::encrypt($user['id']) . '" data-name="' . $user['name'] . '" title="Login as"><i class="fa-solid fa-right-to-bracket"></i> Login As</button>';
-                    $btn .= '<button href="javascript:(0)" class="btn btn-sm btn-info login-as" data-id="' . Crypt::encrypt($user['id']) . '" data-name="' . $user['name'] . '" title="Login as"><i class="fa-solid fa-key"></i> Reset</button>';
+                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($user['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn ' . $btnType . ' btn-sm edit-user"' . $btnAction . '><i class="fa-solid fa-wrench"></i> Ubah</a>';
+                    $btn .= '<a href="javascript:(0)" class="btn btn-sm btn-warning login-as" data-id="' . Crypt::encrypt($user['id']) . '" data-name="' . $user['name'] . '" title="Login as"><i class="fa-solid fa-right-to-bracket"></i> Login As</a>';
+                    $btn .= '<a href="javascript:(0)" class="btn btn-sm btn-info text-white reset-password" data-id="' . Crypt::encrypt($user['id']) . '" data-name="' . $user['name'] . '" title="Reset Password"><i class="fa-solid fa-key"></i> Reset</a>';
                     $btn .= '</div>';
                     return $btn;
                 })
@@ -108,7 +109,7 @@ class UserController extends Controller
                     // Loop through each program of study
                     foreach ($user['prodi'] as $prodi) {
                         // Add the program of study to the result
-                        $result .= '<ul><li>' . $prodi . '</li></ul>';                        
+                        $result .= '<ul><li>' . $prodi . '</li></ul>';
                     }
                     return $result;
                 })
@@ -279,5 +280,37 @@ class UserController extends Controller
 
         return response()->json($result); // return the user data
 
+    }
+
+    /**
+     * Reset a user's password to their student number
+     *
+     * This function resets a user's password to their student number.
+     * It takes the encrypted user ID as a parameter and decrypts it.
+     * It then retrieves the user and updates the user's password to
+     * the student number.
+     *
+     * @param Request $request the request containing the user ID
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function resetPassword(Request $request)
+    {
+        try {
+            // Decrypt the given user ID
+            $id = Crypt::decrypt($request->id);
+            // Get the user
+            $getUser = User::where('id', $id)->first();
+            // Update the user's password to their student number
+            $getUser->update([
+                'password' => Hash::make($getUser->no_induk)
+            ]);
+
+            // Return JSON true
+            return response()->json(true);
+        } catch (\Throwable $th) { // If exception occurs
+            // Return the exception message
+            return response()->json($th->getMessage());
+        }
     }
 }

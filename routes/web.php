@@ -62,6 +62,7 @@ Route::middleware(['auth:web', 'role:superadmin'])->group(function () {
     Route::get('setting/users', [UserController::class, 'index']);
     Route::get('setting/users/{id}', [UserController::class, 'show']);
     Route::post('setting/users/store', [UserController::class, 'store']);
+    Route::post('setting/users/reset-password', [UserController::class, 'resetPassword']);
 
     Route::get('setting/komponen-penilaian', [KomponenPenilaianController::class, 'index']);
     Route::post('setting/komponen-penilaian/store', [KomponenPenilaianController::class, 'store']);
