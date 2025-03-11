@@ -13,31 +13,29 @@
 @section('content')
     <div class="body flex-grow-1">
         <div class="container-lg">
-            <div class="row">
-                {{-- START DAFTAR PROPOSAL --}}
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5>Pengguna</h5></span>
-                    </div>
-                    <div class="card-body">
-                        <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4" id="addUser"><i
-                                class="fa-solid fa-user-plus"></i> Tambah
-                            Pengguna</a>
-                        <div class="table-responsive">
-                            <table class="table table-striped" id="myTable">
-                                <thead>
-                                    <tr>
-                                        <td class="text-center">No</td>
-                                        <td class="text-center">No Induk</td>
-                                        <td class="text-center">Nama</td>
-                                        <td class="text-center">Prodi</td>
-                                        <td class="text-center">Peran</td>
-                                        <td class="text-center">Aksi</td>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+            {{-- START DAFTAR PROPOSAL --}}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Pengguna</h5>
+                </div>
+                <div class="card-body">
+                    <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4" id="addUser"><i
+                            class="fa-solid fa-user-plus"></i> Tambah
+                        Pengguna</a>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="myTable">
+                            <thead>
+                                <tr>
+                                    <td class="text-center">No</td>
+                                    <td class="text-center">No Induk</td>
+                                    <td class="text-center">Nama</td>
+                                    <td class="text-center">Prodi</td>
+                                    <td class="text-center">Peran</td>
+                                    <td class="text-center">Aksi</td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -109,6 +107,7 @@
     {{-- Data Tables --}}
     <link rel="stylesheet" href="//cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
     <script src="//cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
+    {{-- <script src="https://cdn.datatables.net/responsive/3.0.4/css/responsive.bootstrap4.css"></script> --}}
 
     {{-- Swal --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -224,8 +223,8 @@
                             name: name
                         },
                         dataType: "JSON",
-                        success: function(response) {                            
-                                window.location.href = "{{ URL::to('/') }}";                            
+                        success: function(response) {
+                            window.location.href = "{{ URL::to('/') }}";
                         },
                         error: function(xhr, status, error) {
                             console.log(xhr.responseText);

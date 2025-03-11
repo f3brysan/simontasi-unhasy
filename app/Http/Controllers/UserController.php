@@ -59,13 +59,16 @@ class UserController extends Controller
             return DataTables::of($usersData)
                 // Add a column for the user's action
                 ->addColumn('action', function ($user) use ($roles) {
-                    $btn = '';
+                    $btn = '<div class="btn-group" role="group" aria-label="Basic example">';
                     // If the user has a role that can be assigned to the user
                     if (array_intersect($user['roles'], $roles->pluck('name')->toArray())) {
                         // Add a button to assign roles to the user
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($user['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn btn-primary btn-sm edit-user m-1"><i class="fa-solid fa-wrench"></i></a>';
+                        $btn .= '<button href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($user['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn btn-primary btn-sm edit-user"><i class="fa-solid fa-wrench"></i></button>';
+                    }else{
+                        $btn .= '<button href="javascript:void(0)" data-toggle="tooltip" data-id="' . Crypt::encrypt($user['id']) . '" data-original-title="Ubah Peran" title="Ubah Peran" class="edit btn btn-secondary btn-sm edit-user" disabled><i class="fa-solid fa-wrench"></i></button>';
                     }                    
-                    $btn .= '<a href="javascript:(0)" class="btn btn-sm btn-warning m-1 login-as" data-id="' . Crypt::encrypt($user['id']) . '" data-name="'.$user['name'].'" title="Login as"><i class="fa-solid fa-right-to-bracket"></i></a>';
+                    $btn .= '<button href="javascript:(0)" class="btn btn-sm btn-warning login-as" data-id="' . Crypt::encrypt($user['id']) . '" data-name="'.$user['name'].'" title="Login as"><i class="fa-solid fa-right-to-bracket"></i></button>';
+                    $btn .= '</div>';
                     return $btn;
                 })
                 // Add a column for the user's roles
