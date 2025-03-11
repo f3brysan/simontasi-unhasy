@@ -32,12 +32,12 @@
                     <li class="nav-item"><a class="nav-link" href="{{ URL::to('admin/data/sidang') }}"><i
                             class="fa-solid fa-book nav-icon"></i> Data Sidang Akhir</a></li>
                 </ul>
-            </li>
-            <li class="nav-title">Setting</li>
-            <li class="nav-item"><a class="nav-link" href="{{ URL::to('setting/users') }}">
-                    <i class="fa-solid fa-users nav-icon"></i> User</a></li>
+            </li>            
         @endrole
         @role('superadmin')
+        <li class="nav-title">Setting</li>
+            <li class="nav-item"><a class="nav-link" href="{{ URL::to('setting/users') }}">
+                    <i class="fa-solid fa-users nav-icon"></i> User</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ URL::to('setting/pembayaran') }}">
             <i class="fa-solid fa-key nav-icon"></i> Master VA Pembayaran </a></li>
         <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
