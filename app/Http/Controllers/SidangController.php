@@ -86,7 +86,12 @@ class SidangController extends Controller
 
             $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataSidang->id)->first();
             $data['jadwal'] = DB::table('tr_pendaftaran_jadwal')->where('id', $dataSidang->id)->first();
-            $data['statusProposal'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataSidang->id)->first();
+            $data['statusProposal'] = DB::table('tr_pendaftaran_status as tps')
+                ->select('tps.*')
+                ->join('tr_pendaftaran as tp', 'tp.id', '=', 'tps.pendaftaran_id')
+                ->where('tp.type', '=', 'P')
+                ->where('pendaftaran_id', $dataSidang->id)
+                ->first();
             return view('sidang.index', $data);
         }
     }
@@ -207,11 +212,11 @@ class SidangController extends Controller
         $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataSidang->id)->first();
         $data['jadwal'] = DB::table('tr_pendaftaran_jadwal')->where('id', $dataSidang->id)->first();
         $data['statusProposal'] = DB::table('tr_pendaftaran_status as tps')
-        ->select('tps.*')
-        ->join('tr_pendaftaran as tp','tp.id','=','tps.pendaftaran_id')
-        ->where('tp.type','=','P')
-        ->where('pendaftaran_id', $dataSidang->id)
-        ->first();        
+            ->select('tps.*')
+            ->join('tr_pendaftaran as tp', 'tp.id', '=', 'tps.pendaftaran_id')
+            ->where('tp.type', '=', 'P')
+            ->where('pendaftaran_id', $dataSidang->id)
+            ->first();
 
         return view('sidang.history', $data);
     }

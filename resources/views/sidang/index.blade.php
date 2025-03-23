@@ -257,7 +257,7 @@
             @endif
 
             {{-- START HASIL PROPOSAL --}}
-            @if (!empty($jadwal))
+            @if (!empty($jadwal) AND !empty($statusProposal))
                 @if ($jadwal->akhir <= date('Y-m-d H:i:s'))
                     <div class="card mb-4">
                         <div class="card-header">
@@ -347,10 +347,12 @@
                     <div class="card-header">
                         <h5>Log Book Bimbingan</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body">                        
+                        @if ($nilaiAkhir == 0)                            
                         <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4"
                             onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataSidang->id) }}', '{{ auth()->user()->no_induk }}')"><i
                                 class="fa-solid fa-file-circle-plus"></i></i> Tambah</a>
+                        @endif
                         <div class="col-lg-12 table table-responsive">
                             <table class="table table-sm table-bordered table-striped" id="myTable">
                                 <thead>
