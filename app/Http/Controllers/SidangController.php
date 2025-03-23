@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Crypt;
 
 class SidangController extends Controller
 {
@@ -56,7 +57,7 @@ class SidangController extends Controller
                     // Use the on and where methods to specify the join condition
                     $join->on('pb.berkas_id', '=', 'b.id')
                         ->where('pb.pendaftaran_id', '=', $dataSidang->id);
-                })  
+                })
                 // Filter the documents to only include those of type 'P'
                 ->where('b.type', 'T')
                 // Get the results
@@ -76,20 +77,19 @@ class SidangController extends Controller
                 // Get the results
                 ->get();
             $data['nilai'] = DB::table('tr_nilai as n')
-            ->select('created_by as dosen','u.nama', 'n.is_lock', DB::raw('SUM(nilai) as nilai'))
-            ->leftJoin('users as u','u.no_induk','=','created_by')
-            ->where('pendaftaran_id', $dataSidang->id)
-            ->groupBy(['created_by','u.nama', 'n.is_lock'])
-            ->get();
-            
+                ->select('created_by as dosen', 'u.nama', 'n.is_lock', DB::raw('SUM(nilai) as nilai'))
+                ->leftJoin('users as u', 'u.no_induk', '=', 'created_by')
+                ->where('pendaftaran_id', $dataSidang->id)
+                ->groupBy(['created_by', 'u.nama', 'n.is_lock'])
+                ->get();
+
 
             $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataSidang->id)->first();
             $data['jadwal'] = DB::table('tr_pendaftaran_jadwal')->where('id', $dataSidang->id)->first();
-            $data['statusProposal'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataSidang->id)->first();   
+            $data['statusProposal'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataSidang->id)->first();
             return view('sidang.index', $data);
         }
     }
-
 
     public function daftarSidang(Request $request)
     {
@@ -150,5 +150,69 @@ class SidangController extends Controller
             DB::rollBack();
             return $e->getMessage();
         }
+    }
+
+    public function historySidang($id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $dataSidang = DB::table('tr_pendaftaran as tp')
+            ->select('tp.*')
+            ->leftJoin('tr_pendaftaran_status as tps', 'tps.pendaftaran_id', '=', 'tp.id')
+            ->where('tp.id', $id)
+            ->first();
+        $data['prodi'] = DB::table('ms_prodi')->where('kode_prodi', auth()->user()->prodi_kode)->first()->prodi;
+        $data['dataSidang'] = $dataSidang;
+        $data['pembimbing'] = DB::table('tr_pendaftaran_dosen')
+            ->where('pendaftaran_id', $dataSidang->id)
+            ->where('tipe', 'like', 'B%')->get();
+        $data['penguji'] = DB::table('tr_pendaftaran_dosen')
+            ->where('pendaftaran_id', $dataSidang->id)
+            ->where('tipe', 'like', 'U%')->get();
+        $data['berkas'] = DB::table('ms_berkas as b')
+            // Select the necessary fields
+            ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
+            // Join the tr_pendaftaran_berkas table to retrieve the associated file
+            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use ($dataSidang) {
+                // Use the on and where methods to specify the join condition
+                $join->on('pb.berkas_id', '=', 'b.id')
+                    ->where('pb.pendaftaran_id', '=', $dataSidang->id);
+            })
+            // Filter the documents to only include those of type 'P'
+            ->where('b.type', $dataSidang->type)
+            // Get the results
+            ->get();
+
+        $data['berkas_hasil'] = DB::table('ms_berkas as b')
+            // Select the necessary fields
+            ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
+            // Join the tr_pendaftaran_berkas table to retrieve the associated file
+            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use ($dataSidang) {
+                // Use the on and where methods to specify the join condition
+                $join->on('pb.berkas_id', '=', 'b.id')
+                    ->where('pb.pendaftaran_id', '=', $dataSidang->id);
+            })
+            // Filter the documents to only include those of type 'P'
+            ->where('b.type', $dataSidang->type . 'H')
+            // Get the results
+            ->get();
+        $data['nilai'] = DB::table('tr_nilai as n')
+            ->select('created_by as dosen', 'u.nama', 'n.is_lock', DB::raw('SUM(nilai) as nilai'))
+            ->leftJoin('users as u', 'u.no_induk', '=', 'created_by')
+            ->where('pendaftaran_id', $dataSidang->id)
+            ->groupBy(['created_by', 'u.nama', 'n.is_lock'])
+            ->get();
+
+
+        $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataSidang->id)->first();
+        $data['jadwal'] = DB::table('tr_pendaftaran_jadwal')->where('id', $dataSidang->id)->first();
+        $data['statusProposal'] = DB::table('tr_pendaftaran_status as tps')
+        ->select('tps.*')
+        ->join('tr_pendaftaran as tp','tp.id','=','tps.pendaftaran_id')
+        ->where('tp.type','=','P')
+        ->where('pendaftaran_id', $dataSidang->id)
+        ->first();        
+
+        return view('sidang.history', $data);
     }
 }

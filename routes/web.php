@@ -86,6 +86,8 @@ Route::middleware(['auth:web', 'role:mahasiswa|superadmin|pengelola'])->group(fu
 
     Route::get('daftar/sidang', [SidangController::class, 'index']);  
     Route::post('daftar/sidang/store', [SidangController::class, 'daftarSidang']);  
+
+    Route::get('detail/pendaftaran/{id}', [SidangController::class, 'historySidang']);  
 });
 
 Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen|pengelola'])->group(function () {
