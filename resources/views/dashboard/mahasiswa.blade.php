@@ -24,10 +24,10 @@
                             <div>
                                 <div class="fs-6 fw-semibold text-primary">Sidang Proposal</div>
                                 @if (isset($getProposal))
-                                    <p class="text-info">Anda telah mendaftar Sidang Proposal</p>
+                                    <p class="text-success">Anda telah terdaftar</p>
                                     <p class="text-primary">{!! $getProposal->title !!}</p>
                                 @else
-                                    <p class="text-info">Anda Belum mendaftar Sidang Proposal</p>
+                                    <p class="text-info">Anda belum terdaftar</p>
                                 @endif
                             </div>
                         </div>
@@ -48,20 +48,23 @@
                                 <span class="fa fa-book"></span>
                             </div>
                             <div>
-                                <div class="fs-6 fw-semibold text-primary">Sidang Skripsi/TA/Tesis</div>
+                                <div class="fs-6 fw-semibold text-primary">Sidang Akhir/TESIS/MUNAQOSAH</div>
                                 @if (isset($proposalAccepted))
-                                    <p class="text-info">Anda dapat mendaftar Sidang Proposal</p>
+                                    @if (isset($getSeminar))
+                                        <p class="text-success">Anda telah terdaftar</p>
+                                        <p class="text-primary">{!! $getSeminar->title !!}</p>
+                                    @else
+                                    <p class="text-info">Anda dapat mendaftar</p>
+                                    @endif
                                 @else
-                                    <p class="text-danger">Anda Belum mendaftar Sidang Proposal</p>
+                                    <p class="text-danger">Anda Belum terdaftar pada Sidang Proposal</p>
                                 @endif
                             </div>
                         </div>
                         <div class="card-footer px-3 py-2">
                             @if (isset($proposalAccepted))
                                 <a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
-                                    href="{{ URL::to('daftar/sidang') }}"><span class="small fw-semibold">Daftar
-                                        Disini</span>
-                                    <span class="fa fa-arrow"></span></a>
+                                    href="{{ URL::to('daftar/sidang') }}"><span class="small fw-semibold text-info">{{ isset($getSeminar) ? 'Lihat Disini' : 'Daftar Disini' }}</span><span class="fa fa-chevron-right"></span></a></a>
                             @else
                                 <a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center"
                                     href="javascript:void(0)"><span class="small fw-semibold">Belum bisa daftar</span>
@@ -108,9 +111,8 @@
                                                     @endswitch
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($item->status == NULL)
+                                                    @if ($item->status == null)
                                                         <span class="badge bg-secondary">Menunggu Persetujuan</span>
-                                                        
                                                     @endif
                                                     @if ($item->status == 1 and empty($item->catatan))
                                                         <span class="badge bg-success">Diterima</span>
@@ -126,7 +128,7 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    <a href="" class="btn btn-sm btn-info text-light">Lihat</a>
+                                                    <a href="{{ URL::to('detail/pendaftaran/' . Crypt::encrypt($item->id)) }}" target="_blank" class="btn btn-sm btn-info text-light">Lihat</a>
                                                 </td>
                                             </tr>
                                         @endforeach
