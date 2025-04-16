@@ -105,6 +105,7 @@ Route::middleware(['auth:web', 'role:superadmin|mahasiswa|dosen|pengelola'])->gr
     Route::post('dosen/sidang/penilaian/store', [LogBookController::class, 'storeNilaiSidang']);
 
     Route::get('document/berita-acara-proposal/{id}', [ProposalDocTemplateController::class, 'pdfBeritaAcaraProposal']);
+    Route::get('document/berita-acara-sidang-akhir/{id}', [ProposalDocTemplateController::class, 'pdfBeritaAcaraProposal']);
 });
 
 Route::get('sync/prodi', [SyncDataController::class, 'syncDataProdi']);
