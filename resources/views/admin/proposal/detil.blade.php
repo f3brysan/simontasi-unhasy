@@ -56,20 +56,22 @@
                                                 {!! $dataProposal->title !!}
                                             </div>
                                             <div class="col-md-2">
-                                                @if ($dataProposal->is_ok == null)
-                                                    <a href="javascript:void(0)"
-                                                        onclick="kunciJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                        class="m-1 btn btn-sm btn-info text-light float-end"><i
-                                                            class="fas fa-lock"></i> Kunci</a>
-                                                    <a href="javascript:void(0)"
-                                                        onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                        class="m-1 btn btn-sm btn-primary float-end"><i
-                                                            class="fas fa-pencil"></i> Ubah</a>
-                                                @else
-                                                    <a href="javascript:void(0)"
-                                                        onclick="bukaJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                        class="m-1 btn btn-sm btn-warning float-end"><i
-                                                            class="fas fa-unlock"></i> Buka Kunci</a>
+                                                @if ($allowBtn == true)
+                                                    @if ($dataProposal->is_ok == null)
+                                                        <a href="javascript:void(0)"
+                                                            onclick="kunciJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                            class="m-1 btn btn-sm btn-info text-light float-end"><i
+                                                                class="fas fa-lock"></i> Kunci</a>
+                                                        <a href="javascript:void(0)"
+                                                            onclick="gantiJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                            class="m-1 btn btn-sm btn-primary float-end"><i
+                                                                class="fas fa-pencil"></i> Ubah</a>
+                                                    @else
+                                                        <a href="javascript:void(0)"
+                                                            onclick="bukaJudul('{{ Crypt::encrypt($dataProposal->id) }}')"
+                                                            class="m-1 btn btn-sm btn-warning float-end"><i
+                                                                class="fas fa-unlock"></i> Buka Kunci</a>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </div>
@@ -86,10 +88,12 @@
                                                 <div class="col-md-3">
                                                     @if ($item->is_ok == 1)
                                                         Disetujui Pada : {{ $item->is_ok_at }}
-                                                        <a href="javascript:void(0)"
-                                                            class="btn btn-sm btn-danger text-light float-end"
-                                                            onclick="unapprovePembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
-                                                                class="fas fa-refresh"></i> Batal Setujui</a>
+                                                        @if ($allowBtn == true)
+                                                            <a href="javascript:void(0)"
+                                                                class="btn btn-sm btn-danger text-light float-end"
+                                                                onclick="unapprovePembimbing('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                                                    class="fas fa-refresh"></i> Batal Setujui</a>
+                                                        @endif
                                                     @else
                                                         <a href="javascript:void(0)"
                                                             class="btn btn-sm btn-success float-end m-1"
@@ -112,15 +116,16 @@
                                             @foreach ($penguji as $item)
                                                 <div class="col-md-9">
                                                     <u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}
-
                                                     <br>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <a href="javascript:void(0)"
-                                                        onclick="hapusPenguji('{{ Crypt::encrypt($item->id) }}')"
-                                                        class="ml-4 btn btn-sm btn-warning text-dark"><i
-                                                            class="fas fa-trash"></i> Hapus</a>
-                                                </div>
+                                                @if ($allowBtn == true)
+                                                    <div class="col-md-3">
+                                                        <a href="javascript:void(0)"
+                                                            onclick="hapusPenguji('{{ Crypt::encrypt($item->id) }}')"
+                                                            class="ml-4 btn btn-sm btn-warning text-dark"><i
+                                                                class="fas fa-trash"></i> Hapus</a>
+                                                    </div>
+                                                @endif
                                             @endforeach
                                             @if (count($penguji) < 2)
                                                 <div class="col-md-3">
@@ -176,7 +181,7 @@
                                             </td>
                                             <td class="text-center"><a href="javascript:void(0)"
                                                     onclick="editJadwal('{{ Crypt::encrypt($dataProposal->id) }}')"
-                                                    class="btn btn-sm btn-primary">Edit</a></td>
+                                                    class="btn btn-sm {{ $allowBtn == true ? 'btn-primary' : 'btn-secondary disabled' }}">Edit</a></td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -187,84 +192,181 @@
             </div>
             {{-- END JADWAL PROPOSAL --}}
 
-            {{-- START HASIL --}}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5>Hasil</h5></span>
-                </div>
-                <div class="card-body">
-                    <div class="col-lg-12 table table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <td class="text-center">Nama Pembimbing & Penguji</td>
-                                    <td class="text-center">Nilai</td>
-                                    <td class="text-center">Status</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($pembimbing as $item)
-                                    <tr>
-                                        <td><u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}</td>
-                                        <td class="text-center">{{ $getNilaibyDosen[$item->nip]->total_nilai }}</td>
-                                        <td class="text-center">
-                                            @if ($getNilaibyDosen[$item->nip]->is_lock == 1)
-                                                <span class="badge bg-success">Final</span>
-                                            @else
-                                                <span class="badge bg-warning">Belum Final</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                @foreach ($penguji as $item)
-                                    <tr>
-                                        <td><u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}</td>
-                                        <td class="text-center">
-                                            @if (!empty($getNilaibyDosen[$item->nip]))
-                                                {{ $getNilaibyDosen[$item->nip]->total_nilai }}
-                                            @else
-                                                <span class="badge bg-danger">Belum Menilai</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if (!empty($getNilaibyDosen[$item->nip]))
-                                                @if ($getNilaibyDosen[$item->nip]->is_lock == 1)
-                                                    <span class="badge bg-success">Final</span>
-                                                @else
-                                                    <span class="badge bg-warning">Belum Final</span>
-                                                @endif
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-lg-12">
-                        @php
-                            $totalPenilai = count($pembimbing) + count($penguji);
-                            $totalTernilai = count($getNilaibyDosen);
-                            $canLock = $totalPenilai == $totalTernilai ? true : false;
-                        @endphp
-                        @if ($canLock)
-                            @if ($statusPendaftaran->status == '1')
-                                <button class="btn btn-success float-end text-white"><i class="fa-solid fa-lock"></i> Sudah
-                                    Terkunci</button>
-                            @else
-                                <button class="btn btn-info float-end text-white"
-                                    onclick="kunciHasil('{{ Crypt::encrypt($dataProposal->id) }}')"><i
-                                        class="fa-solid fa-lock"></i> Kunci Hasil</button>
-                            @endif
-                        @else
-                            <button class="btn btn-secondary float-end text-white" disabled
-                                onclick="kunciHasil('{{ Crypt::encrypt($dataProposal->id) }}')"><i
-                                    class="fa-solid fa-lock"></i> Kunci Hasil</button>
-                        @endif
 
+
+            @if (!empty($dataProposal))
+                @if ($dataProposal->type == 'T')
+                    {{-- START HASIL --}}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Hasil</h5></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="col-lg-12 table table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <td class="text-center">Nama Pembimbing & Penguji</td>
+                                            <td class="text-center">Nilai</td>
+                                            <td class="text-center">Status</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($pembimbing as $item)
+                                            <tr>
+                                                <td><u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}</td>
+                                                <td class="text-center">{{ $getNilaibyDosen[$item->nip]->total_nilai }}
+                                                </td>
+                                                <td class="text-center">
+                                                    @if ($getNilaibyDosen[$item->nip]->is_lock == 1)
+                                                        <span class="badge bg-success">Final</span>
+                                                    @else
+                                                        <span class="badge bg-warning">Belum Final</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        @foreach ($penguji as $item)
+                                            <tr>
+                                                <td><u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}</td>
+                                                <td class="text-center">
+                                                    @if (!empty($getNilaibyDosen[$item->nip]))
+                                                        {{ $getNilaibyDosen[$item->nip]->total_nilai }}
+                                                    @else
+                                                        <span class="badge bg-danger">Belum Menilai</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    @if (!empty($getNilaibyDosen[$item->nip]))
+                                                        @if ($getNilaibyDosen[$item->nip]->is_lock == 1)
+                                                            <span class="badge bg-success">Final</span>
+                                                        @else
+                                                            <span class="badge bg-warning">Belum Final</span>
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-12">
+                                @php
+                                    $totalPenilai = count($pembimbing) + count($penguji);
+                                    $totalTernilai = count($getNilaibyDosen);
+                                    $canLock = $totalPenilai == $totalTernilai ? true : false;
+                                @endphp
+                                @if ($canLock)
+                                    @if ($statusPendaftaran->status == '1')
+                                        <button class="btn btn-success float-end text-white"><i
+                                                class="fa-solid fa-lock"></i> Sudah
+                                            Terkunci</button>
+                                    @else
+                                        <button class="btn btn-info float-end text-white"
+                                            onclick="kunciHasil('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                                class="fa-solid fa-lock"></i> Kunci Hasil</button>
+                                    @endif
+                                @else
+                                    <button class="btn btn-secondary float-end text-white" disabled
+                                        onclick="kunciHasil('{{ Crypt::encrypt($dataProposal->id) }}')"><i
+                                            class="fa-solid fa-lock"></i> Kunci Hasil</button>
+                                @endif
+
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            {{-- END HASIL --}}
+                    {{-- END HASIL --}}
+                @else
+                    {{-- START HASIL PROPOSAL --}}
+                    @if (!empty($jadwal))
+                        @if ($jadwal->akhir <= date('Y-m-d H:i:s'))
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5>Hasil Sidang Proposal</h5></span>
+                                </div>
+                                <div class="card-body">
+                                    @if (!empty($dataProposal))
+                                        <div class="table container-fluid">
+                                            <h6>Hasil Sidang Proposal</h6>
+                                            <table class="table table-bordered table-hover">
+                                                <tr>
+                                                    <td style="width: 15%" class="text-center"><b>Status Proposal</b></td>
+                                                    <td class="text-center">
+                                                        @if (!empty($statusPendaftaran))
+                                                            @if ($statusPendaftaran->status == 1 and empty($statusPendaftaran->catatan))
+                                                                <span class="badge bg-success">Diterima</span>
+                                                                <p class="small">Catatan :
+                                                                    {{ $statusPendaftaran->catatan ?? '-' }}
+                                                                </p>
+                                                            @endif
+                                                            @if ($statusPendaftaran->status == 1 and !empty($statusPendaftaran->catatan))
+                                                                <span class="badge bg-warning">Diterima dengan
+                                                                    Catatan</span>
+                                                                <p class="small">Catatan :
+                                                                    {{ $statusPendaftaran->catatan ?? '-' }}
+                                                                </p>
+                                                            @endif
+                                                            @if ($statusPendaftaran->status == 0)
+                                                                <span class="badge bg-danger">Ditolak</span>
+                                                                <p class="small">Catatan :
+                                                                    {{ $statusPendaftaran->catatan ?? '-' }}
+                                                                </p>
+                                                            @endif
+                                                        @else
+                                                            <span class="badge bg-secondary">Menunggu Penilaian</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <h6>Monitoring Berkas Hasil Proposal</h6>
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">Nama Berkas</th>
+                                                        <th class="text-center">File Berkas</th>
+                                                        <th class="text-center">Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                @foreach ($berkas_hasil as $item)
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="width: 15%">{{ $item->nama }}</td>
+                                                            <td>
+                                                                @if ($item->file)
+                                                                    <a href="{{ URL::to('/') }}/{{ $item->file }}"
+                                                                        target="_blank"
+                                                                        class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-center" style="width: 10%">
+                                                                @if ($item->doc_id)
+                                                                    <a href="javascript:void(0)"
+                                                                        onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}', '{{ $item->doc_id }}')"
+                                                                        class="btn btn-sm {{ $allowBtn == true ? 'btn-info' : 'btn-secondary disabled' }} text-light"><i
+                                                                            class="fas fa-redo-alt"></i></i>
+                                                                        Ganti</a>
+                                                                @else
+                                                                    <a href="javascript:void(0)"
+                                                                        onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}')"
+                                                                        class="btn btn-sm btn-primary"><i
+                                                                            class="fas fa-upload"></i>
+                                                                        Unggah</a>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                @endforeach
+                                            </table>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+                    @endif
+                    {{-- END HASIL PROPOSAL --}}
+                @endif
+            @endif
+
 
             {{-- START LOGBOOK --}}
             <div class="card mb-4">

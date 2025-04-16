@@ -57,7 +57,7 @@ class AdminProposalController extends Controller
 
         return view('admin.proposal.index', $data);
     }
-    
+
     public function getAllDataProposal()
     {
         // Get the program code for the user
@@ -75,7 +75,7 @@ class AdminProposalController extends Controller
                 ->leftjoin("tr_pendaftaran_dosen as pd", function ($join) {
                     // Join the 'tr_pendaftaran_dosen' table with the 'tr_pendaftaran' table
                     $join->on("pd.pendaftaran_id", "=", "p.id")
-                    ->where("pd.tipe", "B");
+                        ->where("pd.tipe", "B");
                 })
                 ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok as dosen_ok")
                 ->get();
@@ -90,7 +90,7 @@ class AdminProposalController extends Controller
                 ->leftjoin("tr_pendaftaran_dosen as pd", function ($join) {
                     // Join the 'tr_pendaftaran_dosen' table with the 'tr_pendaftaran' table
                     $join->on("pd.pendaftaran_id", "=", "p.id")
-                    ->where("pd.tipe", "B");
+                        ->where("pd.tipe", "B");
                 })
                 ->select("p.*", "u.prodi_kode", "u.nama", "pd.is_ok as dosen_ok")
                 ->get();
@@ -227,14 +227,28 @@ class AdminProposalController extends Controller
         ksort($allDosenPembimbing);
 
         $data['getNilaibyDosen'] = DB::table('tr_nilai')
-        ->select('created_by', 'is_lock',DB::raw("COALESCE(SUM(nilai), '0') AS total_nilai"))
-        ->where('pendaftaran_id',$dataProposal->id)
-        ->groupBy(['created_by','is_lock'])
-        ->get()
-        ->keyBy('created_by');
+            ->select('created_by', 'is_lock', DB::raw("COALESCE(SUM(nilai), '0') AS total_nilai"))
+            ->where('pendaftaran_id', $dataProposal->id)
+            ->groupBy(['created_by', 'is_lock'])
+            ->get()
+            ->keyBy('created_by');
 
-        $data['statusPendaftaran'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataProposal->id)->first();
+        $data['berkas_hasil'] = DB::table('ms_berkas as b')
+            // Select the necessary fields
+            ->select('b.*', 'pb.id as doc_id', 'pb.file', 'pb.is_lock')
+            // Join the tr_pendaftaran_berkas table to retrieve the associated file
+            ->leftJoin('tr_pendaftaran_berkas as pb', function ($join) use ($dataProposal) {
+                // Use the on and where methods to specify the join condition
+                $join->on('pb.berkas_id', '=', 'b.id')
+                    ->where('pb.pendaftaran_id', '=', $dataProposal->id);
+            })
+            // Filter the documents to only include those of type 'P'
+            ->where('b.type', 'PH')
+            // Get the results
+            ->get();
         
+        $data['statusPendaftaran'] = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $dataProposal->id)->first();
+
 
         // Add the filtered dosens to the data array
         $data['allDosenPenguji'] = $allDosenPenguji;
@@ -243,7 +257,9 @@ class AdminProposalController extends Controller
         $data['logbookDone'] = DB::table('tr_logbook')->where('pendaftaran_id', $dataProposal->id)->where('is_approve', 1)->get();
         $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataProposal->id)->first();
 
-        // Return the view with the data
+        $data['allowBtn'] = $data['statusPendaftaran']->status == '0' ? true : false;
+            
+        // Return the view with the data    
         return view('admin.proposal.detil', $data);
     }
 
@@ -352,7 +368,7 @@ class AdminProposalController extends Controller
             return Redirect::back()->with('error', 'Jadwal sidang gagal disimpan.');
         }
     }
-    
+
     public function getJadwalSidang($id)
     {
         try {
