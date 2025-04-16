@@ -89,6 +89,7 @@
                         <div class="card col-md-5 text-white bg-primary py-5">
                             <div class="card-body text-center">
                                 <div>
+                                    <h4>Universitas Hasyim Asy'ari</h4>
                                     <h2>TALENTA</h2>
                                     <p>Tracking Aktivitas Laporan dan Evaluasi Naskah Tugas Akhir</p>
                                 </div>
