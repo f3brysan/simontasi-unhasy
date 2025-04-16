@@ -89,8 +89,8 @@
                         <div class="card col-md-5 text-white bg-primary py-5">
                             <div class="card-body text-center">
                                 <div>
-                                    <h2>MONIT UNHASY</h2>
-                                    <p>Sistem Monitoring Tugas Akhir/Skripsi/Tesis</p>
+                                    <h2>TALENTA</h2>
+                                    <p>Tracking Aktivitas Laporan dan Evaluasi Naskah Tugas Akhir</p>
                                 </div>
                             </div>
                         </div>
