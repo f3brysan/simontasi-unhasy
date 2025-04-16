@@ -15,7 +15,7 @@
     <meta name="description" content="Monit Universitas Hasyim Asy'ari">
     <meta name="author" content="Universitas Hasyim Asy'ari">
     <meta name="keyword" content="university, education, monitoring">
-    <title>Monit Universitas Hasyim Asy'ari</title>
+    <title>TALENTA Universitas Hasyim Asy'ari</title>
     <link rel="apple-touch-icon" sizes="57x57" href="{{ URL::to('/') }}/assets/favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="{{ URL::to('/') }}/assets/favicon/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="{{ URL::to('/') }}/assets/favicon/apple-icon-72x72.png">
