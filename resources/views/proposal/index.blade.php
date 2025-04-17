@@ -115,7 +115,7 @@
                                                         @if ($item->doc_id)
                                                             <a href="javascript:void(0)"
                                                                 onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataProposal->id }}', '{{ $item->doc_id }}')"
-                                                                class="btn btn-sm btn-info float-end text-light"><i
+                                                                class="btn btn-sm {{ $allowBtn == true ? 'btn-info' : 'btn-secondary disabled' }} float-end text-light"><i
                                                                     class="fas fa-redo-alt"></i></i>
                                                                 Ganti</a>
                                                         @else
