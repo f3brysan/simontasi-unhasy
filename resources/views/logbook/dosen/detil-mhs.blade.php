@@ -297,7 +297,8 @@
                                                         class="form-control" name="nilai[{{ $item->id }}]"
                                                         id="nilai" data-id="{{ $item->id }}"
                                                         data-nim="{{ $dataProposal->no_induk }}"
-                                                        value="{{ $item->nilai ?? '' }}">
+                                                        value="{{ $item->nilai ?? '' }}"
+                                                        {{ $allowBtn == true ? '' : 'disabled' }}>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -307,7 +308,11 @@
                                         </tr>
                                         <tr>
                                             <td colspan="4">
-                                                <button class="btn btn-primary float-end">Simpan</button>
+                                                @if ($statusProposal->status == 1)
+                                                    <span class="badge bg-success float-end">Sudah dikunci sistem<br>({{ $statusProposal->created_at }})</span>
+                                                    @else
+                                                    <button class="btn btn-primary float-end">Simpan</button>
+                                                @endif
                                             </td>
                                         </tr>
                                     </tbody>

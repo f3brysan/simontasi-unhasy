@@ -363,7 +363,8 @@ class LogBookController extends Controller
         $data['statusProposal'] = DB::table('tr_pendaftaran_status')
             ->where('pendaftaran_id', $dataProposal->id)
             ->first();
-
+            
+        $data['allowBtn'] = $data['statusProposal']->status == '1' ? false : true;
         /**
          * Check if the request is an AJAX request
          * Use Datatables to display the data         
