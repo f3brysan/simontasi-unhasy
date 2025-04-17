@@ -16,21 +16,21 @@
     <meta name="author" content="Universitas Hasyim Asy'ari">
     <meta name="keyword" content="university, education, monitoring">
     <title>TALENTA Universitas Hasyim Asy'ari</title>
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ URL::to('/') }}/assets/favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ URL::to('/') }}/assets/favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ URL::to('/') }}/assets/favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ URL::to('/') }}/assets/favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ URL::to('/') }}/assets/favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ URL::to('/') }}/assets/favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ URL::to('/') }}/assets/favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ URL::to('/') }}/assets/favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ URL::to('/') }}/assets/favicon/apple-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
     <link rel="icon" type="image/png" sizes="192x192"
-        href="{{ URL::to('/') }}/assets/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ URL::to('/') }}/assets/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="{{ URL::to('/') }}/assets/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ URL::to('/') }}/assets/favicon/favicon-16x16.png">
-    <link rel="manifest" href="{{ URL::to('/') }}/assets/favicon/manifest.json">
+        href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
+    <link rel="manifest" href="{{ URL::to('/') }}/assets/icons/favicon-talenta.png">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="assets/favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
@@ -47,8 +47,8 @@
     <div class="bg-light min-vh-100 d-flex flex-row align-items-center">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card-group d-block d-md-flex row">
+                <div class="col-lg-8">                  
+                    <div class="card-group d-block d-md-flex row">                       
                         <div class="card col-md-7 p-4 mb-0">
                             <form action="{{ URL::to('login') }}" method="POST">
                                 @csrf
@@ -85,16 +85,19 @@
                                     </div>
                                 </div>
                             </form>
-                        </div>
-                        <div class="card col-md-5 text-white bg-primary py-5">
+                        </div>           
+                        <div class="card col-md-5 text-black py-5">
                             <div class="card-body text-center">
-                                <div>
+                                <div class="mb-1">
+                                    <img src="{{ asset('assets/icons/talenta-logo.png') }}" alt="" style="max-width: 70%; max-height: 50%; margin: auto; display: block;">
+                                </div>
+                                <div>                                    
                                     <h4>Universitas Hasyim Asy'ari</h4>
                                     <h2>TALENTA</h2>
                                     <p>Tracking Aktivitas Laporan dan Evaluasi Naskah Tugas Akhir</p>
                                 </div>
                             </div>
-                        </div>
+                        </div>             
                     </div>
                 </div>
             </div>
