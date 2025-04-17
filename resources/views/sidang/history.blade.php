@@ -173,7 +173,7 @@
                                             <tr>
                                                 <td>Template Berita Acara </td>
                                                 <td class="text-center"><a
-                                                        href="{{ URL::to('document/berita-acara-proposal/' . $dataSidang->id) }}"
+                                                        href="{{ URL::to('document/berita-acara-sidang-akhir/' . $dataSidang->id) }}"
                                                         target="_blank" class="btn btn-sm btn-info text-white"> Unduh</a>
                                                 </td>
                                             </tr>
