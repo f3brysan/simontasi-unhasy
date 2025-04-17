@@ -20,14 +20,17 @@ class ProposalDocTemplateController extends Controller
                     ->orWhere('tps.status', '!=', '0');
             })
             ->first();
+            
             $users = DB::table('users')->where('no_induk', $dataProposal->no_induk)->first();
             $prodi = DB::table('ms_prodi')->where('kode_prodi', $users->prodi_kode)->first();
             $jadwal = DB::table('tr_pendaftaran_jadwal')->where('id', $dataProposal->id)->first();
-
+            
             $dosen = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $id)->orderBy('tipe', 'ASC')->get();
+            $jenjang = substr($prodi->prodi, 0, 2);
+            $jenisSidang = $jenjang == 'S1' ? 'Sidang Akhir Skripsi' : 'Sidang Akhir Tesis';
 
             $data = [
-                'title' => 'BERITA ACARA SEMINAR PROPOSAL SKRIPSI',
+                'title' => $dataProposal->type == 'P' ? 'BERITA ACARA SEMINAR PROPOSAL' : 'BERITA ACARA'. ' ' . strtoupper($jenisSidang),
                 'fileName' => 'berita-acara-proposal',
                 'dataProposal' => $dataProposal,
                 'users' => $users,
