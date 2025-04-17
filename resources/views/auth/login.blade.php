@@ -86,7 +86,7 @@
                                 </div>
                             </form>
                         </div>           
-                        <div class="card col-md-5 text-black py-5">
+                        <div class="card col-md-5 text-black p-4">
                             <div class="card-body text-center">
                                 <div class="mb-1">
                                     <img src="{{ asset('assets/icons/talenta-logo.png') }}" alt="" style="max-width: 70%; max-height: 50%; margin: auto; display: block;">
