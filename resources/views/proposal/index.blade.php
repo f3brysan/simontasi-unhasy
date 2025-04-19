@@ -139,8 +139,8 @@
             </div>
             {{-- END DAFTAR PROPOSAL --}}
 
-            @if ($dataProposal)
-                @if (empty($statusBayar))
+            @if ($dataProposal)                     
+                @if (empty($statusBayar))                
                     <div class="card mb-4" id="checkLogCompleted" style="display: none">
                         <div class="card-header">
                             <h5>Daftar Sidang Proposal</h5></span>
@@ -348,6 +348,9 @@
                         <h5>Log Book Bimbingan</h5>
                     </div>
                     <div class="card-body">
+                        <div class="alert alert-info" role="alert">
+                            Minimal bimbingan sebanyak 4x untuk bisa mendaftar Seminar Proposal.
+                          </div>
                         <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4"
                             onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataProposal->id) }}', '{{ auth()->user()->no_induk }}')"><i
                                 class="fa-solid fa-file-circle-plus"></i></i> Tambah</a>
