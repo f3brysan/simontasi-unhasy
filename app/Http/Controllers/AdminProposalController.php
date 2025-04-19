@@ -256,9 +256,12 @@ class AdminProposalController extends Controller
 
         $data['logbookDone'] = DB::table('tr_logbook')->where('pendaftaran_id', $dataProposal->id)->where('is_approve', 1)->get();
         $data['statusBayar'] = DB::table('tr_pendaftaran_va')->where('pendaftaran_id', $dataProposal->id)->first();
-
-        $data['allowBtn'] = $data['statusPendaftaran']->status == '0' ? true : false;
-            
+        if ($data['statusPendaftaran']->status == '0' OR $data['statusPendaftaran']->status == NULL) {
+            $data['allowBtn'] = true;
+        }else{
+            $data['allowBtn'] = false;
+        }                        
+        
         // Return the view with the data    
         return view('admin.proposal.detil', $data);
     }
