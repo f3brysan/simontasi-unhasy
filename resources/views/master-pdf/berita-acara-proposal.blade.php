@@ -43,7 +43,7 @@
     <style>
         @page {
             margin-top: 3cm;
-            margin-left: 2.50cm;
+            margin-left: 2.00cm;
             margin-right: 2.00cm;
             margin-bottom: 2cm;
         }
@@ -84,12 +84,12 @@
     @foreach ($dosen as $dosens)
         @if ($dosens->tipe == 'B')
             <header>
-                <table width="100%" height="100%" border="0" class="custom" style="border-collapse: collapse">
+                {{-- <table width="100%" height="100%" border="0" class="custom" style="border-collapse: collapse">
                     <tr>
                         <td style="text-align: center"><img src="{{ $prodi->kop_fakultas_path }}" width="100%"
                                 alt=""></td>
                     </tr>
-                </table>
+                </table> --}}
             </header>
             <div>
                 <h3 align="center"><u>{{ $title }}</u></h3>
@@ -179,7 +179,7 @@
                 <p style="text-align: justify; width: 100%">
                     ......................................................................................................................................................
                 </p>
-                <table class="custom" style="width: 50%; margin-left: 50%">
+                <table class="custom" style="width: 100%; margin-left: 50%">
                     <tr>
                         <td>Jombang,
                             {{ \Carbon\Carbon::parse(date($jadwal->awal))->locale('id')->isoFormat('D MMMM YYYY') }}
@@ -249,7 +249,7 @@
                 <p style="text-align: justify; width: 100%">
                     ......................................................................................................................................................
                 </p>
-                <table class="custom" style="width: 50%; margin-left: 50%">
+                <table class="custom" style="width: 100%; margin-left: 50%">
                     <tr>
                         <td>Jombang,
                             {{ \Carbon\Carbon::parse(date($jadwal->awal))->locale('id')->isoFormat('D MMMM YYYY') }}
@@ -319,7 +319,7 @@
                 <p style="text-align: justify; width: 100%">
                     ......................................................................................................................................................
                 </p>
-                <table class="custom" style="width: 50%; margin-left: 50%">
+                <table class="custom" style="width: 100%; margin-left: 50%">
                     <tr>
                         <td>Jombang,
                             {{ \Carbon\Carbon::parse(date($jadwal->awal))->locale('id')->isoFormat('D MMMM YYYY') }}
@@ -383,7 +383,7 @@
                 <p style="text-align: justify; width: 100%">
                     ......................................................................................................................................................
                 </p>
-                <table class="custom" style="width: 50%; margin-left: 50%">
+                <table class="custom" style="width: 100%; margin-left: 50%">
                     <tr>
                         <td>Jombang,
                             {{ \Carbon\Carbon::parse(date($jadwal->awal))->locale('id')->isoFormat('D MMMM YYYY') }}
