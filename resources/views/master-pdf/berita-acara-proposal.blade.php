@@ -300,7 +300,7 @@
         @else
         <div class="page_break"></div>
             <div>
-                <h3 align="center">RANGKUMAN HASIL SEMINAR PROPOSAL SKRIPSI</h3>
+                <h3 align="center">{{ $title2 }}</h3>
                 <table width="100%" height="100%" border="0" class="custom"
                     style="border-collapse: collapse">
                     <tr>

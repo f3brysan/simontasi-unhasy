@@ -25,19 +25,21 @@ class ProposalDocTemplateController extends Controller
             $prodi = DB::table('ms_prodi')->where('kode_prodi', $users->prodi_kode)->first();
             $jadwal = DB::table('tr_pendaftaran_jadwal')->where('id', $dataProposal->id)->first();
             
-            $dosen = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $id)->orderBy('tipe', 'ASC')->get();
+            $dosen = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $id)->orderBy('tipe', 'ASC')->orderby('nip')->get();
+            
             $jenjang = substr($prodi->prodi, 0, 2);
             $jenisSidang = $jenjang == 'S1' ? 'Sidang Akhir Skripsi' : 'Sidang Akhir Tesis';
             
             $data = [
                 'title' => $dataProposal->type == 'P' ? 'BERITA ACARA SEMINAR PROPOSAL' : 'BERITA ACARA'. ' ' . strtoupper($jenisSidang),
+                'title2' => $dataProposal->type == 'P' ? 'RANGKUMAN HASIL SEMINAR PROPOSAL' : 'RANGKUMAN HASIL'. ' ' . strtoupper($jenisSidang),
                 'fileName' => 'berita-acara-proposal',
                 'dataProposal' => $dataProposal,
                 'users' => $users,
                 'prodi' => $prodi,
                 'jadwal' => $jadwal,
                 'dosen' => $dosen
-            ];
+            ];            
             
             $pdf = Pdf::loadView('master-pdf.berita-acara-proposal', $data)->setPaper('a4', 'potrait');
             $uniqueCode = date('YmdHis');
