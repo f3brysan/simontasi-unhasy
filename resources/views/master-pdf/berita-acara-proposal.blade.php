@@ -1,9 +1,45 @@
+{{-- @php
+    header('Content-type:application/pdf');
+
+    // It will be called downloaded.pdf
+    header("Content-Disposition:attachment;filename=\"downloaded.pdf\"");
+
+@endphp --}}
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>{{ $title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        .amiri-regular {
+            font-family: "Amiri", serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .amiri-bold {
+            font-family: "Amiri", serif;
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        .amiri-regular-italic {
+            font-family: "Amiri", serif;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .amiri-bold-italic {
+            font-family: "Amiri", serif;
+            font-weight: 700;
+            font-style: italic;
+        }
+    </style>
     <style>
         @page {
             margin-top: 3cm;
@@ -45,16 +81,16 @@
 </head>
 
 <body>
-    @foreach ($dosen as $dosens)    
-        @if ($dosens->tipe == 'B')   
-        <header>
-            <table width="100%" height="100%" border="0" class="custom" style="border-collapse: collapse">
-                <tr>
-                    <td style="text-align: center"><img src="{{ $prodi->kop_fakultas_path }}" width="100%"
-                            alt=""></td>
-                </tr>
-            </table>
-        </header>                 
+    @foreach ($dosen as $dosens)
+        @if ($dosens->tipe == 'B')
+            <header>
+                <table width="100%" height="100%" border="0" class="custom" style="border-collapse: collapse">
+                    <tr>
+                        <td style="text-align: center"><img src="{{ $prodi->kop_fakultas_path }}" width="100%"
+                                alt=""></td>
+                    </tr>
+                </table>
+            </header>
             <div>
                 <h3 align="center"><u>{{ $title }}</u></h3>
                 <table width="100%" height="100%" border="0" class="custom" style="border-collapse: collapse">
@@ -76,7 +112,7 @@
                         <td style="text-align: left; width:2%">3.</td>
                         <td style="width: 15%">Judul</td>
                         <td style="width: 1%">:</td>
-                        <td style="width: 50%">{!! trim($dataProposal->title) !!}</td>
+                        <td style="width: 50%" class="amiri-bold">{!! trim($dataProposal->title) !!}</td>
                     </tr>
                     <tr>
                         <td style="text-align: left; width:2%">4.</td>
@@ -170,7 +206,7 @@
                     <tr>
                         <td style="width: 25%">Judul Proposal</td>
                         <td style="width: 3%">:</td>
-                        <td>{!! $dataProposal->title !!}</td>
+                        <td class="amiri-bold">{!! $dataProposal->title !!}</td>
                     </tr>
                     <tr>
                         <td style="width: 25%">Nama Mahasiswa</td>
@@ -242,7 +278,7 @@
                     <tr>
                         <td style="width: 25%">Judul Proposal</td>
                         <td style="width: 3%">:</td>
-                        <td>{!! $dataProposal->title !!}</td>
+                        <td class="amiri-bold">{!! $dataProposal->title !!}</td>
                     </tr>
                     <tr>
                         <td style="width: 25%">Nama Mahasiswa</td>
@@ -296,9 +332,9 @@
                         <td><u>{{ $dosens->nama }}</u><br>NIY : {{ $dosens->nip }}</td>
                     </tr>
                 </table>
-            </div>            
+            </div>
         @else
-        <div class="page_break"></div>
+            <div class="page_break"></div>
             <div>
                 <h3 align="center">{{ $title2 }}</h3>
                 <table width="100%" height="100%" border="0" class="custom"
@@ -306,7 +342,7 @@
                     <tr>
                         <td style="width: 25%">Judul Proposal</td>
                         <td style="width: 3%">:</td>
-                        <td>{!! $dataProposal->title !!}</td>
+                        <td class="amiri-bold">{!! $dataProposal->title !!}</td>
                     </tr>
                     <tr>
                         <td style="width: 25%">Nama Mahasiswa</td>
@@ -360,7 +396,7 @@
                         <td><u>{{ $dosens->nama }}</u><br>NIY : {{ $dosens->nip }}</td>
                     </tr>
                 </table>
-            </div>            
+            </div>
         @endif
     @endforeach
 
