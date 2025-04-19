@@ -176,14 +176,18 @@ class AdminSidangController extends Controller
 
             // Calculate the nilai akhir
             $nilaiAkhir = round($sumNilai / count($getNilais->toArray()), 2);
-
+            
+            $konversiNilai = $this->konversiNilai($nilaiAkhir);
+            
             // Update the status of the proposal to 1 (selesai)
             $updateStatus = DB::table('tr_pendaftaran_status')->where('pendaftaran_id', $id)->update(
                 [
                     'status' => 1,
                     'created_at' => now(),
                     'created_by' => auth()->user()->no_induk,
-                    'nilai' => $nilaiAkhir
+                    'nilai' => $nilaiAkhir,
+                    'grade' => $konversiNilai['letter_grade'],
+                    'nilai_konversi' => $konversiNilai['point']
                 ]
             );
 
