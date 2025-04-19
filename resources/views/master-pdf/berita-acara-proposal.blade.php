@@ -112,7 +112,7 @@
                         <td style="text-align: left; width:2%">3.</td>
                         <td style="width: 15%">Judul</td>
                         <td style="width: 1%">:</td>
-                        <td style="width: 50%" class="amiri-bold">{!! trim($dataProposal->title) !!}</td>
+                        <td style="width: 50%" class="amiri-regular">{!! trim($dataProposal->title) !!}</td>
                     </tr>
                     <tr>
                         <td style="text-align: left; width:2%">4.</td>
@@ -206,7 +206,7 @@
                     <tr>
                         <td style="width: 25%">Judul Proposal</td>
                         <td style="width: 3%">:</td>
-                        <td class="amiri-bold">{!! $dataProposal->title !!}</td>
+                        <td class="amiri-regular">{!! $dataProposal->title !!}</td>
                     </tr>
                     <tr>
                         <td style="width: 25%">Nama Mahasiswa</td>
@@ -278,7 +278,7 @@
                     <tr>
                         <td style="width: 25%">Judul Proposal</td>
                         <td style="width: 3%">:</td>
-                        <td class="amiri-bold">{!! $dataProposal->title !!}</td>
+                        <td class="amiri-regular">{!! $dataProposal->title !!}</td>
                     </tr>
                     <tr>
                         <td style="width: 25%">Nama Mahasiswa</td>
@@ -342,7 +342,7 @@
                     <tr>
                         <td style="width: 25%">Judul Proposal</td>
                         <td style="width: 3%">:</td>
-                        <td class="amiri-bold">{!! $dataProposal->title !!}</td>
+                        <td class="amiri-regular">{!! $dataProposal->title !!}</td>
                     </tr>
                     <tr>
                         <td style="width: 25%">Nama Mahasiswa</td>
