@@ -63,7 +63,14 @@
                                     <td><strong>Dosen Pembimbing</strong></td>
                                     <td>
                                         <div class="row">
+                                            @php
+                                                $pembimbingisOK = 0;
+                                            @endphp
                                             @foreach ($pembimbing as $item)
+                                                @php
+                                                    $pembimbingisOK =
+                                                        $item->is_ok == 1 ? $pembimbingisOK + 1 : $pembimbingisOK;
+                                                @endphp
                                                 <div class="col-md-9">
                                                     <u>{{ $item->nama }}</u><br>NIY: {{ $item->nip }}
                                                 </div>
@@ -139,8 +146,8 @@
             </div>
             {{-- END DAFTAR PROPOSAL --}}
 
-            @if ($dataProposal)                     
-                @if (empty($statusBayar))                
+            @if ($dataProposal)
+                @if (empty($statusBayar))
                     <div class="card mb-4" id="checkLogCompleted" style="display: none">
                         <div class="card-header">
                             <h5>Daftar Sidang Proposal</h5></span>
@@ -349,9 +356,13 @@
                     </div>
                     <div class="card-body">
                         <div class="alert alert-info" role="alert">
-                            Minimal bimbingan sebanyak 4x untuk bisa mendaftar Seminar Proposal.
-                          </div>
-                        <a href="javascript:(0)" class="btn btn-sm btn-primary mb-4"
+                            @if ($pembimbingisOK != 1)
+                                Menunggu Persetujuan Pembimbing
+                            @else
+                                Minimal bimbingan sebanyak 4x untuk bisa mendaftar Seminar Proposal.
+                            @endif
+                        </div>
+                        <a href="javascript:(0)" class="mb-4 btn btn-sm {{ $pembimbingisOK != 1 ? 'disabled btn-secondary' : 'btn-primary' }}"
                             onclick="addKegiatanLogBook('{{ Crypt::encrypt($dataProposal->id) }}', '{{ auth()->user()->no_induk }}')"><i
                                 class="fa-solid fa-file-circle-plus"></i></i> Tambah</a>
                         <div class="col-lg-12 table table-responsive">

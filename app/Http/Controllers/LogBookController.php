@@ -99,18 +99,18 @@ class LogBookController extends Controller
         try {
             // Decrypt the proposal ID
             $pendaftaran_id = Crypt::decrypt($request->idProposal);
-
+            
             // Retrieve the pembimbing data for the decrypted proposal ID
             $getPembimbing = DB::table('tr_pendaftaran_dosen')
                 ->where('pendaftaran_id', $pendaftaran_id)
                 ->where('tipe', 'B')
                 ->where('is_ok', '1')
                 ->get();
-
+            
             DB::beginTransaction();
             $taskDo = 0;  // Number of tasks completed
             $mustDo = count($getPembimbing);  // Total number of tasks
-
+            
             /**
              * Insert or update the logbook records for each pembimbing
              */
@@ -131,7 +131,7 @@ class LogBookController extends Controller
                     // Store the file in the specified path
                     $storage = Storage::disk('my_files')->put($path, $file);
                 }
-
+                
                 if (empty($request->idLogBook)) {
                     // Insert a new logbook record
                     DB::table('tr_logbook')->insert([
