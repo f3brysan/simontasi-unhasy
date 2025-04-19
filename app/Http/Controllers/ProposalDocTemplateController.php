@@ -28,7 +28,7 @@ class ProposalDocTemplateController extends Controller
             $dosen = DB::table('tr_pendaftaran_dosen')->where('pendaftaran_id', $id)->orderBy('tipe', 'ASC')->get();
             $jenjang = substr($prodi->prodi, 0, 2);
             $jenisSidang = $jenjang == 'S1' ? 'Sidang Akhir Skripsi' : 'Sidang Akhir Tesis';
-
+            
             $data = [
                 'title' => $dataProposal->type == 'P' ? 'BERITA ACARA SEMINAR PROPOSAL' : 'BERITA ACARA'. ' ' . strtoupper($jenisSidang),
                 'fileName' => 'berita-acara-proposal',
@@ -38,7 +38,7 @@ class ProposalDocTemplateController extends Controller
                 'jadwal' => $jadwal,
                 'dosen' => $dosen
             ];
-
+            
             $pdf = Pdf::loadView('master-pdf.berita-acara-proposal', $data)->setPaper('a4', 'potrait');
             $uniqueCode = date('YmdHis');
             // Return the PDF stream with a unique file name
