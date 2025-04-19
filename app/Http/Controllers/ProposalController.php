@@ -125,14 +125,14 @@ class ProposalController extends Controller
         try {
             // Get the user's student number and the data of the selected professor
             $no_induk = auth()->user()->no_induk;
-            $pendaftaran_id = $request->pendaftaran_id;
+            $pendaftaran_id = $request->pendaftaran_id ?? $request->pendaftaran_id_edit;
             $dataDosen = DB::table('ms_dosen')->where('no_identitas', $request->dosen_pembimbing)->first();
-
+            
             // Check if the user already has a proposal
             $isExist = DB::table('tr_pendaftaran as p')
-                ->where('id', $pendaftaran_id)->exists();
+                ->where('id', $pendaftaran_id)->exists();                
             DB::beginTransaction();
-
+            
             // If the user does not have a proposal, create a new one
             if (!$isExist) {
                 $idPendaftaran = Str::uuid();
