@@ -162,6 +162,7 @@ class LogBookController extends Controller
                         'nip' => $pembimbing->nip,
                         'tgl_bimbingan' => $request->tgl_bimbingan,
                         'catatan' => $request->catatanLogBook,
+                        'attachment' => $storage,
                         'is_approve' => 0,
                         'created_at' => date('Y-m-d H:i:s')
                     ]);
