@@ -247,7 +247,48 @@
                                                 </tr>
                                             </tbody>
                                         </table>
-                                    </div>                                           
+                                    </div>  
+                                    <div class="table container-fluid">
+                                        <h6>Monitoring Berkas Hasil Sidang Akhir</h6>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Nama Berkas</th>
+                                                    <th class="text-center">File Berkas</th>
+                                                    <th class="text-center">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            @foreach ($berkas_hasil as $item)
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="width: 15%">{{ $item->nama }}</td>
+                                                        <td>
+                                                            @if ($item->file)
+                                                                <a href="{{ URL::to('/') }}/{{ $item->file }}"
+                                                                    target="_blank"
+                                                                    class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
+                                                            @endif
+                                                        </td>
+                                                        <td class="text-center" style="width: 10%">
+                                                            @if ($item->doc_id)
+                                                                <a href="javascript:void(0)"
+                                                                    onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataSidang->id }}', '{{ $item->doc_id }}')"
+                                                                    class="btn btn-sm btn-info text-light"><i
+                                                                        class="fas fa-redo-alt"></i></i>
+                                                                    Ganti</a>
+                                                            @else
+                                                                <a href="javascript:void(0)"
+                                                                    onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataSidang->id }}')"
+                                                                    class="btn btn-sm btn-primary"><i
+                                                                        class="fas fa-upload"></i>
+                                                                    Unggah</a>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            @endforeach
+                                        </table>                                         
+                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -293,46 +334,7 @@
 
                                             </td>
                                         </tr>
-                                    </table>
-                                    <h6>Monitoring Berkas Hasil Proposal</h6>
-                                    <table class="table table-bordered table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">Nama Berkas</th>
-                                                <th class="text-center">File Berkas</th>
-                                                <th class="text-center">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        @foreach ($berkas_hasil as $item)
-                                            <tbody>
-                                                <tr>
-                                                    <td style="width: 15%">{{ $item->nama }}</td>
-                                                    <td>
-                                                        @if ($item->file)
-                                                            <a href="{{ URL::to('/') }}/{{ $item->file }}"
-                                                                target="_blank"
-                                                                class="btn btn-sm btn-info text-light">{{ $item->file }}</a>
-                                                        @endif
-                                                    </td>
-                                                    <td class="text-center" style="width: 10%">
-                                                        @if ($item->doc_id)
-                                                            <a href="javascript:void(0)"
-                                                                onclick="gantiBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataSidang->id }}', '{{ $item->doc_id }}')"
-                                                                class="btn btn-sm btn-info text-light"><i
-                                                                    class="fas fa-redo-alt"></i></i>
-                                                                Ganti</a>
-                                                        @else
-                                                            <a href="javascript:void(0)"
-                                                                onclick="unggahBerkas('{{ $item->id }}', '{{ $item->nama }}' ,'{{ $dataSidang->id }}')"
-                                                                class="btn btn-sm btn-primary"><i
-                                                                    class="fas fa-upload"></i>
-                                                                Unggah</a>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        @endforeach
-                                    </table>
+                                    </table>                                    
                                 </div>
                             @endif
                         </div>

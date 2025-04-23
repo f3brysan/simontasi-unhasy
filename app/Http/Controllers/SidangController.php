@@ -76,6 +76,7 @@ class SidangController extends Controller
                 ->where('b.type', 'TH')
                 // Get the results
                 ->get();
+                
             $data['nilai'] = DB::table('tr_nilai as n')
                 ->select('created_by as dosen', 'u.nama', 'n.is_lock', DB::raw('SUM(nilai) as nilai'))
                 ->leftJoin('users as u', 'u.no_induk', '=', 'created_by')
