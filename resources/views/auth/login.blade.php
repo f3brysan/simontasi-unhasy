@@ -88,8 +88,13 @@
                         </div>           
                         <div class="card col-md-5 text-black p-4">
                             <div class="card-body text-center">
-                                <div class="mb-1">
-                                    <img src="{{ asset('assets/icons/talenta-logo.png') }}" alt="" style="max-width: 70%; max-height: 50%; margin: auto; display: block;">
+                                <div class="row mb-2">
+                                    <div class="col-6">
+                                        <img src="{{ asset('assets/icons/talenta-logo.png') }}" alt="" style="max-width: 100%; max-height: 100%; margin: auto; display: block;">
+                                    </div>
+                                    <div class="col-6">
+                                        <img src="{{ asset('assets/icons/diktisaintek_berdampak_logo.png') }}" alt="" style="max-width: 100%; max-height: 100%; margin: auto; display: block;">
+                                    </div>
                                 </div>
                                 <div>                                    
                                     <h4>Universitas Hasyim Asy'ari</h4>
