@@ -106,7 +106,7 @@ class GetDataAPISiakad extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Berhasil void',
-                'data' => $response
+                'data' => $response->getContents()
             ], 200);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
