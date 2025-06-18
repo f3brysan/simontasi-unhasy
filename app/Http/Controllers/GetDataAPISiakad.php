@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class GetDataAPISiakad extends Controller
 {
@@ -18,7 +19,7 @@ class GetDataAPISiakad extends Controller
             $getDosen = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
                 'type' => 'dosen'
             ]);
-    
+
             $result = $getDosen->data;
             if ($nip != null) {
                 foreach ($getDosen->data as $item) {
@@ -44,9 +45,9 @@ class GetDataAPISiakad extends Controller
             $getProdi = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
                 'type' => 'prodi'
             ]);
-    
-            $result = $getProdi->data;    
-    
+
+            $result = $getProdi->data;
+
             if ($kode != null) {
                 foreach ($getProdi->data as $item) {
                     if ($item->kode_prodi == $kode) {
@@ -70,8 +71,8 @@ class GetDataAPISiakad extends Controller
         try {
             $getFakultas = $this->requestData('https://siakad.unhasy.ac.id/api/all.php', 'POST', [
                 'type' => 'prodi'
-            ]);            
-    
+            ]);
+
             if ($kode != null) {
                 foreach ($getFakultas->data as $item) {
                     if ($item->kode_fakultas == $kode) {
@@ -92,6 +93,19 @@ class GetDataAPISiakad extends Controller
             return $result;
         } catch (\Exception $e) {
             return $e->getMessage();
+        }
+    }
+
+    public function void(Request $request)
+    {
+        try {
+            $response = Http::post($request->url, [
+                'token' => $request->token,
+            ]);
+
+            return response()->json($response->json());
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()]);
         }
     }
 }
