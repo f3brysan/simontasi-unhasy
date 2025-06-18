@@ -103,11 +103,7 @@ class GetDataAPISiakad extends Controller
                 'token' => $request->token,
             ]);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Berhasil void',
-                'data' => $response->getContents()
-            ], 200);
+            return response()->json($response->json(), 200);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
         }
