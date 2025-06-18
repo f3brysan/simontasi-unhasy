@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\API_NilaiAkhirController;
+use App\Http\Controllers\GetDataAPISiakad;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('v1/get-nilai-akhir', [API_NilaiAkhirController::class, 'getNilaiAkhir']);
+Route::post('v1/void-transaction', [GetDataAPISiakad::class, 'void']);
