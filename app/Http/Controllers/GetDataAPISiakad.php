@@ -99,6 +99,11 @@ class GetDataAPISiakad extends Controller
     public function void(Request $request)
     {
         try {
+             $this->validate($request, [
+                'token' => 'required',
+                'url' => 'required'
+            ]);
+            
             $response = Http::post($request->url, [
                 'token' => $request->token,
             ]);
